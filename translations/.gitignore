@@ -1,0 +1,38 @@
+# Composer dependencies
+/vendor/
+
+# Symfony cache and logs
+/var/cache/
+/var/log/
+
+# Environment variable files
+/.env
+/.env.local
+/.env.*.local
+
+# Symfony built assets and static files
+/public/bundles/
+/public/build/
+/public/uploads/
+
+# IDE/editor config files (e.g., PhpStorm, VS Code)
+.idea/
+.vscode/
+*.iml
+
+# Node.js dependencies (if using Webpack Encore or similar)
+/node_modules/
+
+# PHPUnit result caches
+.phpunit.result.cache
+
+# Coverage reports
+/coverage/
+
+# Doctrine file-based metadata and cache
+/var/doctrine/
+
+# Miscellaneous system files
+*.DS_Store
+*.swp
+Thumbs.db
