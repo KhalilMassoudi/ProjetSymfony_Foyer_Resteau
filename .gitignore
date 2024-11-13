@@ -5,11 +5,6 @@
 /var/cache/
 /var/log/
 
-# Environment variable files
-/.env
-/.env.local
-/.env.*.local
-
 # Symfony built assets and static files
 /public/bundles/
 /public/build/
