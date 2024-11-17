@@ -57,5 +57,12 @@ class IndexController extends AbstractController
             'controller_name' => 'IndexController',
         ]);
     }
+    #[Route('/GestionServices', name: 'app_GestionServices')]
+    public function gestionservice(): Response
+    {
+        return $this->render('backtemplates/GestionServices.html.twig', [
+            'controller_name' => 'IndexController',
+        ]);
+    }
 
 }
