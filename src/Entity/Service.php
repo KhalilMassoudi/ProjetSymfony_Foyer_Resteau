@@ -20,6 +20,12 @@ class Service
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
     private ?\DateTimeInterface $date_creation = null;
 
+    #[ORM\Column(type: Types::DATE_MUTABLE)]
+    private ?\DateTimeInterface $date_fin = null;
+
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $description = null;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -36,15 +42,39 @@ class Service
 
         return $this;
     }
-
-    public function getDateCreation(): ?\DateTimeInterface
+    // Getters and Setters
+    public function getDateCreation(): ?\DateTime
     {
         return $this->date_creation;
     }
 
-    public function setDateCreation(\DateTimeInterface $date_creation): static
+    public function setDateCreation(\DateTime $date_creation): self
     {
         $this->date_creation = $date_creation;
+        return $this;
+    }
+
+    public function getDateFin(): ?\DateTime
+    {
+        return $this->date_fin;
+    }
+
+    public function setDateFin(?\DateTime $date_fin): self
+    {
+        $this->date_fin = $date_fin;
+        return $this;
+    }
+
+
+    
+    public function getDescription(): ?string
+    {
+        return $this->description;
+    }
+
+    public function setDescription(?string $description): static
+    {
+        $this->description = $description;
 
         return $this;
     }
