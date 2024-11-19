@@ -1,0 +1,87 @@
+{# backtemplates/edit_chambre.html.twig #}
+
+{% extends 'backtemplates/baseback2.html.twig' %}
+
+{% block title %}
+    Modifier Chambre
+{% endblock %}
+
+{% block body %}
+    <div class="container mt-4">
+        <h1>Modifier la chambre</h1>
+
+        {# Affichage du message flash si une chambre a été modifiée avec succès #}
+        {% for message in app.flashes('success') %}
+            <div class="alert alert-success">
+                {{ message }}
+            </div>
+        {% endfor %}
+
+        {# Formulaire pour modifier une chambre #}
+        <h2>Modifier une chambre</h2>
+        {{ form_start(form, {'attr': {'class': 'form-horizontal'}}) }}
+        <div class="row mb-3">
+            <label for="{{ form.numeroChB.vars.id }}" class="col-sm-2 col-form-label">{{ form.numeroChB.vars.label }}</label>
+            <div class="col-sm-10">
+                {{ form_widget(form.numeroChB, {'attr': {'class': 'form-control'}}) }}
+            </div>
+        </div>
+        <div class="row mb-3">
+            <label for="{{ form.etageChB.vars.id }}" class="col-sm-2 col-form-label">{{ form.etageChB.vars.label }}</label>
+            <div class="col-sm-10">
+                {{ form_widget(form.etageChB, {'attr': {'class': 'form-control'}}) }}
+            </div>
+        </div>
+        <div class="row mb-3">
+            <label for="{{ form.capaciteChB.vars.id }}" class="col-sm-2 col-form-label">{{ form.capaciteChB.vars.label }}</label>
+            <div class="col-sm-10">
+                {{ form_widget(form.capaciteChB, {'attr': {'class': 'form-control'}}) }}
+            </div>
+        </div>
+        <div class="row mb-3">
+            <label for="{{ form.statutChB.vars.id }}" class="col-sm-2 col-form-label">{{ form.statutChB.vars.label }}</label>
+            <div class="col-sm-10">
+                {{ form_widget(form.statutChB, {'attr': {'class': 'form-control'}}) }}
+            </div>
+        </div>
+        <button type="submit" class="btn btn-primary">Modifier</button>
+        <a href="{{ path('app_chamber') }}" class="btn btn-secondary">Annuler</a>
+        {{ form_end(form) }}
+
+        {# Affichage des détails de la chambre en cours d'édition (optionnel) #}
+        <h2 class="mt-4">Détails de la chambre</h2>
+        <table class="table table-bordered">
+            <tr>
+                <th>ID</th>
+                <td>{{ chambre.idChB }}</td>
+            </tr>
+            <tr>
+                <th>Numéro</th>
+                <td>{{ chambre.numeroChB }}</td>
+            </tr>
+            <tr>
+                <th>Étage</th>
+                <td>{{ chambre.etageChB }}</td>
+            </tr>
+            <tr>
+                <th>Capacité</th>
+                <td>{{ chambre.capaciteChB }}</td>
+            </tr>
+            <tr>
+                <th>Statut</th>
+                <td>
+                    {% set statut = chambre.statutChB %}
+                    {% if statut == 'Disponible' %}
+                        <span class="badge bg-success">Disponible</span>
+                    {% elseif statut == 'Occupée' %}
+                        <span class="badge bg-danger">Occupée</span>
+                    {% elseif statut == 'En maintenance' %}
+                        <span class="badge bg-warning">En maintenance</span>
+                    {% else %}
+                        <span class="badge bg-secondary">Inconnu</span>
+                    {% endif %}
+                </td>
+            </tr>
+        </table>
+    </div>
+{% endblock %}
