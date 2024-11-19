@@ -84,7 +84,7 @@ class ChambreController extends AbstractController
         }
 
         // Afficher le formulaire d'édition
-        return $this->render('backtemplates/edit_chambre.html.twig', [
+        return $this->render('backtemplates/app_edit_chambre.html.twig', [
             'form' => $form->createView(),
             'chambre' => $chambre,
         ]);
