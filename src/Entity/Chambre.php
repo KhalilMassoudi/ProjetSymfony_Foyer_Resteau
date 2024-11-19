@@ -23,15 +23,15 @@ class Chambre
     private int $capaciteChB;
 
     #[ORM\Column(type: 'string', length: 20)]
-    private ChambreStatut $statutChB;
+    private string $statutChB;  // Stocker la valeur de l'énumération sous forme de chaîne
 
-    // Getters and Setters
-
+    // Getter pour idChB
     public function getIdChB(): int
     {
         return $this->idChB;
     }
 
+    // Getter et Setter pour numeroChB
     public function getNumeroChB(): string
     {
         return $this->numeroChB;
@@ -43,6 +43,7 @@ class Chambre
         return $this;
     }
 
+    // Getter et Setter pour etageChB
     public function getEtageChB(): int
     {
         return $this->etageChB;
@@ -54,6 +55,7 @@ class Chambre
         return $this;
     }
 
+    // Getter et Setter pour capaciteChB
     public function getCapaciteChB(): int
     {
         return $this->capaciteChB;
@@ -65,14 +67,17 @@ class Chambre
         return $this;
     }
 
-    public function getStatutChB(): string
+    // Getter et Setter pour statutChB
+    public function getStatutChB(): ChambreStatut
     {
-        return $this->statutChB;
+        // Retourner l'énumération en la convertissant depuis la chaîne stockée
+        return ChambreStatut::from($this->statutChB);
     }
 
-    public function setStatutChB(ChambreStatut $statutChB): self
+    public function setStatutChB(ChambreStatut $statut): self
     {
-        $this->statutChB = $statutChB;
+        // Stocker la valeur de l'énumération sous forme de chaîne
+        $this->statutChB = $statut->value;
         return $this;
     }
 }
