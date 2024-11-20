@@ -1,0 +1,21 @@
+{% extends 'backtemplates/gestionRestau.html.twig' %}
+
+
+
+{% block title %}Create a New Category{% endblock %}
+
+{% block body %}
+    <h1>Create a New Category</h1>
+
+   {{ form_start(form) }}
+    <div class="form-group mb-3">
+        {{ form_row(form.nomCategorie) }}
+    </div>
+    <div class="form-group mb-3">
+        {{ form_row(form.descrCategorie) }}
+    </div>
+    <button type="submit" class="btn btn-primary">Create Category</button>
+{{ form_end(form) }}
+
+    <a href="{{ path('app_categorie_plat_index') }}" class="btn btn-secondary">Back to Category List</a>
+{% endblock %}

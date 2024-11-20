@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Entity\CategoriePlat;
 use App\Form\CategoriePlatType;
+use Doctrine\ORM\EntityManagerInterface;
 use App\Repository\CategoriePlatRepository;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -21,26 +22,31 @@ class CategoriePlatController extends AbstractController
     }
 
     #[Route('/categorie/plat/new', name: 'app_categorie_plat_new')]
-    public function new(Request $request): Response
+    public function new(Request $request, EntityManagerInterface $entityManager): Response
     {
+        // Create a new CategoriePlat object
         $categoriePlat = new CategoriePlat();
+
+        // Create the form based on the CategoriePlatType
         $form = $this->createForm(CategoriePlatType::class, $categoriePlat);
 
+        // Handle the request
         $form->handleRequest($request);
 
+        // If the form is submitted and valid, save the category and redirect
         if ($form->isSubmitted() && $form->isValid()) {
-            $entityManager = $this->getDoctrine()->getManager();
             $entityManager->persist($categoriePlat);
             $entityManager->flush();
 
+            // Redirect to the list of categories (you can modify this route)
             return $this->redirectToRoute('app_categorie_plat_index');
         }
 
+        // Render the form in the view
         return $this->render('categorie_plat/new.html.twig', [
             'form' => $form->createView(),
         ]);
     }
-
     #[Route('/categorie/plat/{id}', name: 'app_categorie_plat_show')]
     public function show(CategoriePlat $categoriePlat): Response
     {
