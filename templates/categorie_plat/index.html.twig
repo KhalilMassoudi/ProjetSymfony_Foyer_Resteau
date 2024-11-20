@@ -20,7 +20,15 @@
                     <td>{{ categorie.id }}</td>
                     <td>{{ categorie.nomCategorie }}</td>
                     <td>{{ categorie.descrCategorie }}</td>
+                    <td>
+                        <a href="{{ path('app_categorie_plat_show', { id: categorie.id }) }}" class="btn btn-info btn-sm">View</a>
+                        <a href="{{ path('app_categorie_plat_edit', { id: categorie.id }) }}" class="btn btn-warning btn-sm">Edit</a>
 
+                        <!-- Formulaire pour la suppression de la catégorie -->
+                        <form action="{{ path('app_categorie_plat_delete', {'id': categorie.id}) }}" method="post" style="display:inline;" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer cette catégorie ?');">
+                            <button type="submit" class="btn btn-danger btn-sm">Delete</button>
+                        </form>
+                    </td>
                 </tr>
             {% else %}
                 <tr>

@@ -1,0 +1,19 @@
+{% extends 'backtemplates/gestionRestau.html.twig' %}
+
+{% block title %}Edit Category{% endblock %}
+
+{% block body %}
+    <h1>Edit Category</h1>
+
+    {{ form_start(form) }}
+        <div class="form-group mb-3">
+            {{ form_row(form.nomCategorie) }}
+        </div>
+        <div class="form-group mb-3">
+            {{ form_row(form.descrCategorie) }}
+        </div>
+        <button type="submit" class="btn btn-success">Update Category</button>
+    {{ form_end(form) }}
+
+    <a href="{{ path('app_categorie_plat_index') }}" class="btn btn-secondary mt-3">Back to Category List</a>
+{% endblock %}

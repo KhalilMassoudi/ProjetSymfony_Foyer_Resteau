@@ -29,7 +29,8 @@ class Plat
     #[ORM\Column]
     private bool $dispoPlat = true; // New boolean field with a default value of `true`
 
-    #[ORM\ManyToOne(inversedBy: 'plats')]
+    #[ORM\ManyToOne(targetEntity: CategoriePlat::class, inversedBy: 'plats')]
+    #[ORM\JoinColumn(nullable: true, onDelete: 'SET NULL')]
     private ?CategoriePlat $categoriePlat = null;
 
     public function getId(): ?int
