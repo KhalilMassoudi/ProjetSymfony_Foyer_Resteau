@@ -35,7 +35,7 @@ class ReclamationController extends AbstractController
 
 
 
-    #[Route('/ajoutReclamation', name: 'app_ajouterReclamations')]
+    #[Route('/ajoutReclamation', name: 'app_ajouterReclamation')]
     public function ajoutReclamation(ManagerRegistry $doctrine, Request $request): Response
     {
         // Création d'une nouvelle instance de Reclamation

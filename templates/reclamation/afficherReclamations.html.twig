@@ -1,0 +1,81 @@
+{% extends 'basefront.html.twig' %}
+
+{% block amodifier %}
+    <section class="py-5">
+        <div class="container-fluid">
+            <div class="bg-secondary py-5 my-5 rounded-5" style="background: url('images/bg-leaves-img-pattern.png') no-repeat;">
+                <div class="container my-5">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <h2 class="text-black">Liste des Réclamations</h2>
+
+                            <!-- Ajout du CSS personnalisé directement dans le fichier Twig -->
+                            <style>
+                                /* Appliquer un fond gris sombre au tableau avec bordures arrondies */
+                                .table-custom {
+                                    background-color: rgba(177, 202, 227, 0.62);  /* Gris foncé */
+                                    color: #f8f9fa;  /* Texte en blanc pour contraste */
+                                    border-radius: 10px;  /* Bordures arrondies */
+                                    overflow: hidden;  /* Assurez-vous que les coins arrondis sont visibles */
+                                }
+
+                                /* Appliquer une bordure légère de couleur claire */
+                                .table-custom th, .table-custom td {
+                                    border: 1px solid #4c7aa8;  /* Bordure gris clair */
+                                }
+
+                                /* Appliquer un effet de survol pour les lignes du tableau */
+                                .table-custom tbody tr:hover {
+                                    background-color: #c7d9ec;  /* Gris moyen au survol */
+                                }
+
+                                /* Appliquer une couleur différente pour les en-têtes */
+                                .table-custom thead {
+                                    background-color: #b6b8ba;  /* Fond encore plus sombre pour l'en-tête */
+                                    color: #ffffff;  /* Texte blanc pour l'en-tête */
+                                }
+                            </style>
+
+                            <!-- Table des réclamations -->
+                            <table class="table table-striped table-bordered table-custom text-dark">
+                                <thead>
+                                <tr>
+                                    <th>Titre de la Réclamation</th>
+                                    <th>Description</th>
+                                    <th>Date de Réclamation</th>
+                                    <th>État</th>
+                                    <th>Réponse</th>
+                                    <th>Actions</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                {% for reclamation in reclamations %}
+                                    <tr>
+                                        <td>{{ reclamation.titre }}</td>
+                                        <td>{{ reclamation.description }}</td>
+                                        <td>{{ reclamation.dateReclamation|date('d/m/Y') }}</td>
+                                        <td>{{ reclamation.etat }}</td>
+                                        <td>{{ reclamation.reponse ?: '-' }}</td> <!-- Affiche un tiret si la réponse est vide -->
+                                        <td>
+                                            <!-- Icônes d'action -->
+                                            <a href="" class="btn btn-info btn-sm" title="Voir">
+                                                <i class="bi bi-eye"></i>
+                                            </a>
+                                            <a href="" class="btn btn-warning btn-sm" title="Modifier">
+                                                <i class="bi bi-pencil"></i>
+                                            </a>
+                                            <a href="" class="btn btn-danger btn-sm" title="Supprimer" onclick="return confirm('Êtes-vous sûr de vouloir supprimer cette réclamation ?')">
+                                                <i class="bi bi-trash"></i>
+                                            </a>
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+{% endblock %}
