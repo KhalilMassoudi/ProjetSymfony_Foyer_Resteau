@@ -24,7 +24,7 @@ class CategoriePlat
     /**
      * @var Collection<int, Plat>
      */
-    #[ORM\OneToMany(targetEntity: Plat::class, mappedBy: 'categoriePlat')]
+    #[ORM\OneToMany(mappedBy: 'categoriePlat', targetEntity: Plat::class, cascade: ['persist'], orphanRemoval: false)]
     private Collection $plats;
 
     public function __construct()
