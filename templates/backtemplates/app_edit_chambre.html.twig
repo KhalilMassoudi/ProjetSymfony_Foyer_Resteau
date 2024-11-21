@@ -1,14 +1,6 @@
-{# backtemplates/edit_chambre.html.twig #}
-
 {% extends 'backtemplates/baseback2.html.twig' %}
-
-{% block title %}
-    Modifier Chambre
-{% endblock %}
-
 {% block body %}
-    <div class="container mt-4">
-        <h1>Modifier la chambre</h1>
+    <div class="container mt-4" style="margin-left: 20%; margin-top: 400px;padding-top: 80px;">
 
         {# Affichage du message flash si une chambre a été modifiée avec succès #}
         {% for message in app.flashes('success') %}
@@ -44,8 +36,8 @@
                 {{ form_widget(form.statutChB, {'attr': {'class': 'form-control'}}) }}
             </div>
         </div>
-        <button type="submit" class="btn btn-primary">Modifier</button>
-        <a href="{{ path('app_chamber') }}" class="btn btn-secondary">Annuler</a>
+        <button type="submit" class="btn btn-primary">Modifier <span class="btn-icon-right"><i class="fa fa-edit"></i></span></button>
+        <a href="{{ path('app_chamber') }}" class="btn btn-secondary">Annuler <span class="btn-icon-right"><i class="fa fa-times"></i></span></a>
         {{ form_end(form) }}
 
         {# Affichage des détails de la chambre en cours d'édition (optionnel) #}
@@ -70,16 +62,27 @@
             <tr>
                 <th>Statut</th>
                 <td>
-                    {% set statut = chambre.statutChB %}
-                    {% if statut == 'Disponible' %}
-                        <span class="badge bg-success">Disponible</span>
-                    {% elseif statut == 'Occupée' %}
-                        <span class="badge bg-danger">Occupée</span>
-                    {% elseif statut == 'En maintenance' %}
-                        <span class="badge bg-warning">En maintenance</span>
-                    {% else %}
-                        <span class="badge bg-secondary">Inconnu</span>
-                    {% endif %}
+                    <div class="card-body">
+                        {% set statut = chambre.statutChB.getValue() %}
+
+                        {% if statut == 'Disponible' %}
+                            <button type="button" class="btn btn-success">
+                                Disponible <span class="btn-icon-right"><i class="fa fa-check"></i></span>
+                            </button>
+                        {% elseif statut == 'Occupée' %}
+                            <button type="button" class="btn btn-danger">
+                                Occupée <span class="btn-icon-right"><i class="fa fa-times"></i></span>
+                            </button>
+                        {% elseif statut == 'En maintenance' %}
+                            <button type="button" class="btn btn-warning">
+                                En maintenance <span class="btn-icon-right"><i class="fa fa-wrench"></i></span>
+                            </button>
+                        {% else %}
+                            <button type="button" class="btn btn-secondary">
+                                Inconnu <span class="btn-icon-right"><i class="fa fa-question"></i></span>
+                            </button>
+                        {% endif %}
+                    </div>
                 </td>
             </tr>
         </table>

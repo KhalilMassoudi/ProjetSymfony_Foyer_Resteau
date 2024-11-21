@@ -1,0 +1,90 @@
+{% extends 'backtemplates/baseback2.html.twig' %}
+
+{% block title %}Gestion des équipements{% endblock %}
+
+{% block body %}
+    <div class="container mt-4" style="margin-left: 20%; margin-top: 400px; padding-top: 80px;">
+
+        <!-- Bouton pour afficher le formulaire d'ajout, avec une couleur bleue et icône -->
+        <button id="showFormButton" class="btn btn-primary mb-3">
+            Ajouter un équipement
+            <span class="btn-icon-right"><i class="fa fa-plus"></i></span>
+        </button>
+
+        <!-- Formulaire d'ajout d'équipement masqué par défaut -->
+        <div id="addForm" style="display: none;">
+            <h2>Ajouter un nouvel équipement</h2>
+            {{ form_start(form) }}
+            {{ form_widget(form) }}
+
+            <!-- Espacement supplémentaire avant le bouton d'ajout -->
+            <div class="mt-3">
+                <!-- Bouton d'ajout dans le formulaire avec le même style -->
+                <button type="submit" class="btn btn-primary">
+                    Ajouter <span class="btn-icon-right"><i class="fa fa-check"></i></span>
+                </button>
+            </div>
+
+            {{ form_end(form) }}
+        </div>
+
+        <h2>Équipements existants</h2>
+        <table class="table">
+            <thead>
+            <tr>
+                <th>ID</th>
+                <th>Nom de l'équipement</th>
+                <th>État</th>
+                <th>Date du dernier entretien</th>
+                <th>Actions</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for equipement in equipements %}
+                <tr>
+                    <td>{{ equipement.idEquipementB }}</td>
+                    <td>{{ equipement.nomEquipementB }}</td>
+                    <td>{{ equipement.etatEquipementB }}</td>
+                    <td>{{ equipement.dateDernierEntretienEquipementB|date('Y-m-d') }}</td>
+                    <td>
+                        <!-- Bouton de modification avec le même style que le bouton d'ajout -->
+                        <a href="{{ path('app_equipement_edit', {'idEquipementB': equipement.idEquipementB}) }}" class="btn btn-primary btn-sm">
+                            <i class="fa fa-edit"></i> Modifier
+                        </a>
+
+                        <!-- Bouton de suppression avec le même style que le bouton d'ajout -->
+                        <a href="{{ path('app_equipement_delete', {'idEquipementB': equipement.idEquipementB}) }}" class="btn btn-danger btn-sm" onclick="return confirm('Êtes-vous sûr de vouloir supprimer cet équipement ?');">
+                            <i class="fa fa-trash"></i> Supprimer
+                        </a>
+                    </td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+
+        <!-- Message flash success -->
+        {% for message in app.flashes('success') %}
+            <div class="alert alert-success">
+                {{ message }}
+            </div>
+        {% endfor %}
+    </div>
+
+    <!-- JavaScript pour afficher ou masquer le formulaire -->
+    <script>
+        // Sélectionner le bouton et le formulaire
+        const showFormButton = document.getElementById('showFormButton');
+        const addForm = document.getElementById('addForm');
+
+        // Ajouter un écouteur d'événements au bouton
+        showFormButton.addEventListener('click', function () {
+            // Alterner l'affichage du formulaire
+            if (addForm.style.display === 'none') {
+                addForm.style.display = 'block';
+            } else {
+                addForm.style.display = 'none';
+            }
+        });
+    </script>
+
+{% endblock %}
