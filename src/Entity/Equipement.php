@@ -18,6 +18,7 @@ class Equipement
     #[ORM\Column(type: 'string', length: 50)]
     private string $etatEquipementB;
 
+
     #[ORM\Column(type: 'date')]
     private \DateTimeInterface $dateDernierEntretienEquipementB;
 
