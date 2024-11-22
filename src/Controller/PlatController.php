@@ -5,79 +5,100 @@ namespace App\Controller;
 use App\Entity\Plat;
 use App\Form\PlatType;
 use App\Repository\PlatRepository;
-use App\Repository\CategoriePlatRepository;
+use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 class PlatController extends AbstractController
 {
-    #[Route('/plat', name: 'app_plat_index')]
-    public function index(PlatRepository $platRepository): Response
+    #[Route("/plat", name: "app_plat")]
+    public function index(Request $request, EntityManagerInterface $entityManager, PlatRepository $platRepository): Response
     {
-        return $this->render('plat/index.html.twig', [
-            'plats' => $platRepository->findAll(),
-        ]);
-    }
-
-    #[Route('/plat/new', name: 'app_plat_new')]
-    public function new(Request $request, CategoriePlatRepository $categoriePlatRepository): Response
-    {
+        // Créer une nouvelle instance de Plat
         $plat = new Plat();
-        $form = $this->createForm(PlatType::class, $plat);
 
+        // Créer le formulaire pour ajouter un nouveau plat
+        $form = $this->createForm(PlatType::class, $plat);
         $form->handleRequest($request);
 
+        // Vérifier si le formulaire a été soumis et est valide
         if ($form->isSubmitted() && $form->isValid()) {
-            $entityManager = $this->getDoctrine()->getManager();
+            // Sauvegarder le nouveau plat dans la base de données
             $entityManager->persist($plat);
             $entityManager->flush();
 
-            return $this->redirectToRoute('app_plat_index');
+            // Ajouter un message flash pour informer l'utilisateur
+            $this->addFlash('success', 'Plat ajouté avec succès !');
+
+            // Rediriger vers la liste des plats
+            return $this->redirectToRoute('app_plat');
         }
 
-        return $this->render('plat/new.html.twig', [
+        // Récupérer la liste des plats
+        $plats = $platRepository->findAll();
+
+        // Rendre la vue avec le formulaire et la liste des plats
+        return $this->render('backtemplates/app_plat.html.twig', [
             'form' => $form->createView(),
-            'categories' => $categoriePlatRepository->findAll(),
+            'plats' => $plats,
         ]);
     }
 
-    #[Route('/plat/{id}', name: 'app_plat_show')]
-    public function show(Plat $plat): Response
+    #[Route("/plat/edit/{id}", name: "app_plat_edit")]
+    public function edit(int $id, Request $request, EntityManagerInterface $entityManager, PlatRepository $platRepository): Response
     {
-        return $this->render('plat/show.html.twig', [
-            'plat' => $plat,
-        ]);
-    }
+        // Récupérer le plat par ID
+        $plat = $platRepository->find($id);
 
-    #[Route('/plat/{id}/edit', name: 'app_plat_edit')]
-    public function edit(Request $request, Plat $plat): Response
-    {
+        // Vérifier si le plat existe
+        if (!$plat) {
+            throw $this->createNotFoundException('Le plat n\'existe pas.');
+        }
+
+        // Créer le formulaire pour éditer le plat
         $form = $this->createForm(PlatType::class, $plat);
         $form->handleRequest($request);
 
+        // Vérifier si le formulaire a été soumis et est valide
         if ($form->isSubmitted() && $form->isValid()) {
-            $this->getDoctrine()->getManager()->flush();
+            // Sauvegarder les modifications dans la base de données
+            $entityManager->flush();
 
-            return $this->redirectToRoute('app_plat_index');
+            // Ajouter un message flash pour informer l'utilisateur
+            $this->addFlash('success', 'Plat modifié avec succès !');
+
+            // Rediriger vers la liste des plats
+            return $this->redirectToRoute('app_plat');
         }
 
-        return $this->render('plat/edit.html.twig', [
+        // Afficher le formulaire d'édition
+        return $this->render('backtemplates/app_edit_plat.html.twig', [
             'form' => $form->createView(),
             'plat' => $plat,
         ]);
     }
 
-    #[Route('/plat/{id}/delete', name: 'app_plat_delete')]
-    public function delete(Request $request, Plat $plat): Response
+    #[Route("/plat/delete/{id}", name: "app_plat_delete")]
+    public function delete(int $id, EntityManagerInterface $entityManager, PlatRepository $platRepository): Response
     {
-        if ($this->isCsrfTokenValid('delete' . $plat->getId(), $request->get('_token'))) {
-            $entityManager = $this->getDoctrine()->getManager();
-            $entityManager->remove($plat);
-            $entityManager->flush();
+        // Récupérer le plat par ID
+        $plat = $platRepository->find($id);
+
+        // Vérifier si le plat existe
+        if (!$plat) {
+            throw $this->createNotFoundException('Le plat n\'existe pas.');
         }
 
-        return $this->redirectToRoute('app_plat_index');
+        // Supprimer le plat
+        $entityManager->remove($plat);
+        $entityManager->flush();
+
+        // Ajouter un message flash pour informer l'utilisateur
+        $this->addFlash('success', 'Plat supprimé avec succès !');
+
+        // Rediriger vers la liste des plats
+        return $this->redirectToRoute('app_plat');
     }
 }

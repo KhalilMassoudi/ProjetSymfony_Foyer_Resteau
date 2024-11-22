@@ -46,7 +46,6 @@ class Plat
     public function setNomPlat(string $nomPlat): static
     {
         $this->nomPlat = $nomPlat;
-
         return $this;
     }
 
@@ -58,7 +57,6 @@ class Plat
     public function setDescPlat(?string $descPlat): static
     {
         $this->descPlat = $descPlat;
-
         return $this;
     }
 
@@ -70,7 +68,6 @@ class Plat
     public function setPrixPlat(float $prixPlat): static
     {
         $this->prixPlat = $prixPlat;
-
         return $this;
     }
 
@@ -82,7 +79,6 @@ class Plat
     public function setTypeCuisine(string $typeCuisine): static
     {
         $this->typeCuisine = $typeCuisine;
-
         return $this;
     }
 
@@ -94,7 +90,17 @@ class Plat
     public function setCategoriePlat(?CategoriePlat $categoriePlat): static
     {
         $this->categoriePlat = $categoriePlat;
+        return $this;
+    }
 
+    public function getDispoPlat(): bool
+    {
+        return $this->dispoPlat;
+    }
+
+    public function setDispoPlat(bool $dispoPlat): static
+    {
+        $this->dispoPlat = $dispoPlat;
         return $this;
     }
 }
