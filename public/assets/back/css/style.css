@@ -263,7 +263,9 @@ body {
   line-height: 1.5;
   color: #BDBDC7;
   text-align: left;
-  background-color: rgba(88, 115, 254, 0.04); }
+  background-color: rgba(88, 115, 254, 0.04);
+
+}
 
 [tabindex="-1"]:focus {
   outline: 0 !important; }
@@ -19405,3 +19407,16 @@ html[dir="rtl"] [direction="rtl"][data-sidebar-style="compact"]:not([data-layout
       color: #fff; }
 
 /*# sourceMappingURL=style.css.map */
+/* Ajoutez ce CSS dans votre fichier global de styles (par exemple, assets/styles/app.css) */
+.badge-circle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px; /* Largeur du cercle */
+  height: 40px; /* Hauteur du cercle */
+  border-radius: 50%; /* Rendre le badge circulaire */
+  text-align: center;
+  font-size: 18px; /* Ajuster la taille du texte à l'intérieur du cercle */
+}
+
+

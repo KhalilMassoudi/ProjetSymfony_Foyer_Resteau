@@ -1,0 +1,66 @@
+{# backtemplates/app_edit_equipement.html.twig #}
+
+{% extends 'backtemplates/baseback2.html.twig' %}
+
+{% block title %}
+    Modifier l'équipement - {{ equipement.nomEquipementB }}
+{% endblock %}
+
+{% block body %}
+    <div class="container mt-4" style="margin-left: 20%; margin-top: 400px; padding-top: 80px;">
+        <h1>Modifier l'équipement</h1>
+
+        {# Message flash pour les succès ou les erreurs #}
+        {% for message in app.flashes('success') %}
+            <div class="alert alert-success">
+                {{ message }}
+            </div>
+        {% endfor %}
+
+        {% for message in app.flashes('error') %}
+            <div class="alert alert-danger">
+                {{ message }}
+            </div>
+        {% endfor %}
+
+        {# Formulaire d'édition de l'équipement #}
+        {{ form_start(form, {'attr': {'class': 'form-horizontal'}}) }}
+
+        <div class="row mb-3">
+            <label for="{{ form.nomEquipementB.vars.id }}" class="col-sm-2 col-form-label">{{ form.nomEquipementB.vars.label }}</label>
+            <div class="col-sm-10">
+                {{ form_widget(form.nomEquipementB, {'attr': {'class': 'form-control'}}) }}
+                {{ form_errors(form.nomEquipementB) }}
+            </div>
+        </div>
+
+        <div class="row mb-3">
+            <label for="{{ form.etatEquipementB.vars.id }}" class="col-sm-2 col-form-label">{{ form.etatEquipementB.vars.label }}</label>
+            <div class="col-sm-10">
+                {{ form_widget(form.etatEquipementB, {'attr': {'class': 'form-control'}}) }}
+                {{ form_errors(form.etatEquipementB) }}
+            </div>
+        </div>
+
+        <div class="row mb-3">
+            <label for="{{ form.dateDernierEntretienEquipementB.vars.id }}" class="col-sm-2 col-form-label">{{ form.dateDernierEntretienEquipementB.vars.label }}</label>
+            <div class="col-sm-10">
+                {{ form_widget(form.dateDernierEntretienEquipementB, {
+                    'attr': {'class': 'form-control', 'placeholder': 'dd-mm-yyyy'}
+                }) }}
+                {{ form_errors(form.dateDernierEntretienEquipementB) }}
+            </div>
+        </div>
+
+        {# Boutons modifiés avec les styles personnalisés #}
+        <div class="card-body">
+            <button type="submit" class="btn btn-google">Enregistrer les modifications
+                <span class="btn-icon-right"><i class="fa fa-save"></i></span>
+            </button>
+            <a href="{{ path('app_equipement') }}" class="btn btn-twitter">Annuler
+                <span class="btn-icon-right"><i class="fa fa-times"></i></span>
+            </a>
+        </div>
+        {{ form_end(form) }}
+    </div>
+{% endblock %}

@@ -1,51 +1,50 @@
-{# backtemplates/app_chambre.html.twig #}
-
 {% extends 'backtemplates/baseback2.html.twig' %}
 
 {% block title %}
-    Chambre - Gestion
+    Gestion des chambres
 {% endblock %}
 
 {% block body %}
-    <div class="container mt-4">
+    <div class="container mt-4" style="margin-left: 20%; margin-top: 400px;padding-top: 80px;">
         <h1>Gestion des chambres</h1>
 
-        {# Affichage du message flash si une chambre a été ajoutée avec succès #}
+        {# Affichage des messages flash #}
         {% for message in app.flashes('success') %}
             <div class="alert alert-success">
                 {{ message }}
             </div>
         {% endfor %}
 
+        {# Bouton pour afficher/masquer le formulaire d'ajout de chambre #}
+        <button id="toggleFormBtn" class="btn btn-primary mb-4">
+            Ajouter une chambre <span class="btn-icon-right"><i class="fa fa-plus"></i></span>
+        </button>
+
         {# Formulaire pour ajouter une nouvelle chambre #}
-        <h2>Ajouter une chambre</h2>
-        {{ form_start(form, {'attr': {'class': 'form-horizontal'}}) }}
-        <div class="row mb-3">
-            <label for="{{ form.numeroChB.vars.id }}" class="col-sm-2 col-form-label">{{ form.numeroChB.vars.label }}</label>
-            <div class="col-sm-10">
+        <div id="ajouterChambreDiv" class="d-none">
+            <h2>Ajouter une chambre</h2>
+            {{ form_start(form, {'attr': {'class': 'form-horizontal'}}) }}
+            <div class="mb-3">
+                <label for="{{ form.numeroChB.vars.id }}" class="form-label">{{ form.numeroChB.vars.label }}</label>
                 {{ form_widget(form.numeroChB, {'attr': {'class': 'form-control'}}) }}
             </div>
-        </div>
-        <div class="row mb-3">
-            <label for="{{ form.etageChB.vars.id }}" class="col-sm-2 col-form-label">{{ form.etageChB.vars.label }}</label>
-            <div class="col-sm-10">
+            <div class="mb-3">
+                <label for="{{ form.etageChB.vars.id }}" class="form-label">{{ form.etageChB.vars.label }}</label>
                 {{ form_widget(form.etageChB, {'attr': {'class': 'form-control'}}) }}
             </div>
-        </div>
-        <div class="row mb-3">
-            <label for="{{ form.capaciteChB.vars.id }}" class="col-sm-2 col-form-label">{{ form.capaciteChB.vars.label }}</label>
-            <div class="col-sm-10">
+            <div class="mb-3">
+                <label for="{{ form.capaciteChB.vars.id }}" class="form-label">{{ form.capaciteChB.vars.label }}</label>
                 {{ form_widget(form.capaciteChB, {'attr': {'class': 'form-control'}}) }}
             </div>
-        </div>
-        <div class="row mb-3">
-            <label for="{{ form.statutChB.vars.id }}" class="col-sm-2 col-form-label">{{ form.statutChB.vars.label }}</label>
-            <div class="col-sm-10">
+            <div class="mb-3">
+                <label for="{{ form.statutChB.vars.id }}" class="form-label">{{ form.statutChB.vars.label }}</label>
                 {{ form_widget(form.statutChB, {'attr': {'class': 'form-control'}}) }}
             </div>
+            <button type="submit" class="btn btn-success">
+                Ajouter <span class="btn-icon-right"><i class="fa fa-check"></i></span>
+            </button>
+            {{ form_end(form) }}
         </div>
-        <button type="submit" class="btn btn-primary">Ajouter</button>
-        {{ form_end(form) }}
 
         {# Liste des chambres #}
         <h2 class="mt-4">Liste des chambres</h2>
@@ -64,28 +63,69 @@
             {% for chambre in chambres %}
                 <tr>
                     <td>{{ chambre.idChB }}</td>
-                    <td>{{ chambre.numeroChB }}</td>
+                    <td>
+                        <div class="badge-circle">
+                            <a href="javascript:void()" class="badge badge-outline-primary">{{ chambre.numeroChB }}</a>
+                        </div>
+                    </td>
                     <td>{{ chambre.etageChB }}</td>
                     <td>{{ chambre.capaciteChB }}</td>
                     <td>
-                        {% set statut = chambre.statutChB %}
-                        {% if statut == 'Disponible' %}
-                            <span class="badge bg-success">Disponible</span>
-                        {% elseif statut == 'Occupée' %}
-                            <span class="badge bg-danger">Occupée</span>
-                        {% elseif statut == 'En maintenance' %}
-                            <span class="badge bg-warning">En maintenance</span>
+                        {% set statut = chambre.statutChB.getValue()|trim|lower %}
+                        {% if statut == 'disponible' %}
+                            <button type="button" class="btn btn-facebook">
+                                Disponible <span class="btn-icon-right"><i class="fa fa-check"></i></span>
+                            </button>
+                        {% elseif statut == 'occupée' %}
+                            <button type="button" class="btn btn-twitter">
+                                Occupée <span class="btn-icon-right"><i class="fa fa-times"></i></span>
+                            </button>
+                        {% elseif statut == 'en maintenance' %}
+                            <button type="button" class="btn btn-youtube">
+                                En maintenance <span class="btn-icon-right"><i class="fa fa-wrench"></i></span>
+                            </button>
                         {% else %}
-                            <span class="badge bg-secondary">Inconnu</span>
+                            <button type="button" class="btn btn-secondary">
+                                Inconnu <span class="btn-icon-right"><i class="fa fa-question"></i></span>
+                            </button>
                         {% endif %}
                     </td>
                     <td>
-                        <a href="{{ path('app_chambre_edit', {'idChB': chambre.idChB}) }}" class="btn btn-warning btn-sm">Éditer</a>
-                        <a href="{{ path('app_chambre_delete', {'idChB': chambre.idChB}) }}" class="btn btn-danger btn-sm">Supprimer</a>
+                        <!-- Boutons de modification et suppression avec le même style -->
+                        <a href="{{ path('app_chambre_edit', {'idChB': chambre.idChB}) }}" class="btn btn-primary btn-sm mr-3">
+                            <i class="fa fa-edit"></i> Modifier
+                        </a>
+                        <a href="{{ path('app_chambre_delete', {'idChB': chambre.idChB}) }}" class="btn btn-danger btn-sm" onclick="return confirm('Êtes-vous sûr de vouloir supprimer cette chambre ?');">
+                            <i class="fa fa-trash"></i> Supprimer
+                        </a>
                     </td>
                 </tr>
             {% endfor %}
             </tbody>
         </table>
     </div>
+{% endblock %}
+
+{% block js %}
+    <script src="{{ asset('assets/back/vendor/global/global.min.js') }}"></script>
+    <script src="{{ asset('assets/back/js/quixnav-init.js') }}"></script>
+    <script src="{{ asset('assets/back/js/custom.min.js') }}"></script>
+    <script src="{{ asset('assets/back/vendor/chartist/js/chartist.min.js') }}"></script>
+    <script src="{{ asset('assets/back/vendor/moment/moment.min.js') }}"></script>
+    <script src="{{ asset('assets/back/vendor/pg-calendar/js/pignose.calendar.min.js') }}"></script>
+    <script src="{{ asset('assets/back/js/dashboard/dashboard-2.js') }}"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const toggleFormBtn = document.getElementById('toggleFormBtn');
+            const ajouterChambreDiv = document.getElementById('ajouterChambreDiv');
+
+            // Vérifie si les éléments existent avant d'ajouter l'événement
+            if (toggleFormBtn && ajouterChambreDiv) {
+                toggleFormBtn.addEventListener('click', () => {
+                    // Ajoute ou retire la classe "d-none" pour afficher/masquer le formulaire
+                    ajouterChambreDiv.classList.toggle('d-none');
+                });
+            }
+        });
+    </script>
 {% endblock %}
