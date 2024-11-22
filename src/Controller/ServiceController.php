@@ -3,12 +3,9 @@
 namespace App\Controller;
 
 use App\Entity\Service;
-use App\Entity\TypeService;
 use App\Form\ServiceFormType;
-use App\Form\TypeServiceFormType;
 use App\Repository\ServiceRepository;
 use Doctrine\ORM\EntityManagerInterface;
-use App\Repository\TypeServiceRepository;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -33,7 +30,7 @@ public function AfficherAllServices(ServiceRepository $rep, Request $request, En
     if ($form->isSubmitted() && $form->isValid()) {
         $em->persist($service);
         $em->flush();
-        
+        $this->addFlash('success', 'New Service has been successfully added.');
         return $this->redirectToRoute('app_service'); 
     }
 
@@ -50,6 +47,7 @@ public function AfficherAllServices(ServiceRepository $rep, Request $request, En
         $em=$doc->getManager();
         $em->remove($service);
         $em->flush();//Commit au niveau du base de données
+        $this->addFlash('success', 'The TypeService has been successfully deleted.');
         return $this->redirectToRoute('app_service');
     }
     
