@@ -3,8 +3,10 @@
 namespace App\Form;
 
 use App\Entity\Service;
+use App\Entity\TypeService;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class ServiceFormType extends AbstractType
@@ -20,6 +22,12 @@ class ServiceFormType extends AbstractType
                 'widget' => 'single_text',
             ])
             ->add('description')
+            ->add('description')
+            ->add('TypeService', EntityType::class, [
+                'class' => TypeService::class, // Entité à associer
+                'choice_label' => 'nom', // Doit correspondre au getter
+                'placeholder' => 'Choisissez un type de service', // Optionnel
+            ])
         ;
     }
 
