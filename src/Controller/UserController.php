@@ -10,9 +10,12 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
-use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
+use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
+use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 
-class IndexController extends AbstractController
+
+
+class UserController extends AbstractController
 {
     /*#[Route('/', name: 'app_login')]
     public function login(): Response
@@ -25,7 +28,7 @@ class IndexController extends AbstractController
     public function login(): Response
     {
         return $this->render('backtemplates/app-login.html.twig', [
-            'controller_name' => 'IndexController',
+            'controller_name' => 'UserController',
         ]);
     }
 
@@ -41,9 +44,12 @@ class IndexController extends AbstractController
 
 
     private $entityManager;
-    public function __construct(EntityManagerInterface $entityManager)
+    private $passwordHasher;
+
+    public function __construct(EntityManagerInterface $entityManager, UserPasswordHasherInterface $passwordHasher)
     {
         $this->entityManager = $entityManager;
+        $this->passwordHasher = $passwordHasher;
     }
 
     #[Route('/register', name: 'app_register')]
@@ -57,13 +63,13 @@ class IndexController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             // Encoder le mot de passe
             // Ne pas encoder le mot de passe, juste le mettre tel quel
-            $user->setPassword($user->getPassword());
-
+            $hashedPassword = $this->passwordHasher->hashPassword($user, $user->getPassword());
+            $user->setPassword($hashedPassword);
             // Sauvegarder l'utilisateur dans la base de données
             $this->entityManager->persist($user);
             $this->entityManager->flush();
             // Rediriger après l'enregistrement
-            $this->addFlash('success', 'Compte créé avec succès !');
+            $this->addFlash('success', 'Account created successfully!');
             return $this->redirectToRoute('app_login');
         }
 
@@ -71,6 +77,7 @@ class IndexController extends AbstractController
             'form' => $form->createView(),
         ]);
     }
+
 
 
     #[Route('/login/check', name: 'app_login_check', methods: ['POST'])]
@@ -82,22 +89,30 @@ class IndexController extends AbstractController
         // Rechercher l'utilisateur par email
         $user = $this->entityManager->getRepository(User::class)->findOneBy(['email' => $email]);
 
-        if ($user && $user->getPassword() === $password) {
+        if ($user && $this->passwordHasher->isPasswordValid($user, $password)) {
             // Stocker l'information de connexion dans la session
             $session = $request->getSession();
             $session->set('user_id', $user->getId());
 
-            // Rediriger vers la page d'accueil
-            return $this->redirectToRoute('app_front');
+            // Vérifier le rôle de l'utilisateur et rediriger
+            if (in_array('ROLE_ADMIN', $user->getRoles())) {
+                // Si l'utilisateur est un admin, rediriger vers la page d'administration
+                return $this->render('backtemplates/baseback.html.twig', [
+                    'controller_name' => 'UserController',
+                ]);
+            } else {
+                // Si l'utilisateur est un simple utilisateur, rediriger vers la page front-end
+                return $this->render('fronttemplates/basefront.html.twig', [
+                    'controller_name' => 'UserController',
+                ]);
+            }
         } else {
             // Afficher un message d'erreur si les identifiants sont incorrects
-            $this->addFlash('error', 'Email ou mot de passe incorrect');
+            $this->addFlash('error', 'Incorrect email or password');
 
             return $this->redirectToRoute('app_login');
         }
     }
-
-
     #[Route('/back2', name: 'app_index2')]
     public function listUsers(): Response
     {
@@ -118,7 +133,7 @@ class IndexController extends AbstractController
 
         if (!$user) {
             // Ajouter un message flash si l'utilisateur n'est pas trouvé
-            $this->addFlash('error', 'Utilisateur introuvable.');
+            $this->addFlash('error', 'User not found.');
             return $this->redirectToRoute('app_index2');
         }
 
@@ -127,7 +142,7 @@ class IndexController extends AbstractController
         $this->entityManager->flush();//elle fait le commit dans la liste
 
         // Ajouter un message flash pour la confirmation de suppression
-        $this->addFlash('success', 'Utilisateur supprimé avec succès !');
+        $this->addFlash('success', 'User deleted successfully!');
 
         // Rediriger vers la liste des utilisateurs
         return $this->redirectToRoute('app_index2');
@@ -140,7 +155,7 @@ class IndexController extends AbstractController
     public function index(): Response
     {
         return $this->render('backtemplates/baseback.html.twig', [
-            'controller_name' => 'IndexController',
+            'controller_name' => 'UserController',
         ]);
     }
     /*#[Route('/back2', name: 'app_index2')]
@@ -150,18 +165,22 @@ class IndexController extends AbstractController
             'controller_name' => 'IndexController',
         ]);
     }*/
-    #[Route('/back/profile', name: 'app_profile')]
+
+
+    /*#[Route('/back/profile', name: 'app_profile')]
     public function profile(): Response
     {
         return $this->render('backtemplates/app_profile.html.twig', [
-            'controller_name' => 'IndexController',
+            'controller_name' => 'UserController',
         ]);
-    }
+    }*/
+
+
     #[Route('/back/calander', name: 'app_calander')]
     public function calander(): Response
     {
         return $this->render('backtemplates/app_calander.html.twig', [
-            'controller_name' => 'IndexController',
+            'controller_name' => 'UserController',
         ]);
     }
 
@@ -169,8 +188,61 @@ class IndexController extends AbstractController
     public function front(): Response
     {
         return $this->render('fronttemplates/basefront.html.twig', [
-            'controller_name' => 'IndexController',
+            'controller_name' => 'UserController',
         ]);
     }
+
+    //update
+
+
+    #[Route('/back2/update/{id}', name: 'admin_user_update', methods: ['GET', 'POST'])]
+    public function updateUser(int $id, Request $request): Response
+    {
+        // Récupérer l'utilisateur par son ID
+        $user = $this->entityManager->getRepository(User::class)->find($id);
+
+        if (!$user) {
+            // Si l'utilisateur n'est pas trouvé, afficher un message flash et rediriger
+            $this->addFlash('error', 'Utilisateur introuvable.');
+            return $this->redirectToRoute('app_index2');
+        }
+
+        // Créer le formulaire de mise à jour
+        $form = $this->createForm(UserType::class, $user);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            // Enregistrer les modifications
+            $this->entityManager->flush();
+
+            // Ajouter un message flash de succès
+            $this->addFlash('success', 'User successfully updated!');
+            return $this->redirectToRoute('app_index2');
+        }
+
+        // Rendre le formulaire dans le template
+        return $this->render('backtemplates/app_register.html.twig', [
+            'form' => $form->createView(),
+
+        ]);
+
+    }
+
+
+    #[Route('/back/profile', name: 'app_profile')]
+    public function profile(): Response
+    {
+        // Récupérer l'utilisateur connecté
+        $user = $this->getUser();
+        if (!$user) {
+        // Rediriger vers la page de connexion si non authentifié
+        return $this->redirectToRoute('app_login');
+    }
+
+        return $this->render('backtemplates/app_profile.html.twig', [
+            'user' => $user,
+        ]);
+    }
+
 
 }
