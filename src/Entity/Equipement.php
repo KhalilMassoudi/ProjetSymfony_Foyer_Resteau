@@ -22,6 +22,9 @@ class Equipement
     #[ORM\Column(type: 'date')]
     private \DateTimeInterface $dateDernierEntretienEquipementB;
 
+    #[ORM\ManyToOne(inversedBy: 'equipements')]
+    private ?Chambre $chambre = null;
+
     // Getters and Setters
 
     public function getIdEquipementB(): int
@@ -68,6 +71,18 @@ class Equipement
     public function setDateDernierEntretienEquipementB(\DateTimeInterface $dateDernierEntretienEquipementB): self
     {
         $this->dateDernierEntretienEquipementB = $dateDernierEntretienEquipementB;
+
+        return $this;
+    }
+
+    public function getChambre(): ?Chambre
+    {
+        return $this->chambre;
+    }
+
+    public function setChambre(?Chambre $chambre): static
+    {
+        $this->chambre = $chambre;
 
         return $this;
     }

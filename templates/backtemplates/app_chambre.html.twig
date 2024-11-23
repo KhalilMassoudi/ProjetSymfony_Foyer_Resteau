@@ -62,7 +62,7 @@
             <tbody>
             {% for chambre in chambres %}
                 <tr>
-                    <td>{{ chambre.idChB }}</td>
+                    <td>{{ chambre.id }}</td>
                     <td>
                         <div class="badge-circle">
                             <a href="javascript:void()" class="badge badge-outline-primary">{{ chambre.numeroChB }}</a>
@@ -92,10 +92,10 @@
                     </td>
                     <td>
                         <!-- Boutons de modification et suppression avec le même style -->
-                        <a href="{{ path('app_chambre_edit', {'idChB': chambre.idChB}) }}" class="btn btn-primary btn-sm mr-3">
+                        <a href="{{ path('app_chambre_edit', {'id': chambre.id}) }}" class="btn btn-primary btn-sm mr-3">
                             <i class="fa fa-edit"></i> Modifier
                         </a>
-                        <a href="{{ path('app_chambre_delete', {'idChB': chambre.idChB}) }}" class="btn btn-danger btn-sm" onclick="return confirm('Êtes-vous sûr de vouloir supprimer cette chambre ?');">
+                        <a href="{{ path('app_chambre_delete', {'id': chambre.id}) }}" class="btn btn-danger btn-sm" onclick="return confirm('Êtes-vous sûr de vouloir supprimer cette chambre ?');">
                             <i class="fa fa-trash"></i> Supprimer
                         </a>
                     </td>
