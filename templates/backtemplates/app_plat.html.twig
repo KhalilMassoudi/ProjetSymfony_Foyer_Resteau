@@ -1,131 +1,100 @@
 {% extends 'backtemplates/baseback2.html.twig' %}
 
-{% block title %}
-    Gestion des plats
-{% endblock %}
+{% block title %}Gestion des plats{% endblock %}
 
 {% block body %}
-    <div class="container mt-4" style="margin-left: 20%; margin-top: 100px; padding-top: 80px;">
-        <h1>Gestion des plats</h1>
+    <div class="container mt-4" style="margin-left: 20%; margin-top: 80px; padding-top: 80px;">
 
-        {# Affichage des messages flash #}
+        <!-- Message flash success (en haut, juste avant la section "Ajouter un plat") -->
         {% for message in app.flashes('success') %}
-            <div class="alert alert-success">
+            <div class="alert alert-success" id="flashMessage">
                 {{ message }}
             </div>
         {% endfor %}
 
-        {# Bouton pour afficher/masquer le formulaire d'ajout de plat #}
-        <button id="toggleFormBtn" class="btn btn-primary mb-4">
-            Ajouter un plat <span class="btn-icon-right"><i class="fa fa-plus"></i></span>
-        </button>
-
-        {# Formulaire pour ajouter un nouveau plat #}
-        <div id="ajouterPlatDiv" class="d-none">
-            <h2>Ajouter un plat</h2>
-            {{ form_start(form, {'attr': {'class': 'form-horizontal'}}) }}
-            <div class="mb-3">
-                <label for="{{ form.nomPlat.vars.id }}" class="form-label">{{ form.nomPlat.vars.label }}</label>
-                {{ form_widget(form.nomPlat, {'attr': {'class': 'form-control'}}) }}
-            </div>
-            <div class="mb-3">
-                <label for="{{ form.descPlat.vars.id }}" class="form-label">{{ form.descPlat.vars.label }}</label>
-                {{ form_widget(form.descPlat, {'attr': {'class': 'form-control'}}) }}
-            </div>
-            <div class="mb-3">
-                <label for="{{ form.prixPlat.vars.id }}" class="form-label">{{ form.prixPlat.vars.label }}</label>
-                {{ form_widget(form.prixPlat, {'attr': {'class': 'form-control'}}) }}
-            </div>
-            <div class="mb-3">
-                <label for="{{ form.typeCuisine.vars.id }}" class="form-label">{{ form.typeCuisine.vars.label }}</label>
-                {{ form_widget(form.typeCuisine, {'attr': {'class': 'form-control'}}) }}
-            </div>
-            <div class="mb-3">
-                <label for="{{ form.dispoPlat.vars.id }}" class="form-label">{{ form.dispoPlat.vars.label }}</label>
-                {{ form_widget(form.dispoPlat, {'attr': {'class': 'form-control'}}) }}
-            </div>
-            <div class="mb-3">
-                <label for="{{ form.categoriePlat.vars.id }}" class="form-label">{{ form.categoriePlat.vars.label }}</label>
-                {{ form_widget(form.categoriePlat, {'attr': {'class': 'form-control'}}) }}
-            </div>
-            <button type="submit" class="btn btn-success">
-                Ajouter <span class="btn-icon-right"><i class="fa fa-check"></i></span>
-            </button>
-            {{ form_end(form) }}
+         <!-- Menu de navigation horizontal -->
+        <div class="d-flex justify-content-start mb-4">
+            <a href="{{ path('app_categorieplat') }}" class="btn btn-link text-dark mr-4">
+                Ajouter une catégorie
+            </a>
+            <a href="{{ path('app_categorieplat') }}" class="btn btn-link text-dark">
+                Ajouter un plat
+            </a>
         </div>
 
-        {# Liste des plats #}
-        <h2 class="mt-4">Liste des plats</h2>
-        <table class="table table-striped">
+        <!-- Section des plats -->
+        
+        <button id="showFormButtonPlat" class="btn btn-primary mb-3">
+            Ajouter un plat
+            <span class="btn-icon-right"><i class="fa fa-plus"></i></span>
+        </button>
+
+        <!-- Formulaire d'ajout de plat masqué par défaut -->
+        <div id="addFormPlat" style="display: none;">
+            <h2>Ajouter un nouveau plat</h2>
+            {{ form_start(form) }}
+            {{ form_widget(form) }}
+
+            <div class="mt-3">
+                <button type="submit" class="btn btn-primary">
+                    Ajouter <span class="btn-icon-right"><i class="fa fa-check"></i></span>
+                </button>
+            </div>
+            {{ form_end(form) }}
+            
+        </div>
+        <h2>Plats existants</h2>
+        <table class="table">
             <thead>
-                <tr>
-                    <th>ID</th>
-                    <th>Nom</th>
-                    <th>Description</th>
-                    <th>Prix</th>
-                    <th>Type de cuisine</th>
-                    <th>Disponibilité</th>
-                    <th>Catégorie</th>
-                    <th>Actions</th>
-                </tr>
+            <tr>
+                <th>ID</th>
+                <th>Nom du plat</th>
+                <th>Description</th>
+                <th>Prix</th>
+                <th>Catégorie</th>
+                <th>Disponibilité</th>
+                <th>Actions</th>
+            </tr>
             </thead>
             <tbody>
-                {% for plat in plats %}
-                    <tr>
-                        <td>{{ plat.id }}</td>
-                        <td>{{ plat.nomPlat }}</td>
-                        <td>{{ plat.descPlat }}</td>
-                        <td>{{ plat.prixPlat }}</td>
-                        <td>{{ plat.typeCuisine }}</td>
-                        <td>
-                            {% if plat.dispoPlat %}
-                                <button type="button" class="btn btn-facebook">
-                                    Disponible <span class="btn-icon-right"><i class="fa fa-check"></i></span>
-                                </button>
-                            {% else %}
-                                <button type="button" class="btn btn-twitter">
-                                    Indisponible <span class="btn-icon-right"><i class="fa fa-times"></i></span>
-                                </button>
-                            {% endif %}
-                        </td>
-                        <td>{{ plat.categoriePlat ? plat.categoriePlat.nomCategorie : 'No category' }}</td> {# Affichage de la catégorie #}
-                        <td>
-                            <a href="{{ path('app_plat_edit', {'id': plat.id}) }}" class="btn btn-primary btn-sm mr-3">
-                                <i class="fa fa-edit"></i> Modifier
-                            </a>
-                            <a href="{{ path('app_plat_delete', {'id': plat.id}) }}" class="btn btn-danger btn-sm" onclick="return confirm('Êtes-vous sûr de vouloir supprimer ce plat ?')">
-                                <i class="fa fa-trash"></i> Supprimer
-                            </a>
-                        </td>
-                    </tr>
-                {% else %}
-                    <tr>
-                        <td colspan="8">Aucun plat trouvé.</td>
-                    </tr>
-                {% endfor %}
+            {% for plat in plats %}
+                <tr>
+                    <td>{{ plat.id }}</td>
+                    <td>{{ plat.nomPlat }}</td>
+                    <td>{{ plat.descPlat }}</td>
+                    <td>{{ plat.prixPlat }} €</td>
+                    <td>{{ plat.categoriePlat.nomCategorie }}</td>
+                    <td>{{ plat.dispoPlat ? 'Disponible' : 'Indisponible' }}</td>
+                    <td>
+                        <a href="{{ path('app_plat_edit', {'id': plat.id}) }}" class="btn btn-primary btn-sm">
+                            <i class="fa fa-edit"></i> Modifier
+                        </a>
+                        <a href="{{ path('app_plat_delete', {'id': plat.id}) }}" class="btn btn-danger btn-sm" onclick="return confirm('Êtes-vous sûr de vouloir supprimer ce plat ?');">
+                            <i class="fa fa-trash"></i> Supprimer
+                        </a>
+                    </td>
+                </tr>
+            {% endfor %}
             </tbody>
         </table>
     </div>
-{% endblock %}
 
-{% block js %}
-    <script src="{{ asset('assets/back/vendor/global/global.min.js') }}"></script>
-    <script src="{{ asset('assets/back/js/quixnav-init.js') }}"></script>
-    <script src="{{ asset('assets/back/js/custom.min.js') }}"></script>
-    <script src="{{ asset('assets/back/vendor/chartist/js/chartist.min.js') }}"></script>
-    <script src="{{ asset('assets/back/vendor/moment/moment.min.js') }}"></script>
-    <script src="{{ asset('assets/back/vendor/pg-calendar/js/pignose.calendar.min.js') }}"></script>
-    <script src="{{ asset('assets/back/js/dashboard/dashboard-2.js') }}"></script>
+    <!-- JavaScript pour afficher ou masquer les formulaires -->
     <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            const toggleFormBtn = document.getElementById('toggleFormBtn');
-            const ajouterPlatDiv = document.getElementById('ajouterPlatDiv');
-
-            if (toggleFormBtn && ajouterPlatDiv) {
-                toggleFormBtn.addEventListener('click', () => {
-                    ajouterPlatDiv.classList.toggle('d-none');
-                });
-            }
+        // Gestion du formulaire de plat
+        const showFormButtonPlat = document.getElementById('showFormButtonPlat');
+        const addFormPlat = document.getElementById('addFormPlat');
+        showFormButtonPlat.addEventListener('click', function () {
+            addFormPlat.style.display = (addFormPlat.style.display === 'none') ? 'block' : 'none';
         });
+
+        // Message flash success qui disparaît après 2 secondes
+        setTimeout(function() {
+            const flashMessage = document.getElementById('flashMessage');
+            if (flashMessage) {
+                flashMessage.style.display = 'none';
+            }
+        }, 2000);  // 2000 millisecondes = 2 secondes
     </script>
+
 {% endblock %}

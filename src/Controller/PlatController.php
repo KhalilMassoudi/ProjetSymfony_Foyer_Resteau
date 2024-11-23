@@ -13,10 +13,16 @@ use Symfony\Component\Routing\Annotation\Route;
 
 class PlatController extends AbstractController
 {
+    /**
+     * Méthode pour afficher la liste des plats et permettre l'ajout d'un nouveau plat.
+     */
     #[Route("/plat", name: "app_plat")]
-    public function index(Request $request, EntityManagerInterface $entityManager, PlatRepository $platRepository): Response
-    {
-        // Créer une nouvelle instance de Plat
+    public function index(
+        Request $request,
+        EntityManagerInterface $entityManager,
+        PlatRepository $platRepository
+    ): Response {
+        // Créer une nouvelle instance du plat
         $plat = new Plat();
 
         // Créer le formulaire pour ajouter un nouveau plat
@@ -46,16 +52,18 @@ class PlatController extends AbstractController
         ]);
     }
 
+    /**
+     * Méthode pour modifier un plat existant.
+     */
     #[Route("/plat/edit/{id}", name: "app_plat_edit")]
-    public function edit(int $id, Request $request, EntityManagerInterface $entityManager, PlatRepository $platRepository): Response
-    {
-        // Récupérer le plat par ID
-        $plat = $platRepository->find($id);
-
-        // Vérifier si le plat existe
-        if (!$plat) {
-            throw $this->createNotFoundException('Le plat n\'existe pas.');
-        }
+    public function edit(
+        int $id,
+        Request $request,
+        EntityManagerInterface $entityManager,
+        PlatRepository $platRepository
+    ): Response {
+        // Trouver le plat ou lancer une exception 404
+        $plat = $this->findPlatOr404($platRepository, $id);
 
         // Créer le formulaire pour éditer le plat
         $form = $this->createForm(PlatType::class, $plat);
@@ -80,16 +88,17 @@ class PlatController extends AbstractController
         ]);
     }
 
+    /**
+     * Méthode pour supprimer un plat existant.
+     */
     #[Route("/plat/delete/{id}", name: "app_plat_delete")]
-    public function delete(int $id, EntityManagerInterface $entityManager, PlatRepository $platRepository): Response
-    {
-        // Récupérer le plat par ID
-        $plat = $platRepository->find($id);
-
-        // Vérifier si le plat existe
-        if (!$plat) {
-            throw $this->createNotFoundException('Le plat n\'existe pas.');
-        }
+    public function delete(
+        int $id,
+        EntityManagerInterface $entityManager,
+        PlatRepository $platRepository
+    ): Response {
+        // Trouver le plat ou lancer une exception 404
+        $plat = $this->findPlatOr404($platRepository, $id);
 
         // Supprimer le plat
         $entityManager->remove($plat);
@@ -100,5 +109,17 @@ class PlatController extends AbstractController
 
         // Rediriger vers la liste des plats
         return $this->redirectToRoute('app_plat');
+    }
+
+    /**
+     * Méthode privée pour trouver un plat ou retourner une erreur 404.
+     */
+    private function findPlatOr404(PlatRepository $platRepository, int $id): Plat
+    {
+        $plat = $platRepository->find($id);
+        if (!$plat) {
+            throw $this->createNotFoundException('Le plat n\'existe pas.');
+        }
+        return $plat;
     }
 }
