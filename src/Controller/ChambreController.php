@@ -52,11 +52,11 @@ class ChambreController extends AbstractController
         ]);
     }
 
-    #[Route("/chambre/edit/{idChB}", name: "app_chambre_edit")]
-    public function edit(int $idChB, Request $request, EntityManagerInterface $entityManager, ChambreRepository $chambreRepository): Response
+    #[Route("/chambre/edit/{id}", name: "app_chambre_edit")]
+    public function edit(int $id, Request $request, EntityManagerInterface $entityManager, ChambreRepository $chambreRepository): Response
     {
         // Récupérer la chambre par ID
-        $chambre = $chambreRepository->find($idChB);
+        $chambre = $chambreRepository->find($id);
 
         // Vérifier si la chambre existe
         if (!$chambre) {
@@ -90,11 +90,11 @@ class ChambreController extends AbstractController
         ]);
     }
 
-    #[Route("/chambre/delete/{idChB}", name: "app_chambre_delete")]
-    public function delete(int $idChB, EntityManagerInterface $entityManager, ChambreRepository $chambreRepository): Response
+    #[Route("/chambre/delete/{id}", name: "app_chambre_delete")]
+    public function delete(int $id, EntityManagerInterface $entityManager, ChambreRepository $chambreRepository): Response
     {
         // Récupérer la chambre par ID
-        $chambre = $chambreRepository->find($idChB);
+        $chambre = $chambreRepository->find($id);
 
         // Vérifier si la chambre existe
         if (!$chambre) {
