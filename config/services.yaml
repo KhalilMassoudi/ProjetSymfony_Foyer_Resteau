@@ -14,3 +14,5 @@ services:
 
     # Explicitly declare ChambreStatutTransformer as a service
     App\Form\DataTransformer\ChambreStatutTransformer: ~
+parameters:
+    images_directory: '%kernel.project_dir%/public/uploads/images'
