@@ -1,4 +1,5 @@
 {% extends 'backtemplates/baseback2.html.twig' %}
+
 {% block body %}
     <div class="container mt-4" style="margin-left: 20%; margin-top: 400px;padding-top: 80px;">
 
@@ -12,35 +13,54 @@
         {# Formulaire pour modifier une chambre #}
         <h2>Modifier une chambre</h2>
         {{ form_start(form, {'attr': {'class': 'form-horizontal'}}) }}
+
         <div class="row mb-3">
             <label for="{{ form.numeroChB.vars.id }}" class="col-sm-2 col-form-label">{{ form.numeroChB.vars.label }}</label>
             <div class="col-sm-10">
                 {{ form_widget(form.numeroChB, {'attr': {'class': 'form-control'}}) }}
             </div>
         </div>
+
         <div class="row mb-3">
             <label for="{{ form.etageChB.vars.id }}" class="col-sm-2 col-form-label">{{ form.etageChB.vars.label }}</label>
             <div class="col-sm-10">
                 {{ form_widget(form.etageChB, {'attr': {'class': 'form-control'}}) }}
             </div>
         </div>
+
         <div class="row mb-3">
             <label for="{{ form.capaciteChB.vars.id }}" class="col-sm-2 col-form-label">{{ form.capaciteChB.vars.label }}</label>
             <div class="col-sm-10">
                 {{ form_widget(form.capaciteChB, {'attr': {'class': 'form-control'}}) }}
             </div>
         </div>
+
         <div class="row mb-3">
             <label for="{{ form.statutChB.vars.id }}" class="col-sm-2 col-form-label">{{ form.statutChB.vars.label }}</label>
             <div class="col-sm-10">
                 {{ form_widget(form.statutChB, {'attr': {'class': 'form-control'}}) }}
             </div>
         </div>
+
+        <div class="row mb-3">
+            <label for="{{ form.prixChB.vars.id }}" class="col-sm-2 col-form-label">{{ form.prixChB.vars.label }}</label>
+            <div class="col-sm-10">
+                {{ form_widget(form.prixChB, {'attr': {'class': 'form-control'}}) }}
+            </div>
+        </div>
+
+        <div class="row mb-3">
+            <label for="{{ form.image.vars.id }}" class="col-sm-2 col-form-label">{{ form.image.vars.label }}</label>
+            <div class="col-sm-10">
+                {{ form_widget(form.image, {'attr': {'class': 'form-control'}}) }}
+            </div>
+        </div>
+
         <button type="submit" class="btn btn-primary">Modifier <span class="btn-icon-right"><i class="fa fa-edit"></i></span></button>
         <a href="{{ path('app_chamber') }}" class="btn btn-secondary">Annuler <span class="btn-icon-right"><i class="fa fa-times"></i></span></a>
         {{ form_end(form) }}
 
-        {# Affichage des détails de la chambre en cours d'édition (optionnel) #}
+        {# Affichage des détails de la chambre en cours d'édition #}
         <h2 class="mt-4">Détails de la chambre</h2>
         <table class="table table-bordered">
             <tr>
@@ -83,6 +103,20 @@
                             </button>
                         {% endif %}
                     </div>
+                </td>
+            </tr>
+            <tr>
+                <th>Prix</th>
+                <td>{{ chambre.prixChB }} €</td>
+            </tr>
+            <tr>
+                <th>Image</th>
+                <td>
+                    {% if chambre.image is not null %}
+                        <img src="{{ asset('uploads/images/' ~ chambre.image) }}" alt="Image de la chambre" width="100" height="100">
+                    {% else %}
+                        <span>Aucune image</span>
+                    {% endif %}
                 </td>
             </tr>
         </table>

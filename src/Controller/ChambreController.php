@@ -12,11 +12,13 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Form\FormFactoryInterface;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
+use Symfony\Component\String\Slugger\SluggerInterface;
 
 class ChambreController extends AbstractController
 {
     #[Route("/chambre", name: "app_chamber")]
-    public function index(Request $request, EntityManagerInterface $entityManager, ChambreRepository $chambreRepository, FormFactoryInterface $formFactory): Response
+    public function index(Request $request, EntityManagerInterface $entityManager, ChambreRepository $chambreRepository, SluggerInterface $slugger): Response
     {
         // Créer une nouvelle instance de Chambre
         $chambre = new Chambre();
@@ -30,6 +32,35 @@ class ChambreController extends AbstractController
             // Vérifier et assigner le statut de chambre à partir de l'énumération
             $statut = $form->get('statutChB')->getData();
             $chambre->setStatutChB($statut);
+
+            // Gestion de l'image téléchargée
+            /** @var UploadedFile $imageFile */
+            $imageFile = $form->get('image')->getData();
+            if ($imageFile) {
+                // Générer un nom unique pour l'image
+                $originalFilename = pathinfo($imageFile->getClientOriginalName(), PATHINFO_FILENAME);
+                $safeFilename = $slugger->slug($originalFilename);
+                $newFilename = $safeFilename . '-' . uniqid() . '.' . $imageFile->guessExtension();
+
+                // Déplacer l'image dans le répertoire de destination
+                try {
+                    $imageFile->move(
+                        $this->getParameter('images_directory'), // Spécifier le répertoire d'upload
+                        $newFilename
+                    );
+                } catch (FileException $e) {
+                    // Gérer les erreurs d'upload
+                    $this->addFlash('error', 'Erreur lors de l\'upload de l\'image.');
+                    return $this->redirectToRoute('app_chamber');
+                }
+
+                // Assigner le nom de fichier à l'entité Chambre
+                $chambre->setImage($newFilename);
+            }
+
+            // Gestion du prix
+            $prix = $form->get('prixChB')->getData();
+            $chambre->setPrixChB($prix);
 
             // Sauvegarder la nouvelle chambre dans la base de données
             $entityManager->persist($chambre);
@@ -53,7 +84,7 @@ class ChambreController extends AbstractController
     }
 
     #[Route("/chambre/edit/{id}", name: "app_chambre_edit")]
-    public function edit(int $id, Request $request, EntityManagerInterface $entityManager, ChambreRepository $chambreRepository): Response
+    public function edit(int $id, Request $request, EntityManagerInterface $entityManager, ChambreRepository $chambreRepository, SluggerInterface $slugger): Response
     {
         // Récupérer la chambre par ID
         $chambre = $chambreRepository->find($id);
@@ -72,6 +103,31 @@ class ChambreController extends AbstractController
             // Vérifier et assigner le statut de chambre à partir de l'énumération
             $statut = $form->get('statutChB')->getData();
             $chambre->setStatutChB($statut);
+
+            // Gestion de l'image téléchargée
+            /** @var UploadedFile $imageFile */
+            $imageFile = $form->get('image')->getData();
+            if ($imageFile) {
+                // Générer un nom unique pour l'image
+                $originalFilename = pathinfo($imageFile->getClientOriginalName(), PATHINFO_FILENAME);
+                $safeFilename = $slugger->slug($originalFilename);
+                $newFilename = $safeFilename . '-' . uniqid() . '.' . $imageFile->guessExtension();
+
+                // Déplacer l'image dans le répertoire de destination
+                try {
+                    $imageFile->move(
+                        $this->getParameter('images_directory'), // Spécifier le répertoire d'upload
+                        $newFilename
+                    );
+                } catch (FileException $e) {
+                    // Gérer les erreurs d'upload
+                    $this->addFlash('error', 'Erreur lors de l\'upload de l\'image.');
+                    return $this->redirectToRoute('app_chamber');
+                }
+
+                // Assigner le nom de fichier à l'entité Chambre
+                $chambre->setImage($newFilename);
+            }
 
             // Sauvegarder les modifications dans la base de données
             $entityManager->flush();
