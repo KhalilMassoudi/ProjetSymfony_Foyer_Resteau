@@ -1,8 +1,9 @@
 <?php
-
 namespace App\Form;
 
 use App\Entity\Equipement;
+use App\Entity\Chambre; // Import de l'entité Chambre
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\DateType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
@@ -33,6 +34,16 @@ class EquipementType extends AbstractType
                 'widget' => 'single_text',
                 'attr' => [
                     'class' => 'form-control',
+                ],
+            ])
+            ->add('chambre', EntityType::class, [
+                'class' => Chambre::class, // L'entité liée
+                'choice_label' => 'numeroChB', // Affiche le champ "numeroChB" pour chaque chambre
+                'placeholder' => 'Sélectionnez une chambre', // Option pour afficher une valeur vide
+                'label' => 'Chambre associée', // L'étiquette pour le champ
+                'attr' => [
+                    'class' => 'form-control',
+                    'data-live-search' => 'true', // Ajoute une fonctionnalité de recherche dans le dropdown (facultatif)
                 ],
             ]);
     }

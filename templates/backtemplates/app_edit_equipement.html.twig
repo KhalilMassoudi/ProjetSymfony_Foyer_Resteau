@@ -52,15 +52,25 @@
             </div>
         </div>
 
+        {# Ajout du champ pour la chambre associée #}
+        <div class="row mb-3">
+            <label for="{{ form.chambre.vars.id }}" class="col-sm-2 col-form-label">{{ form.chambre.vars.label }}</label>
+            <div class="col-sm-10">
+                {{ form_widget(form.chambre, {'attr': {'class': 'form-control'}}) }}
+                {{ form_errors(form.chambre) }}
+            </div>
+        </div>
+
         {# Boutons modifiés avec les styles personnalisés #}
         <div class="card-body">
-            <button type="submit" class="btn btn-google">Enregistrer les modifications
+            <button type="submit" class="btn btn-primary">Enregistrer les modifications
                 <span class="btn-icon-right"><i class="fa fa-save"></i></span>
             </button>
-            <a href="{{ path('app_equipement') }}" class="btn btn-twitter">Annuler
+            <a href="{{ path('app_equipement') }}" class="btn btn-secondary">Annuler
                 <span class="btn-icon-right"><i class="fa fa-times"></i></span>
             </a>
         </div>
+
         {{ form_end(form) }}
     </div>
 {% endblock %}

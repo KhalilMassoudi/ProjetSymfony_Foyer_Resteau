@@ -6,79 +6,100 @@ use App\Entity\CategoriePlat;
 use App\Form\CategoriePlatType;
 use App\Repository\CategoriePlatRepository;
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Form\FormFactoryInterface;
 
 class CategoriePlatController extends AbstractController
-{/*done*/
-    #[Route('/categorie/plat', name: 'app_categorie_plat_index')]
-    public function index(CategoriePlatRepository $categoriePlatRepository): Response
+{
+    #[Route("/categorieplat", name: "app_categorieplat")]
+    public function index(Request $request, EntityManagerInterface $entityManager, CategoriePlatRepository $categoriePlatRepository, FormFactoryInterface $formFactory): Response
     {
-        return $this->render('categorie_plat/index.html.twig', [
-            'categories' => $categoriePlatRepository->findAll(),
-        ]);
-    }
-/*done*/
-    #[Route('/categorie/plat/new', name: 'app_categorie_plat_new')]
-    public function new(Request $request, EntityManagerInterface $entityManager): Response
-    {
+        // Create a new CategoriePlat instance
         $categoriePlat = new CategoriePlat();
+
+        // Create the form for adding a new category
         $form = $this->createForm(CategoriePlatType::class, $categoriePlat);
         $form->handleRequest($request);
 
+        // Check if the form is submitted and valid
         if ($form->isSubmitted() && $form->isValid()) {
+            // Persist the new category to the database
             $entityManager->persist($categoriePlat);
             $entityManager->flush();
 
-            return $this->redirectToRoute('app_categorie_plat_index');
+            // Add a success flash message
+            $this->addFlash('success', 'Catégorie ajoutée avec succès !');
+
+            // Redirect to the category list page
+            return $this->redirectToRoute('app_categorieplat');
         }
 
-        return $this->render('categorie_plat/new.html.twig', [
+        // Retrieve all categories
+        $categories = $categoriePlatRepository->findAll();
+
+        // Render the view with the form and the list of categories
+        return $this->render('backtemplates/app_categorieplat.html.twig', [
             'form' => $form->createView(),
+            'categories' => $categories,
         ]);
     }
-/*done*/
-    #[Route('/categorie/plat/{id}', name: 'app_categorie_plat_show')]
-    public function show(CategoriePlat $categoriePlat): Response
+
+    #[Route("/categorieplat/edit/{id}", name: "app_categorieplat_edit")]
+    public function edit(int $id, Request $request, EntityManagerInterface $entityManager, CategoriePlatRepository $categoriePlatRepository): Response
     {
-        return $this->render('categorie_plat/show.html.twig', [
-            'categorie' => $categoriePlat,
-        ]);
-    }
-/*done*/
-    #[Route('/categorie/plat/{id}/edit', name: 'app_categorie_plat_edit')]
-    public function edit(Request $request, CategoriePlat $categoriePlat, EntityManagerInterface $entityManager): Response
-    {
+        // Retrieve the category by ID
+        $categoriePlat = $categoriePlatRepository->find($id);
+
+        // Check if the category exists
+        if (!$categoriePlat) {
+            throw $this->createNotFoundException('La catégorie n\'existe pas.');
+        }
+
+        // Create the form for editing the category
         $form = $this->createForm(CategoriePlatType::class, $categoriePlat);
         $form->handleRequest($request);
 
+        // Check if the form is submitted and valid
         if ($form->isSubmitted() && $form->isValid()) {
+            // Save the changes to the category in the database
             $entityManager->flush();
 
-            return $this->redirectToRoute('app_categorie_plat_index');
+            // Add a success flash message
+            $this->addFlash('success', 'Catégorie modifiée avec succès !');
+
+            // Redirect to the category list page
+            return $this->redirectToRoute('app_categorieplat');
         }
 
-        return $this->render('categorie_plat/edit.html.twig', [
+        // Display the edit form
+        return $this->render('backtemplates/app_edit_categorieplat.html.twig', [
             'form' => $form->createView(),
-            'categorie' => $categoriePlat,
+            'categoriePlat' => $categoriePlat,
         ]);
     }
 
-    #[Route('/categorie/plat/{id}/delete', name: 'app_categorie_plat_delete', methods: ['POST'])]
-    public function delete(CategoriePlat $categoriePlat, EntityManagerInterface $entityManager): Response
+    #[Route("/categorieplat/delete/{id}", name: "app_categorieplat_delete")]
+    public function delete(int $id, EntityManagerInterface $entityManager, CategoriePlatRepository $categoriePlatRepository): Response
     {
-        // Supprimer la catégorie
+        // Retrieve the category by ID
+        $categoriePlat = $categoriePlatRepository->find($id);
+
+        // Check if the category exists
+        if (!$categoriePlat) {
+            throw $this->createNotFoundException('La catégorie n\'existe pas.');
+        }
+
+        // Remove the category
         $entityManager->remove($categoriePlat);
         $entityManager->flush();
-    
-        // Ajouter un message flash de succès
-        $this->addFlash('success', 'La catégorie a été supprimée avec succès.');
-    
-        // Rediriger vers la liste des catégories
-        return $this->redirectToRoute('app_categorie_plat_index');
+
+        // Add a success flash message
+        $this->addFlash('success', 'Catégorie supprimée avec succès !');
+
+        // Redirect to the category list page
+        return $this->redirectToRoute('app_categorieplat');
     }
-    
-    
 }

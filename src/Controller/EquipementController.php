@@ -13,6 +13,9 @@ use Symfony\Component\Routing\Annotation\Route;
 
 class EquipementController extends AbstractController
 {
+    /**
+     * Méthode pour afficher la liste des équipements et permettre l'ajout d'un nouvel équipement.
+     */
     #[Route("/equipement", name: "app_equipement")]
     public function index(
         Request $request,
@@ -49,6 +52,9 @@ class EquipementController extends AbstractController
         ]);
     }
 
+    /**
+     * Méthode pour modifier un équipement existant.
+     */
     #[Route("/equipement/edit/{idEquipementB}", name: "app_equipement_edit")]
     public function edit(
         int $idEquipementB,
@@ -56,13 +62,8 @@ class EquipementController extends AbstractController
         EntityManagerInterface $entityManager,
         EquipementRepository $equipementRepository
     ): Response {
-        // Récupérer l'équipement par ID
-        $equipement = $equipementRepository->find($idEquipementB);
-
-        // Vérifier si l'équipement existe
-        if (!$equipement) {
-            throw $this->createNotFoundException('L\'équipement n\'existe pas.');
-        }
+        // Trouver l'équipement ou lancer une exception 404
+        $equipement = $this->findEquipementOr404($equipementRepository, $idEquipementB);
 
         // Créer le formulaire pour éditer l'équipement
         $form = $this->createForm(EquipementType::class, $equipement);
@@ -87,19 +88,17 @@ class EquipementController extends AbstractController
         ]);
     }
 
+    /**
+     * Méthode pour supprimer un équipement existant.
+     */
     #[Route("/equipement/delete/{idEquipementB}", name: "app_equipement_delete")]
     public function delete(
         int $idEquipementB,
         EntityManagerInterface $entityManager,
         EquipementRepository $equipementRepository
     ): Response {
-        // Récupérer l'équipement par ID
-        $equipement = $equipementRepository->find($idEquipementB);
-
-        // Vérifier si l'équipement existe
-        if (!$equipement) {
-            throw $this->createNotFoundException('L\'équipement n\'existe pas.');
-        }
+        // Trouver l'équipement ou lancer une exception 404
+        $equipement = $this->findEquipementOr404($equipementRepository, $idEquipementB);
 
         // Supprimer l'équipement
         $entityManager->remove($equipement);
@@ -110,5 +109,17 @@ class EquipementController extends AbstractController
 
         // Rediriger vers la liste des équipements
         return $this->redirectToRoute('app_equipement');
+    }
+
+    /**
+     * Méthode privée pour trouver un équipement ou retourner une erreur 404.
+     */
+    private function findEquipementOr404(EquipementRepository $equipementRepository, int $idEquipementB): Equipement
+    {
+        $equipement = $equipementRepository->find($idEquipementB);
+        if (!$equipement) {
+            throw $this->createNotFoundException('L\'équipement n\'existe pas.');
+        }
+        return $equipement;
     }
 }

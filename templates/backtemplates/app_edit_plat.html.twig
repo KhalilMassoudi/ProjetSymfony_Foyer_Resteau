@@ -1,0 +1,81 @@
+{% extends 'backtemplates/baseback2.html.twig' %}
+
+{% block title %}
+    Modifier le plat - {{ plat.nomPlat }}
+{% endblock %}
+
+{% block body %}
+    <div class="container mt-4" style="margin-left: 20%; margin-top: 400px; padding-top: 80px;">
+        <h1>Modifier le plat</h1>
+
+        {# Message flash pour les succès ou les erreurs #}
+        {% for message in app.flashes('success') %}
+            <div class="alert alert-success">
+                {{ message }}
+            </div>
+        {% endfor %}
+
+        {% for message in app.flashes('error') %}
+            <div class="alert alert-danger">
+                {{ message }}
+            </div>
+        {% endfor %}
+
+        {# Formulaire d'édition du plat #}
+        {{ form_start(form, {'attr': {'class': 'form-horizontal'}}) }}
+
+        <div class="row mb-3">
+            <label for="{{ form.nomPlat.vars.id }}" class="col-sm-2 col-form-label">{{ form.nomPlat.vars.label }}</label>
+            <div class="col-sm-10">
+                {{ form_widget(form.nomPlat, {'attr': {'class': 'form-control'}}) }}
+                {{ form_errors(form.nomPlat) }}
+            </div>
+        </div>
+
+        <div class="row mb-3">
+            <label for="{{ form.descPlat.vars.id }}" class="col-sm-2 col-form-label">{{ form.descPlat.vars.label }}</label>
+            <div class="col-sm-10">
+                {{ form_widget(form.descPlat, {'attr': {'class': 'form-control'}}) }}
+                {{ form_errors(form.descPlat) }}
+            </div>
+        </div>
+
+        <div class="row mb-3">
+            <label for="{{ form.prixPlat.vars.id }}" class="col-sm-2 col-form-label">{{ form.prixPlat.vars.label }}</label>
+            <div class="col-sm-10">
+                {{ form_widget(form.prixPlat, {'attr': {'class': 'form-control'}}) }}
+                {{ form_errors(form.prixPlat) }}
+            </div>
+        </div>
+
+        <div class="row mb-3">
+            <label for="{{ form.categoriePlat.vars.id }}" class="col-sm-2 col-form-label">{{ form.categoriePlat.vars.label }}</label>
+            <div class="col-sm-10">
+                {{ form_widget(form.categoriePlat, {'attr': {'class': 'form-control'}}) }}
+                {{ form_errors(form.categoriePlat) }}
+            </div>
+        </div>
+
+        <div class="row mb-3">
+            <label for="{{ form.dispoPlat.vars.id }}" class="col-sm-2 col-form-label">{{ form.dispoPlat.vars.label }}</label>
+            <div class="col-sm-10">
+                {{ form_widget(form.dispoPlat, {'attr': {'class': 'form-control'}}) }}
+                {{ form_errors(form.dispoPlat) }}
+            </div>
+        </div>
+
+        {# Boutons modifiés avec les styles personnalisés #}
+        <div class="card-body">
+            <button type="submit" class="btn btn-primary">
+                Enregistrer les modifications
+                <span class="btn-icon-right"><i class="fa fa-save"></i></span>
+            </button>
+            <a href="{{ path('app_plat') }}" class="btn btn-secondary">
+                Annuler
+                <span class="btn-icon-right"><i class="fa fa-times"></i></span>
+            </a>
+        </div>
+
+        {{ form_end(form) }}
+    </div>
+{% endblock %}
