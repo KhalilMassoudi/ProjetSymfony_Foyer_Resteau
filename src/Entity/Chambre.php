@@ -27,6 +27,12 @@ class Chambre
     #[ORM\Column(type: 'string', length: 20)]
     private string $statutChB;
 
+    #[ORM\Column(type: 'string', length: 255, nullable: true)]
+    private ?string $image = null;
+
+    #[ORM\Column(type: 'float')]
+    private float $prixChB;
+
     /**
      * @var Collection<int, Equipement>
      */
@@ -121,6 +127,26 @@ class Chambre
             }
         }
 
+        return $this;
+    }
+    public function getImage(): ?string
+    {
+        return $this->image;
+    }
+
+    public function setImage(?string $image): self
+    {
+        $this->image = $image;
+        return $this;
+    }
+    public function getPrixChB(): float
+    {
+        return $this->prixChB;
+    }
+
+    public function setPrixChB(float $prixChB): self
+    {
+        $this->prixChB = $prixChB;
         return $this;
     }
 }
