@@ -40,6 +40,19 @@
                 <label for="{{ form.statutChB.vars.id }}" class="form-label">{{ form.statutChB.vars.label }}</label>
                 {{ form_widget(form.statutChB, {'attr': {'class': 'form-control'}}) }}
             </div>
+
+            {# Champ pour insérer une image #}
+            <div class="mb-3">
+                <label for="{{ form.image.vars.id }}" class="form-label">Image de la chambre</label>
+                {{ form_widget(form.image, {'attr': {'class': 'form-control'}}) }}
+            </div>
+
+            {# Champ pour le prix de la chambre #}
+            <div class="mb-3">
+                <label for="{{ form.prixChB.vars.id }}" class="form-label">Prix</label>
+                {{ form_widget(form.prixChB, {'attr': {'class': 'form-control'}}) }}
+            </div>
+
             <button type="submit" class="btn btn-success">
                 Ajouter <span class="btn-icon-right"><i class="fa fa-check"></i></span>
             </button>
@@ -56,6 +69,8 @@
                 <th>Étage</th>
                 <th>Capacité</th>
                 <th>Statut</th>
+                <th>Prix</th>  <!-- Colonne pour afficher le prix -->
+                <th>Image</th> <!-- Colonne pour afficher l'image -->
                 <th>Actions</th>
             </tr>
             </thead>
@@ -90,8 +105,15 @@
                             </button>
                         {% endif %}
                     </td>
+                    <td>{{ chambre.prixChB }} €</td>  <!-- Affichage du prix de la chambre -->
                     <td>
-                        <!-- Boutons de modification et suppression avec le même style -->
+                        {% if chambre.image is not null %}
+                            <img src="{{ asset('uploads/images/' ~ chambre.image) }}" alt="Image de la chambre" width="50" height="50">
+                        {% else %}
+                            <span>Aucune image</span>
+                        {% endif %}
+                    </td>
+                    <td>
                         <a href="{{ path('app_chambre_edit', {'id': chambre.id}) }}" class="btn btn-primary btn-sm mr-3">
                             <i class="fa fa-edit"></i> Modifier
                         </a>
@@ -119,10 +141,8 @@
             const toggleFormBtn = document.getElementById('toggleFormBtn');
             const ajouterChambreDiv = document.getElementById('ajouterChambreDiv');
 
-            // Vérifie si les éléments existent avant d'ajouter l'événement
             if (toggleFormBtn && ajouterChambreDiv) {
                 toggleFormBtn.addEventListener('click', () => {
-                    // Ajoute ou retire la classe "d-none" pour afficher/masquer le formulaire
                     ajouterChambreDiv.classList.toggle('d-none');
                 });
             }
