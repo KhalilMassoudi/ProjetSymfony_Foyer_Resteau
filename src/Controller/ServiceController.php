@@ -50,6 +50,22 @@ public function AfficherAllServices(ServiceRepository $rep, Request $request, En
         $this->addFlash('success', 'The TypeService has been successfully deleted.');
         return $this->redirectToRoute('app_service');
     }
+    #[Route('/edit/{id}', name: 'app_service_edit')]
+    public function modifyS($id,ServiceRepository $rep , ManagerRegistry $doc,Request $request): Response
+    {
+        $service=$rep->find(($id));
+        $form = $this->createForm(ServiceFormType::class, $service);
+        $form->handleRequest($request);
+        if($form->isSubmitted()){
+            $em=$doc->getManager();
+            $em->flush();
+            $this->addFlash('success', 'The service has been successfully updated.');
+            return $this->redirectToRoute('app_service');
+        }
+        return $this->render('service/edit_Service.html.twig',[
+            'form' => $form->createView(),
+            'service' => $service,
+        ]);
+    }
     
 }
-

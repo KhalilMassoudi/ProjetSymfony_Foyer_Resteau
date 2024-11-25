@@ -22,7 +22,6 @@ class ServiceFormType extends AbstractType
                 'widget' => 'single_text',
             ])
             ->add('description')
-            ->add('description')
             ->add('TypeService', EntityType::class, [
                 'class' => TypeService::class, // Entité à associer
                 'choice_label' => 'nom', // Doit correspondre au getter

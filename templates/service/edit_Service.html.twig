@@ -1,0 +1,70 @@
+{% extends 'baseback2.html.twig' %}
+
+{% block body %}
+<div class="content-body">
+        <div class="card-body">
+
+                <h4>Ajouter un service</h4>
+                {{ form_start(form, {'attr': {'class': 'form-horizontal'}}) }}
+                
+
+                <div class="row mb-3">
+                    <label for="{{ form.nom.vars.id }}" class="col-md-3 col-form-label text-primary">Nom</label>
+                    <div class="col-md-9">
+                        {{ form_widget(form.nom, {'attr': {'class': 'form-control', 'placeholder': 'Nom'}}) }}
+                    </div>
+                </div>
+                
+
+                <div class="row mb-3">
+                    <label for="{{ form.description.vars.id }}" class="col-md-3 col-form-label text-primary">Description</label>
+                    <div class="col-md-9">
+                        {{ form_widget(form.description, {'attr': {'class': 'form-control', 'placeholder': 'Description'}}) }}
+                    </div>
+                </div>
+
+
+                <div class="row mb-3">
+                    <label for="{{ form.date_creation.vars.id }}" class="col-md-3 col-form-label text-primary">Date de création</label>
+                    <div class="col-md-9">
+                        {{ form_widget(form.date_creation, {'attr': {'class': 'form-control', 'placeholder': 'Date de création'}}) }}
+                    </div>
+                </div>
+
+                <div class="row mb-3">
+                    <label for="{{ form.date_fin.vars.id }}" class="col-md-3 col-form-label text-primary">Date de fin</label>
+                    <div class="col-md-9">
+                        {{ form_widget(form.date_fin, {'attr': {'class': 'form-control', 'placeholder': 'Date de fin'}}) }}
+                    </div>
+                </div>
+
+
+                <div class="row mb-3">
+                    <label for="{{ form.TypeService.vars.id }}" class="col-md-3 col-form-label text-primary">Type de service</label>
+                    <div class="col-md-9">
+                        {{ form_widget(form.TypeService, {'attr': {'class': 'form-control', 'placeholder': 'Type de service'}}) }}
+                    </div>
+                </div>
+
+                <div class="d-flex justify-content-between">
+                    <button type="submit" class="btn btn-success">Valider <span class="btn-icon-right"><i class="fa fa-check"></i></span></button>
+                    <a href="{{ path('app_service') }}" class="btn btn-danger">Annuler <span class="btn-danger"><i class="fa fa-times"></i></span></a>
+                </div>
+
+                {{ form_end(form) }}
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block js %}
+<script src="{{ asset('assets/back/vendor/global/global.min.js') }}"></script>
+<script src="{{ asset('assets/back/js/quixnav-init.js') }}"></script>
+<script src="{{ asset('assets/back/js/custom.min.js') }}"></script>
+<script src="{{ asset('assets/back/vendor/chartist/js/chartist.min.js') }}"></script>
+<script src="{{ asset('assets/back/vendor/moment/moment.min.js') }}"></script>
+<script src="{{ asset('assets/back/vendor/pg-calendar/js/pignose.calendar.min.js') }}"></script>
+<script src="{{ asset('assets/back/js/dashboard/dashboard-2.js') }}"></script>
+
+
+{% endblock %}
