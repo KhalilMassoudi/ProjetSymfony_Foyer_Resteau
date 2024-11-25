@@ -32,7 +32,7 @@
                 </button>
             </h4>
         </div>
-        <div class="card-body">
+                <div class="card-body">
             <div class="table-responsive">
                 <table class="table student-data-table m-t-20">
                     <thead>
@@ -40,11 +40,13 @@
                             <th>ID</th>
                             <th>Nom</th>
                             <th>Description</th>
+                            <th>Date Création</th>
+                            <th>Date Fin</th>
+                            <th>Type Service</th>
                             <th>Actions</th>
                         </tr>
                     </thead>
                     <tbody>
-                        {# Affichage des messages flash #}
                         {% for message in app.flashes('success') %}
                         <div class="alert alert-success">
                             {{ message }}
@@ -55,18 +57,21 @@
                             <td>{{ s.id }}</td>
                             <td>{{ s.nom }}</td>
                             <td>{{ s.description }}</td>
+                            <td>{{ s.dateCreation ? s.dateCreation|date('Y-m-d') : 'No date available' }}</td>
+                            <td>{{ s.dateFin ? s.dateFin | date('Y-m-d') : '' }}</td>
+                            <td>{{ s.TypeService.nom }}</td>
                             <td>
-                                <a href="#" class="btn btn-primary btn-sm" data-toggle="tooltip" data-placement="top" title="Edit">
+                                <a href="{{ path('app_service_edit', { 'id': s.id }) }}" class="btn btn-primary btn-sm">
                                     <i class="fa fa-edit"></i>
                                 </a>
-                                <a href="{{ path('app_ServiceSupprim', {'id': s.id}) }}" class="btn btn-danger btn-sm" onclick="return confirm('Êtes-vous sûr de vouloir supprimer ce service ?')" data-toggle="tooltip" data-placement="top" title="Delete">
+                                <a href="{{ path('app_ServiceSupprim', { 'id': s.id }) }}" class="btn btn-danger btn-sm" onclick="return confirm('Êtes-vous sûr de vouloir supprimer ce service ?')" title="Delete">
                                     <i class="fa fa-trash"></i>
                                 </a>
                             </td>
                         </tr>
                         {% else %}
                         <tr>
-                            <td colspan="4">Aucun service trouvé.</td>
+                            <td colspan="7">Aucun service trouvé.</td>
                         </tr>
                         {% endfor %}
                     </tbody>

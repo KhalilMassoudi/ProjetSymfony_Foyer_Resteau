@@ -20,7 +20,7 @@ class Service
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
     private ?\DateTimeInterface $date_creation = null;
 
-    #[ORM\Column(type: Types::DATE_MUTABLE)]
+    #[ORM\Column(type: Types::DATETIME_MUTABLE)]
     private ?\DateTimeInterface $date_fin = null;
 
     #[ORM\Column(length: 255, nullable: true)]
@@ -50,6 +50,7 @@ class Service
     public function getDateCreation(): ?\DateTime
     {
         return $this->date_creation;
+        
     }
 
     public function setDateCreation(\DateTime $date_creation): self
