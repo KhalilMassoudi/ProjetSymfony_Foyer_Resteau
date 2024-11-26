@@ -19,12 +19,12 @@ class TypeServiceController extends AbstractController
     {
         $types = $rep->findAll();
         
-        // Create a new Service for the form
+
         $type = new TypeService();
         $form = $this->createForm(TypeServiceFormType::class, $type);
         $form->handleRequest($request);
     
-        // If form is submitted, save the new service
+
         if ($form->isSubmitted() && $form->isValid()) {
             $em->persist($type);
             $em->flush();
@@ -40,31 +40,42 @@ class TypeServiceController extends AbstractController
         ]);
     }
     #[Route('/suppType/{id}', name: 'app_TypeServiceSupprim')]
-    public function SuppTypeService(int $id, TypeServiceRepository $rep, ManagerRegistry $doc): Response
+    public function deleteTypeService(
+        $id,
+        TypeServiceRepository $typeServiceRepository,
+        EntityManagerInterface $em
+    ): Response {
+        $typeService = $typeServiceRepository->find($id);
+        if (!$typeService) {
+            $this->addFlash('error', 'TypeService not found.');
+            return $this->redirectToRoute('app_type_service');
+        }
+        foreach ($typeService->getServices() as $service) {
+            $em->remove($service);
+        }
+        $em->remove($typeService);
+        $em->flush();
+        $this->addFlash('success', 'TypeService and related services successfully deleted.');
+        return $this->redirectToRoute('app_type_service');
+    }
+
+    #[Route('/service/type/edit/{id}', name: 'app_type_service_edit')]
+    public function edittype($id,TypeServiceRepository $rep, Request $request, EntityManagerInterface $em): Response
     {
-        // Retrieve the service to delete
         $type = $rep->find($id);
-        
-        // Check if the entity exists
-        if (!$type) {
-            // If not found, redirect with an error message
-            $this->addFlash('error', 'The TypeService you are trying to delete does not exist.');
+        $form = $this->createForm(TypeServiceFormType::class, $type);
+        $form->handleRequest($request);
+        if ($form->isSubmitted()) {
+            $em->flush();
+            $this->addFlash('success', 'New TypeService has been successfully updated.');
+            var_dump($type->getId()); 
             return $this->redirectToRoute('app_type_service');
         }
     
-        // Get the entity manager
-        $em = $doc->getManager();
-    
-        // Remove the entity
-        $em->remove($type);
-        $em->flush(); // Commit to the database
-    
-        // Add a success message
-        $this->addFlash('success', 'The TypeService has been successfully deleted.');
-    
-        // Redirect back to the type service page
-        return $this->redirectToRoute('app_type_service');
+        return $this->render('service/edit_TypeService.html.twig', [
+            'type' => $type,
+            'formt' => $form->createView(),
+        ]);
     }
-    
     
 }

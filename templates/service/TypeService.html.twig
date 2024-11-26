@@ -56,7 +56,7 @@
                                     <td>{{ t.nom }}</td>
                                     <td>{{ t.description }}</td>
                                     <td>
-                                        <a href="#" class="btn btn-primary btn-sm">
+                                        <a href="{{ path('app_type_service_edit', { 'id': t.id }) }}" class="btn btn-primary btn-sm">
                                             <i class="fa fa-edit"></i> 
                                         </a>
                                         <a href="{{ path('app_TypeServiceSupprim', {'id': t.id}) }}" class="btn btn-danger btn-sm" onclick="return confirm('Êtes-vous sûr de vouloir supprimer ce type ?')">

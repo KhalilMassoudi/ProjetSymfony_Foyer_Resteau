@@ -67,5 +67,15 @@ public function AfficherAllServices(ServiceRepository $rep, Request $request, En
             'service' => $service,
         ]);
     }
-    
+    #[Route('/servicefront/nos-services', name: 'app_frontend_services')]
+    public function afficherServicesFrontend(ServiceRepository $rep): Response
+    {
+
+    $services = $rep->findAll();
+
+    return $this->render('service/Nos_Service.html.twig', [
+        'services' => $services,
+    ]);
+    }
+
 }
