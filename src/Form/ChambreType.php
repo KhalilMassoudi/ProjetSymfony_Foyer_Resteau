@@ -55,6 +55,7 @@ class ChambreType extends AbstractType
             ->add('image', FileType::class, [
                 'label' => 'Image de la chambre',
                 'required' => false,
+                'mapped' => false,
                 'attr' => ['class' => 'form-control'],
             ]);
 
