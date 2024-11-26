@@ -88,7 +88,7 @@
                 {# Nom Field #}
                 <div class="row mb-3">
                     <label for="{{ form.nom.vars.id }}" class="col-md-3 col-form-label text-primary">Nom</label>
-                    <div class="col-md-9">
+                    <div class="col-md-6">
                         {{ form_widget(form.nom, {'attr': {'class': 'form-control', 'placeholder': 'Nom'}}) }}
                     </div>
                 </div>
@@ -96,7 +96,7 @@
                 {# Description Field #}
                 <div class="row mb-3">
                     <label for="{{ form.description.vars.id }}" class="col-md-3 col-form-label text-primary">Description</label>
-                    <div class="col-md-9">
+                    <div class="col-md-6">
                         {{ form_widget(form.description, {'attr': {'class': 'form-control', 'placeholder': 'Description'}}) }}
                     </div>
                 </div>
@@ -104,7 +104,7 @@
                 {# Date Creation Field #}
                 <div class="row mb-3">
                     <label for="{{ form.date_creation.vars.id }}" class="col-md-3 col-form-label text-primary">Date de création</label>
-                    <div class="col-md-9">
+                    <div class="col-md-3">
                         {{ form_widget(form.date_creation, {'attr': {'class': 'form-control', 'placeholder': 'Date de création'}}) }}
                     </div>
                 </div>
@@ -112,7 +112,7 @@
                 {# Date Fin Field #}
                 <div class="row mb-3">
                     <label for="{{ form.date_fin.vars.id }}" class="col-md-3 col-form-label text-primary">Date de fin</label>
-                    <div class="col-md-9">
+                    <div class="col-md-3">
                         {{ form_widget(form.date_fin, {'attr': {'class': 'form-control', 'placeholder': 'Date de fin'}}) }}
                     </div>
                 </div>
@@ -120,7 +120,7 @@
                 {# Type Service Field #}
                 <div class="row mb-3">
                     <label for="{{ form.TypeService.vars.id }}" class="col-md-3 col-form-label text-primary">Type de service</label>
-                    <div class="col-md-9">
+                    <div class="col-md-6">
                         {{ form_widget(form.TypeService, {'attr': {'class': 'form-control', 'placeholder': 'Type de service'}}) }}
                     </div>
                 </div>
