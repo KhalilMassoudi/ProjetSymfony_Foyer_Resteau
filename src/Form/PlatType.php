@@ -34,7 +34,7 @@ class PlatType extends AbstractType
             ])
             ->add('prixPlat', MoneyType::class, [
                 'label' => 'Prix du plat',
-                'currency' => 'EUR',
+                'currency' => 'TND',
                 'attr' => [
                     'class' => 'form-control',
                 ],
