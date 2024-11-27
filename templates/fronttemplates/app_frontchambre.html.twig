@@ -1,0 +1,38 @@
+{% extends 'basefront.html.twig' %}
+{% block title %} chambre
+{%  endblock %}
+{% block amodifier %}
+    <div class="container mt-5">
+        <h1 class="text-center">Liste des Chambres</h1>
+        <div class="row">
+            {% for chambre in chambres %}
+                <div class="col-md-4 mb-4">
+                    <div class="card shadow-sm">
+                        {% if chambre.image %}
+                            <img src="{{ asset('uploads/images/' ~ chambre.image) }}" class="card-img-top" alt="Image de la chambre">
+                        {% else %}
+                            <img src="{{ asset('images/default-room.jpg') }}" class="card-img-top" alt="Image par défaut">
+                        {% endif %}
+                        <div class="card-body">
+                            <h5 class="card-title">{{ chambre.numeroChB }}</h5>
+                            <p class="card-text">Prix : {{ chambre.prixChB }} €</p>
+                            <p class="card-text">Statut :
+                                {% if chambre.statutChB == 'disponible' %}
+                                    <span class="badge bg-success">Disponible</span>
+                                {% elseif chambre.statutChB == 'occupée' %}
+                                    <span class="badge bg-danger">Occupée</span>
+                                {% else %}
+                                    <span class="badge bg-secondary">Indisponible</span>
+                                {% endif %}
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            {% else %}
+                <div class="col-12 text-center">
+                    <p>Aucune chambre n'est disponible pour le moment.</p>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+{% endblock %}

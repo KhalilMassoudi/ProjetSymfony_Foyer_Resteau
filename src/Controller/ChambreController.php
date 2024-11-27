@@ -20,10 +20,10 @@ class ChambreController extends AbstractController
     #[Route("/chambre", name: "app_chamber")]
     public function index(Request $request, EntityManagerInterface $entityManager, ChambreRepository $chambreRepository, SluggerInterface $slugger): Response
     {
-        // Créer une nouvelle instance de Chambre
+
         $chambre = new Chambre();
 
-        // Créer le formulaire pour ajouter une nouvelle chambre
+
         $form = $this->createForm(ChambreType::class, $chambre);
         $form->handleRequest($request);
 
@@ -33,11 +33,11 @@ class ChambreController extends AbstractController
             $statut = $form->get('statutChB')->getData();
             $chambre->setStatutChB($statut);
 
-            // Gestion de l'image téléchargée
+
             /** @var UploadedFile $imageFile */
             $imageFile = $form->get('image')->getData();
             if ($imageFile) {
-                // Générer un nom unique pour l'image
+
                 $originalFilename = pathinfo($imageFile->getClientOriginalName(), PATHINFO_FILENAME);
                 $safeFilename = $slugger->slug($originalFilename);
                 $newFilename = $safeFilename . '-' . uniqid() . '.' . $imageFile->guessExtension();
@@ -58,22 +58,22 @@ class ChambreController extends AbstractController
                 $chambre->setImage($newFilename);
             }
 
-            // Gestion du prix
+
             $prix = $form->get('prixChB')->getData();
             $chambre->setPrixChB($prix);
 
-            // Sauvegarder la nouvelle chambre dans la base de données
+
             $entityManager->persist($chambre);
             $entityManager->flush();
 
             // Ajouter un message flash pour informer l'utilisateur
             $this->addFlash('success', 'Chambre ajoutée avec succès !');
 
-            // Rediriger vers la liste des chambres
+
             return $this->redirectToRoute('app_chamber');
         }
 
-        // Récupérer la liste des chambres
+
         $chambres = $chambreRepository->findAll();
 
         // Rendre la vue avec le formulaire et la liste des chambres
@@ -94,17 +94,17 @@ class ChambreController extends AbstractController
             throw $this->createNotFoundException('La chambre n\'existe pas.');
         }
 
-        // Créer le formulaire pour éditer la chambre
+
         $form = $this->createForm(ChambreType::class, $chambre);
         $form->handleRequest($request);
 
-        // Vérifier si le formulaire a été soumis et est valide
+
         if ($form->isSubmitted() && $form->isValid()) {
             // Vérifier et assigner le statut de chambre à partir de l'énumération
             $statut = $form->get('statutChB')->getData();
             $chambre->setStatutChB($statut);
 
-            // Gestion de l'image téléchargée
+
             /** @var UploadedFile $imageFile */
             $imageFile = $form->get('image')->getData();
             if ($imageFile) {
@@ -113,33 +113,33 @@ class ChambreController extends AbstractController
                 $safeFilename = $slugger->slug($originalFilename);
                 $newFilename = $safeFilename . '-' . uniqid() . '.' . $imageFile->guessExtension();
 
-                // Déplacer l'image dans le répertoire de destination
+
                 try {
                     $imageFile->move(
-                        $this->getParameter('images_directory'), // Spécifier le répertoire d'upload
+                        $this->getParameter('images_directory'),
                         $newFilename
                     );
                 } catch (FileException $e) {
-                    // Gérer les erreurs d'upload
+
                     $this->addFlash('error', 'Erreur lors de l\'upload de l\'image.');
                     return $this->redirectToRoute('app_chamber');
                 }
 
-                // Assigner le nom de fichier à l'entité Chambre
+
                 $chambre->setImage($newFilename);
             }
 
-            // Sauvegarder les modifications dans la base de données
+
             $entityManager->flush();
 
-            // Ajouter un message flash pour informer l'utilisateur
+
             $this->addFlash('success', 'Chambre modifiée avec succès !');
 
-            // Rediriger vers la liste des chambres
+
             return $this->redirectToRoute('app_chamber');
         }
 
-        // Afficher le formulaire d'édition
+
         return $this->render('backtemplates/app_edit_chambre.html.twig', [
             'form' => $form->createView(),
             'chambre' => $chambre,
@@ -157,14 +157,24 @@ class ChambreController extends AbstractController
             throw $this->createNotFoundException('La chambre n\'existe pas.');
         }
 
-        // Supprimer la chambre
+
         $entityManager->remove($chambre);
         $entityManager->flush();
 
-        // Ajouter un message flash pour informer l'utilisateur
+
         $this->addFlash('success', 'Chambre supprimée avec succès !');
 
-        // Rediriger vers la liste des chambres
+
         return $this->redirectToRoute('app_chamber');
     }
+    #[Route("/front/chambre", name: "app_front_chambre")]
+    public function frontChambre(ChambreRepository $chambreRepository): Response
+    {
+        $chambres = $chambreRepository->findAll();
+
+        return $this->render('fronttemplates/app_frontchambre.html.twig', [
+            'chambres' => $chambres,
+        ]);
+    }
+
 }
