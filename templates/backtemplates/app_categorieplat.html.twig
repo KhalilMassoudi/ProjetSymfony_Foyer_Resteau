@@ -6,7 +6,6 @@
 
 {% block body %}
     <div class="container mt-4" style="margin-left: 20%; margin-top: 400px; padding-top: 80px;">
-        <h1>Gestion des catégories</h1>
 
        {# Affichage des messages flash #}
         {% for message in app.flashes('success') %}
@@ -116,4 +115,6 @@
             }
         });
     </script>
+{% endblock %}
+{% block footer %}
 {% endblock %}
