@@ -34,7 +34,7 @@
             
         </div>
         <h2>Plats existants</h2>
-        <table class="table">
+        <table class="table table-striped">
             <thead>
             <tr>
                 <th>ID</th>
@@ -51,7 +51,11 @@
             {% for plat in plats %}
                 <tr>
                     <td>{{ plat.id }}</td>
-                    <td>{{ plat.nomPlat }}</td>
+                    <td>
+                        <div class="badge-circle">
+                            <a href="javascript:void()" class="badge badge-outline-primary">{{ plat.nomPlat }}</a>
+                        </div>
+                    </td>
                     <td>{{ plat.descPlat }}</td>
                     <td>{{ plat.prixPlat }} TND</td>
                     <td>{{ plat.categoriePlat.nomCategorie }}</td>
@@ -89,4 +93,6 @@
         }, 2000);  // 2000 millisecondes = 2 secondes
     </script>
 
+{% endblock %}
+{% block footer %}
 {% endblock %}
