@@ -25,9 +25,36 @@ class UserType extends AbstractType
                 'label' => 'Email',
                 'attr' => ['class' => 'form-control', 'placeholder' => 'Email']
             ])
-            ->add('address', TextType::class, [
+            ->add('address', ChoiceType::class, [
                 'label' => 'Address',
-                'attr' => ['class' => 'form-control', 'placeholder' => 'Address']
+                'choices' => [
+                    'Ariana' => 'Ariana',
+                    'Béja' => 'Béja',
+                    'Ben Arous' => 'Ben Arous',
+                    'Bizerte' => 'Bizerte',
+                    'Gabès' => 'Gabès',
+                    'Gafsa' => 'Gafsa',
+                    'Jendouba' => 'Jendouba',
+                    'Kairouan' => 'Kairouan',
+                    'Kasserine' => 'Kasserine',
+                    'Kébili' => 'Kébili',
+                    'La Manouba' => 'La Manouba',
+                    'Le Kef' => 'Le Kef',
+                    'Mahdia' => 'Mahdia',
+                    'Médenine' => 'Médenine',
+                    'Monastir' => 'Monastir',
+                    'Nabeul' => 'Nabeul',
+                    'Sfax' => 'Sfax',
+                    'Sidi Bouzid' => 'Sidi Bouzid',
+                    'Siliana' => 'Siliana',
+                    'Sousse' => 'Sousse',
+                    'Tataouine' => 'Tataouine',
+                    'Tozeur' => 'Tozeur',
+                    'Tunis' => 'Tunis',
+                    'Zaghouan' => 'Zaghouan',
+                ],
+                'attr' => ['class' => 'form-control'],
+                'placeholder' => 'sélectionnez votre address',
             ])
             ->add('password', PasswordType::class, [
                 'label' => 'Password',
@@ -37,10 +64,6 @@ class UserType extends AbstractType
                 'label' => 'Sign me up',
                 'attr' => ['class' => 'btn btn-primary btn-block']
             ]);
-
-
-
-
     }
 
     public function configureOptions(OptionsResolver $resolver): void
