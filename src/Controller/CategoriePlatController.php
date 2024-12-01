@@ -74,7 +74,7 @@ class CategoriePlatController extends AbstractController
             return $this->redirectToRoute('app_categorieplat');
         }
 
-        // Display the edit form
+     
         return $this->render('backtemplates/app_edit_categorieplat.html.twig', [
             'form' => $form->createView(),
             'categoriePlat' => $categoriePlat,
@@ -84,22 +84,33 @@ class CategoriePlatController extends AbstractController
     #[Route("/categorieplat/delete/{id}", name: "app_categorieplat_delete")]
     public function delete(int $id, EntityManagerInterface $entityManager, CategoriePlatRepository $categoriePlatRepository): Response
     {
-        // Retrieve the category by ID
+        
         $categoriePlat = $categoriePlatRepository->find($id);
 
-        // Check if the category exists
+      
         if (!$categoriePlat) {
             throw $this->createNotFoundException('La catégorie n\'existe pas.');
         }
 
-        // Remove the category
+        
         $entityManager->remove($categoriePlat);
         $entityManager->flush();
 
-        // Add a success flash message
+        
         $this->addFlash('success', 'Catégorie supprimée avec succès !');
 
-        // Redirect to the category list page
+        
         return $this->redirectToRoute('app_categorieplat');
+    }
+   
+    #[Route("/categories", name: "liste_categories")]
+    public function listeCategories(CategoriePlatRepository $categoriePlatRepository): Response
+    {
+        
+        $categoriesPlat = $categoriePlatRepository->findAll();
+
+        return $this->render('fronttemplates/listecategorie.html.twig', [
+            'categoriesPlat' => $categoriesPlat
+        ]);
     }
 }

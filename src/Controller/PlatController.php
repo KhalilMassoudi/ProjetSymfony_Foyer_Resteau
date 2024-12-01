@@ -4,8 +4,8 @@ namespace App\Controller;
 
 use App\Entity\Plat;
 use App\Form\PlatType;
-use App\Repository\PlatRepository;
-use Doctrine\ORM\EntityManagerInterface;
+use App\Repository\PlatRepository;// operations BDD
+use Doctrine\ORM\EntityManagerInterface;//manipuler base de donnes
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -29,32 +29,28 @@ class PlatController extends AbstractController
         $form = $this->createForm(PlatType::class, $plat);
         $form->handleRequest($request);
 
-        // Vérifier si le formulaire a été soumis et est valide
         if ($form->isSubmitted() && $form->isValid()) {
-            // Sauvegarder le nouveau plat dans la base de données
-            $entityManager->persist($plat);
-            $entityManager->flush();
+            // ajout plat persistance dans la bdd 
+            $entityManager->persist($plat);// preparer l entité
+            $entityManager->flush();//ecr bdd
 
-            // Ajouter un message flash pour informer l'utilisateur
+  
             $this->addFlash('success', 'Plat ajouté avec succès !');
 
-            // Rediriger vers la liste des plats
             return $this->redirectToRoute('app_plat');
         }
 
-        // Récupérer la liste des plats
+        // Récupérer plats(injecter la repo)
         $plats = $platRepository->findAll();
 
-        // Rendre la vue avec le formulaire et la liste des plats
+       
         return $this->render('backtemplates/app_plat.html.twig', [
             'form' => $form->createView(),
             'plats' => $plats,
         ]);
     }
 
-    /**
-     * Méthode pour modifier un plat existant.
-     */
+
     #[Route("/plat/edit/{id}", name: "app_plat_edit")]
     public function edit(
         int $id,
@@ -62,7 +58,7 @@ class PlatController extends AbstractController
         EntityManagerInterface $entityManager,
         PlatRepository $platRepository
     ): Response {
-        // Trouver le plat ou lancer une exception 404
+        // injecter repo
         $plat = $this->findPlatOr404($platRepository, $id);
 
         // Créer le formulaire pour éditer le plat
@@ -88,9 +84,6 @@ class PlatController extends AbstractController
         ]);
     }
 
-    /**
-     * Méthode pour supprimer un plat existant.
-     */
     #[Route("/plat/delete/{id}", name: "app_plat_delete")]
     public function delete(
         int $id,
@@ -111,9 +104,7 @@ class PlatController extends AbstractController
         return $this->redirectToRoute('app_plat');
     }
 
-    /**
-     * Méthode privée pour trouver un plat ou retourner une erreur 404.
-     */
+
     private function findPlatOr404(PlatRepository $platRepository, int $id): Plat
     {
         $plat = $platRepository->find($id);
@@ -122,4 +113,17 @@ class PlatController extends AbstractController
         }
         return $plat;
     }
+    #[Route("/plats", name: "app_plats_list")]
+    public function listAllPlats(PlatRepository $platRepository): Response
+    {
+        // Récupérer tous les plats
+        $plats = $platRepository->findAll();
+    
+        // Rendre la vue avec la liste des plats
+        return $this->render('fronttemplates/plat_details.html.twig', [
+            'plats' => $plats,
+        ]);
+    }
+    
+
 }

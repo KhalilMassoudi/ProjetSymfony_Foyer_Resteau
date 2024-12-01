@@ -1,0 +1,36 @@
+{% extends 'basefront.html.twig' %}
+
+{% block amodifier %}
+<div class="row">
+    <h2 class="section-title">Liste des catégories de plats</h2>
+    {% for categoriePlat in categoriesPlat %}
+    <div class="col-md-4 mb-4">
+        <article class="post-item card border-0 shadow-sm p-3">
+            <div class="image-holder zoom-effect">
+                <a href="{{ path('liste_categories', { 'id': categoriePlat.id }) }}">
+                    <!-- Image statique pour la catégorie -->
+                    <img src="{{ asset('assets/front/images/th.jpg') }}" alt="Categorie image" class="card-img-top">
+                </a>
+            </div>
+            <div class="card-body">
+                <div class="post-meta d-flex text-uppercase gap-3 my-2 align-items-center">
+                    <div class="meta-date">
+                        <svg width="16" height="16"><use xmlns:xlink:href="#calendar"></use></svg>
+                        <!-- Date actuelle -->
+                        {{ "now"|date("d M Y") }}
+                    </div>
+                </div>
+                <div class="post-header">
+                    <h3 class="post-title">
+                        <a href="{{ path('liste_categories', { 'id': categoriePlat.id }) }}" class="text-decoration-none">
+                            {{ categoriePlat.nomCategorie }}
+                        </a>
+                    </h3>
+                    <p>{{ categoriePlat.descrCategorie ?: "Aucune description disponible" }}</p>
+                </div>
+            </div>
+        </article>
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}
