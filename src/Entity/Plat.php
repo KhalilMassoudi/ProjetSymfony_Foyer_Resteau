@@ -103,4 +103,24 @@ class Plat
         $this->dispoPlat = $dispoPlat;
         return $this;
     }
+    #[ORM\Column(length: 255, nullable: true)]
+    #[Assert\File(
+        maxSize: '2M', // Limite de taille (2 Mo ici)
+        mimeTypes: ['image/jpeg', 'image/png', 'image/gif'], // Types MIME autorisés
+        mimeTypesMessage: 'Veuillez télécharger une image valide (JPEG, PNG, GIF).',
+        maxSizeMessage: 'L\'image ne doit pas dépasser 2 Mo.'
+    )]
+    private ?string $image = null;
+    
+    public function getImage(): ?string
+    {
+        return $this->image;
+    }
+    
+    public function setImage(?string $image): static
+    {
+        $this->image = $image;
+        return $this;
+    }
+
 }

@@ -1,16 +1,23 @@
 {% extends 'basefront.html.twig' %}
 {% block amodifier %}
 <div class="row">
-<h2 class="section-title">Liste des plats </h2>
+    <h2 class="section-title">Liste des plats </h2>
     {% for plat in plats %}
     <div class="col-md-4 mb-4">
         <article class="post-item card border-0 shadow-sm p-3">
             <div class="image-holder zoom-effect">
                 <a href="#">
-                    <!-- Static image for plats -->
-                                <img src="{{ asset('assets/front/images/OIP.jpg') }}"
-                                     alt="post" class="c
-                                     ard-img-top">
+                    <!-- Dynamically loaded image for plats -->
+                    {% if plat.image %}
+                        <img src="{{ asset('uploads/images/' ~ plat.image) }}"
+                             alt="Image de {{ plat.nomPlat }}" class="card-img-top"
+                             style="width: 100%; height: 400px; object-fit: cover;">
+                    {% else %}
+                        <!-- Fallback image if no image is set -->
+                        <img src="{{ asset('assets/front/images/default-plat.jpg') }}"
+                             alt="Image par défaut" class="card-img-top"
+                             style="width: 100%; height: 400px; object-fit: cover;">
+                    {% endif %}
                 </a>
             </div>
             <div class="card-body">
