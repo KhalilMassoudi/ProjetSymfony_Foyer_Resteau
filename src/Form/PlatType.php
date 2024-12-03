@@ -3,14 +3,16 @@
 namespace App\Form;
 
 use App\Entity\Plat;
-use App\Entity\CategoriePlat; // Import de l'entité CategoriePlat
+use App\Entity\CategoriePlat;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
+use Symfony\Component\Form\Extension\Core\Type\FileType;
 use Symfony\Component\Form\Extension\Core\Type\MoneyType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Validator\Constraints as Assert;
 
 class PlatType extends AbstractType
 {
@@ -54,13 +56,29 @@ class PlatType extends AbstractType
                 'required' => false,
             ])
             ->add('categoriePlat', EntityType::class, [
-                'class' => CategoriePlat::class, // L'entité liée
-                'choice_label' => 'nomCategorie', // Affiche le champ "nomCategorie" pour chaque catégorie
-                'placeholder' => 'Sélectionnez une catégorie', // Option pour afficher une valeur vide
-                'label' => 'Catégorie associée', // L'étiquette pour le champ
+                'class' => CategoriePlat::class,
+                'choice_label' => 'nomCategorie',
+                'placeholder' => 'Sélectionnez une catégorie',
+                'label' => 'Catégorie associée',
                 'attr' => [
                     'class' => 'form-control',
-                    'data-live-search' => 'true', // Fonction de recherche dans le dropdown (facultatif)
+                    'data-live-search' => 'true',
+                ],
+            ])
+            ->add('image', FileType::class, [
+                'label' => 'Image du plat',
+                'required' => false,
+                'mapped' => false,
+                'attr' => [
+                    'class' => 'form-control',
+                ],
+                'constraints' => [
+                    new Assert\File([
+                        'maxSize' => '2M',
+                        'mimeTypes' => ['image/jpeg', 'image/png', 'image/gif'],
+                        'mimeTypesMessage' => 'Veuillez télécharger une image valide (JPEG, PNG, GIF).',
+                        'maxSizeMessage' => 'L\'image ne doit pas dépasser 2 Mo.',
+                    ]),
                 ],
             ]);
     }
