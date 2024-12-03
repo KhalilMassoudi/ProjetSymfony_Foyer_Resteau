@@ -6,6 +6,8 @@ use App\Repository\TypeServiceRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert ;
+
 
 #[ORM\Entity(repositoryClass: TypeServiceRepository::class)]
 class TypeService
@@ -16,9 +18,11 @@ class TypeService
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
+    #[Assert\NotBlank(message: "Le nom est obligatoire")]
     private ?string $nom = null;
 
     #[ORM\Column(length: 255)]
+    #[Assert\Length(min:10, minMessage:"la description doit contenir au moins 10 caracteres")]
     private ?string $description = null;
 
     /**

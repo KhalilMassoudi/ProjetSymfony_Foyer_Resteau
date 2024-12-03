@@ -11,6 +11,8 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Validator\Constraints as Assert ;
+
 
 
 class ServiceController extends AbstractController
@@ -56,7 +58,7 @@ public function AfficherAllServices(ServiceRepository $rep, Request $request, En
         $service=$rep->find(($id));
         $form = $this->createForm(ServiceFormType::class, $service);
         $form->handleRequest($request);
-        if($form->isSubmitted()){
+        if($form->isSubmitted()  && $form->isValid()){
             $em=$doc->getManager();
             $em->flush();
             $this->addFlash('success', 'The service has been successfully updated.');
