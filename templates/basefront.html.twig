@@ -297,7 +297,7 @@
         </div>
 
     {% endblock %}
-
+{% endblock %}
 {% block amodifier %}
     <section class="py-5">
         <div class="container-fluid">
@@ -349,6 +349,58 @@
 
 
 
+{% block footer %}
+
+    <section class="py-5 my-5">
+        <div class="container-fluid">
+
+            <div class="bg-warning py-5 rounded-5" style="background-image: url('images/bg-pattern-2.png') no-repeat;">
+                <div class="container">
+                    <div class="row">
+                        <div class="col-md-4">
+                            <img src="{{ asset('assets/front/images/phone.png') }}"
+                                 alt="phone" class="image-float img-fluid">
+                        </div>
+                        <div class="col-md-8">
+                            <h2 class="my-5">Shop faster with foodmart App</h2>
+                            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sagittis sed ptibus liberolectus nonet psryroin. Amet sed lorem posuere sit iaculis amet, ac urna. Adipiscing fames semper erat ac in suspendisse iaculis. Amet blandit tortor praesent ante vitae. A, enim pretiummi senectus magna. Sagittis sed ptibus liberolectus non et psryroin.</p>
+                            <div class="d-flex gap-2 flex-wrap">
+                                <img src="{{ asset('assets/front/images/app-store.jpg') }}"
+                                     alt="app-store">
+                                <img src="{{ asset('assets/front/images/google-play.jpg') }}"
+                                     alt="google-play">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+    <section class="py-5">
+        <div class="container-fluid">
+            <h2 class="my-5">People are also looking for</h2>
+            <a href="#" class="btn btn-warning me-2 mb-2">Blue diamon almonds</a>
+            <a href="#" class="btn btn-warning me-2 mb-2">Angie’s Boomchickapop Corn</a>
+            <a href="#" class="btn btn-warning me-2 mb-2">Salty kettle Corn</a>
+            <a href="#" class="btn btn-warning me-2 mb-2">Chobani Greek Yogurt</a>
+            <a href="#" class="btn btn-warning me-2 mb-2">Sweet Vanilla Yogurt</a>
+            <a href="#" class="btn btn-warning me-2 mb-2">Foster Farms Takeout Crispy wings</a>
+            <a href="#" class="btn btn-warning me-2 mb-2">Warrior Blend Organic</a>
+            <a href="#" class="btn btn-warning me-2 mb-2">Chao Cheese Creamy</a>
+            <a href="#" class="btn btn-warning me-2 mb-2">Chicken meatballs</a>
+            <a href="#" class="btn btn-warning me-2 mb-2">Blue diamon almonds</a>
+            <a href="#" class="btn btn-warning me-2 mb-2">Angie’s Boomchickapop Corn</a>
+            <a href="#" class="btn btn-warning me-2 mb-2">Salty kettle Corn</a>
+            <a href="#" class="btn btn-warning me-2 mb-2">Chobani Greek Yogurt</a>
+            <a href="#" class="btn btn-warning me-2 mb-2">Sweet Vanilla Yogurt</a>
+            <a href="#" class="btn btn-warning me-2 mb-2">Foster Farms Takeout Crispy wings</a>
+            <a href="#" class="btn btn-warning me-2 mb-2">Warrior Blend Organic</a>
+            <a href="#" class="btn btn-warning me-2 mb-2">Chao Cheese Creamy</a>
+            <a href="#" class="btn btn-warning me-2 mb-2">Chicken meatballs</a>
+        </div>
+    </section>
 
     <section class="py-5">
         <div class="container-fluid">
@@ -432,14 +484,15 @@
         </div>
     </section>
 
-    <footer class="py-5">
+    <section class="py-5">
         <div class="container-fluid">
             <div class="row">
 
                 <div class="col-lg-3 col-md-6 col-sm-6">
                     <div class="footer-menu">
-                        <img class="brand-title" src="{{ asset('assets/front/images/dotcom.png') }}" alt="">
-                             alt="logo">
+                        <img src="{{ asset('assets/front/images/dotcom.png') }}"
+                             alt="logo" style="max-width: 40%; margin-left: 0; display: block;">
+
                         <div class="social-links mt-5">
                             <ul class="d-flex list-unstyled gap-2">
                                 <li>
@@ -560,21 +613,22 @@
 
             </div>
         </div>
-    </footer>
+
     <div id="footer-bottom">
         <div class="container-fluid">
             <div class="row">
                 <div class="col-md-6 copyright">
-                    <p>© 2023 Foodmart. All rights reserved.</p>
+
                 </div>
                 <div class="col-md-6 credit-link text-start text-md-end">
-                    <p>Free HTML Template by <a href="https://templatesjungle.com/">TemplatesJungle</a> Distributed by <a href="https://themewagon">ThemeWagon</a></p>
+
                 </div>
             </div>
         </div>
     </div>
-
+    </section>
 {% endblock %}
+
 {% block js %}
     <script src="{{ asset('assets/front/js/jquery-1.11.0.min.js') }}"></script>
     <script src="https://cdn.jsdelivr.net/npm/swiper@9/swiper-bundle.min.js"></script>
