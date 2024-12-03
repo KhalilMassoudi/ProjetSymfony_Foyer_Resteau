@@ -8,10 +8,17 @@
     <div class="container mt-4" style="margin-left: 20%; margin-top: 400px;padding-top: 80px;">
         <h1>Gestion des chambres</h1>
 
-        {# Affichage des messages flash #}
+        {# Affichage des messages flash pour les erreurs #}
+        {% for message in app.flashes('error') %}
+            <div class="alert alert-danger solid alert-rounded">
+                <strong>Erreur!</strong> {{ message }}
+            </div>
+        {% endfor %}
+
+        {# Affichage des messages flash pour les succès #}
         {% for message in app.flashes('success') %}
-            <div class="alert alert-success">
-                {{ message }}
+            <div class="alert alert-success solid alert-rounded">
+                <strong>Succès!</strong> {{ message }}
             </div>
         {% endfor %}
 
