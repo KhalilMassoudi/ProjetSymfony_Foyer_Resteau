@@ -10,7 +10,7 @@ use Doctrine\Migrations\AbstractMigration;
 /**
  * Auto-generated Migration: Please modify to your needs!
  */
-final class Version20241125103618 extends AbstractMigration
+final class Version20241203211900 extends AbstractMigration
 {
     public function getDescription(): string
     {
@@ -23,15 +23,15 @@ final class Version20241125103618 extends AbstractMigration
         $this->addSql('CREATE TABLE boo (id INT AUTO_INCREMENT NOT NULL, PRIMARY KEY(id)) DEFAULT CHARACTER SET utf8mb4 COLLATE `utf8mb4_unicode_ci` ENGINE = InnoDB');
         $this->addSql('CREATE TABLE categorie_plat (id INT AUTO_INCREMENT NOT NULL, nom_categorie VARCHAR(100) NOT NULL, descr_categorie VARCHAR(255) DEFAULT NULL, PRIMARY KEY(id)) DEFAULT CHARACTER SET utf8mb4 COLLATE `utf8mb4_unicode_ci` ENGINE = InnoDB');
         $this->addSql('CREATE TABLE chambre (id INT AUTO_INCREMENT NOT NULL, numero_ch_b VARCHAR(50) NOT NULL, etage_ch_b INT NOT NULL, capacite_ch_b INT NOT NULL, statut_ch_b VARCHAR(20) NOT NULL, image VARCHAR(255) DEFAULT NULL, prix_ch_b DOUBLE PRECISION NOT NULL, PRIMARY KEY(id)) DEFAULT CHARACTER SET utf8mb4 COLLATE `utf8mb4_unicode_ci` ENGINE = InnoDB');
-        $this->addSql('CREATE TABLE demande_service (id INT AUTO_INCREMENT NOT NULL, date_demande DATETIME NOT NULL, PRIMARY KEY(id)) DEFAULT CHARACTER SET utf8mb4 COLLATE `utf8mb4_unicode_ci` ENGINE = InnoDB');
-        $this->addSql('CREATE TABLE equipement (id_equipement_b INT AUTO_INCREMENT NOT NULL, chambre_id INT DEFAULT NULL, nom_equipement_b VARCHAR(100) NOT NULL, etat_equipement_b VARCHAR(50) NOT NULL, date_dernier_entretien_equipement_b DATE NOT NULL, INDEX IDX_B8B4C6F39B177F54 (chambre_id), PRIMARY KEY(id_equipement_b)) DEFAULT CHARACTER SET utf8mb4 COLLATE `utf8mb4_unicode_ci` ENGINE = InnoDB');
-        $this->addSql('CREATE TABLE plat (id INT AUTO_INCREMENT NOT NULL, categorie_plat_id INT DEFAULT NULL, nom_plat VARCHAR(255) NOT NULL, desc_plat LONGTEXT DEFAULT NULL, prix_plat DOUBLE PRECISION NOT NULL, type_cuisine VARCHAR(255) NOT NULL, dispo_plat TINYINT(1) NOT NULL, INDEX IDX_2038A20788BE1BC2 (categorie_plat_id), PRIMARY KEY(id)) DEFAULT CHARACTER SET utf8mb4 COLLATE `utf8mb4_unicode_ci` ENGINE = InnoDB');
+        $this->addSql('CREATE TABLE demande_service (id INT AUTO_INCREMENT NOT NULL, date_demande DATETIME NOT NULL, description VARCHAR(255) DEFAULT NULL, nom VARCHAR(255) DEFAULT NULL, prenom VARCHAR(255) DEFAULT NULL, telephone INT DEFAULT NULL, email VARCHAR(255) NOT NULL, PRIMARY KEY(id)) DEFAULT CHARACTER SET utf8mb4 COLLATE `utf8mb4_unicode_ci` ENGINE = InnoDB');
+        $this->addSql('CREATE TABLE equipement (id_equipement_b INT AUTO_INCREMENT NOT NULL, chambre_id INT DEFAULT NULL, nom_equipement_b VARCHAR(100) NOT NULL, etat_equipement_b VARCHAR(50) NOT NULL, image VARCHAR(255) DEFAULT NULL, date_dernier_entretien_equipement_b DATE NOT NULL, INDEX IDX_B8B4C6F39B177F54 (chambre_id), PRIMARY KEY(id_equipement_b)) DEFAULT CHARACTER SET utf8mb4 COLLATE `utf8mb4_unicode_ci` ENGINE = InnoDB');
+        $this->addSql('CREATE TABLE plat (id INT AUTO_INCREMENT NOT NULL, categorie_plat_id INT DEFAULT NULL, nom_plat VARCHAR(255) NOT NULL, desc_plat LONGTEXT DEFAULT NULL, prix_plat DOUBLE PRECISION NOT NULL, type_cuisine VARCHAR(255) NOT NULL, dispo_plat TINYINT(1) NOT NULL, image VARCHAR(255) DEFAULT NULL, INDEX IDX_2038A20788BE1BC2 (categorie_plat_id), PRIMARY KEY(id)) DEFAULT CHARACTER SET utf8mb4 COLLATE `utf8mb4_unicode_ci` ENGINE = InnoDB');
         $this->addSql('CREATE TABLE reclamation (id INT AUTO_INCREMENT NOT NULL, titre VARCHAR(255) NOT NULL, description VARCHAR(255) NOT NULL, date_reclamation DATETIME NOT NULL, etat VARCHAR(255) NOT NULL, reponse VARCHAR(255) NOT NULL, PRIMARY KEY(id)) DEFAULT CHARACTER SET utf8mb4 COLLATE `utf8mb4_unicode_ci` ENGINE = InnoDB');
         $this->addSql('CREATE TABLE service (id INT AUTO_INCREMENT NOT NULL, type_service_id INT NOT NULL, nom VARCHAR(255) NOT NULL, date_creation DATETIME NOT NULL, date_fin DATETIME NOT NULL, description VARCHAR(255) DEFAULT NULL, INDEX IDX_E19D9AD2F05F7FC3 (type_service_id), PRIMARY KEY(id)) DEFAULT CHARACTER SET utf8mb4 COLLATE `utf8mb4_unicode_ci` ENGINE = InnoDB');
         $this->addSql('CREATE TABLE type_de_chambre (id_type_ch_b INT AUTO_INCREMENT NOT NULL, type_chambre_b VARCHAR(50) NOT NULL, description_chambre_b LONGTEXT DEFAULT NULL, prix_chambre_b DOUBLE PRECISION NOT NULL, PRIMARY KEY(id_type_ch_b)) DEFAULT CHARACTER SET utf8mb4 COLLATE `utf8mb4_unicode_ci` ENGINE = InnoDB');
         $this->addSql('CREATE TABLE type_reclamation (id INT AUTO_INCREMENT NOT NULL, nom_type_reclamation VARCHAR(255) NOT NULL, PRIMARY KEY(id)) DEFAULT CHARACTER SET utf8mb4 COLLATE `utf8mb4_unicode_ci` ENGINE = InnoDB');
         $this->addSql('CREATE TABLE type_service (id INT AUTO_INCREMENT NOT NULL, nom VARCHAR(255) NOT NULL, description VARCHAR(255) NOT NULL, PRIMARY KEY(id)) DEFAULT CHARACTER SET utf8mb4 COLLATE `utf8mb4_unicode_ci` ENGINE = InnoDB');
-        $this->addSql('CREATE TABLE `user` (id INT AUTO_INCREMENT NOT NULL, username VARCHAR(255) NOT NULL, email VARCHAR(255) NOT NULL, password VARCHAR(255) NOT NULL, address VARCHAR(255) DEFAULT NULL, roles JSON NOT NULL COMMENT \'(DC2Type:json)\', PRIMARY KEY(id)) DEFAULT CHARACTER SET utf8mb4 COLLATE `utf8mb4_unicode_ci` ENGINE = InnoDB');
+        $this->addSql('CREATE TABLE user (id INT AUTO_INCREMENT NOT NULL, username VARCHAR(180) NOT NULL, roles JSON NOT NULL COMMENT \'(DC2Type:json)\', password VARCHAR(255) NOT NULL, address VARCHAR(255) NOT NULL, email VARCHAR(255) NOT NULL, UNIQUE INDEX UNIQ_IDENTIFIER_USERNAME (username), PRIMARY KEY(id)) DEFAULT CHARACTER SET utf8mb4 COLLATE `utf8mb4_unicode_ci` ENGINE = InnoDB');
         $this->addSql('CREATE TABLE messenger_messages (id BIGINT AUTO_INCREMENT NOT NULL, body LONGTEXT NOT NULL, headers LONGTEXT NOT NULL, queue_name VARCHAR(190) NOT NULL, created_at DATETIME NOT NULL COMMENT \'(DC2Type:datetime_immutable)\', available_at DATETIME NOT NULL COMMENT \'(DC2Type:datetime_immutable)\', delivered_at DATETIME DEFAULT NULL COMMENT \'(DC2Type:datetime_immutable)\', INDEX IDX_75EA56E0FB7336F0 (queue_name), INDEX IDX_75EA56E0E3BD61CE (available_at), INDEX IDX_75EA56E016BA31DB (delivered_at), PRIMARY KEY(id)) DEFAULT CHARACTER SET utf8mb4 COLLATE `utf8mb4_unicode_ci` ENGINE = InnoDB');
         $this->addSql('ALTER TABLE equipement ADD CONSTRAINT FK_B8B4C6F39B177F54 FOREIGN KEY (chambre_id) REFERENCES chambre (id)');
         $this->addSql('ALTER TABLE plat ADD CONSTRAINT FK_2038A20788BE1BC2 FOREIGN KEY (categorie_plat_id) REFERENCES categorie_plat (id) ON DELETE SET NULL');
@@ -55,7 +55,7 @@ final class Version20241125103618 extends AbstractMigration
         $this->addSql('DROP TABLE type_de_chambre');
         $this->addSql('DROP TABLE type_reclamation');
         $this->addSql('DROP TABLE type_service');
-        $this->addSql('DROP TABLE `user`');
+        $this->addSql('DROP TABLE user');
         $this->addSql('DROP TABLE messenger_messages');
     }
 }

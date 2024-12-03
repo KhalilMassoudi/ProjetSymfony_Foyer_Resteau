@@ -11,6 +11,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Validator\Constraints as Assert ;
 
 class TypeServiceController extends AbstractController
 {
@@ -65,7 +66,7 @@ class TypeServiceController extends AbstractController
         $type = $rep->find($id);
         $form = $this->createForm(TypeServiceFormType::class, $type);
         $form->handleRequest($request);
-        if ($form->isSubmitted()) {
+        if ( $form->isSubmitted() && $form->isValid() ) {
             $em->flush();
             $this->addFlash('success', 'New TypeService has been successfully updated.');
             var_dump($type->getId()); 
