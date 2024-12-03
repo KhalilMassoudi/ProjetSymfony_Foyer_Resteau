@@ -172,6 +172,11 @@ class ChambreController extends AbstractController
     {
         $chambres = $chambreRepository->findAll();
 
+        // Vérification du contenu des chambres
+        if (!$chambres) {
+            throw $this->createNotFoundException('Aucune chambre trouvée');
+        }
+
         return $this->render('fronttemplates/app_frontchambre.html.twig', [
             'chambres' => $chambres,
         ]);

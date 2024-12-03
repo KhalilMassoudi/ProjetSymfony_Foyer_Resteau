@@ -1,38 +1,69 @@
-{% extends 'basefront.html.twig' %}
-{% block title %} chambre
-{%  endblock %}
-{% block amodifier %}
+{% extends 'fronttemplates/basefront.html.twig' %}
+
+{% block body %}
     <div class="container mt-5">
-        <h1 class="text-center">Liste des Chambres</h1>
-        <div class="row">
-            {% for chambre in chambres %}
-                <div class="col-md-4 mb-4">
-                    <div class="card shadow-sm">
-                        {% if chambre.image %}
-                            <img src="{{ asset('uploads/images/' ~ chambre.image) }}" class="card-img-top" alt="Image de la chambre">
-                        {% else %}
-                            <img src="{{ asset('images/default-room.jpg') }}" class="card-img-top" alt="Image par défaut">
-                        {% endif %}
-                        <div class="card-body">
-                            <h5 class="card-title">{{ chambre.numeroChB }}</h5>
-                            <p class="card-text">Prix : {{ chambre.prixChB }} €</p>
-                            <p class="card-text">Statut :
-                                {% if chambre.statutChB == 'disponible' %}
-                                    <span class="badge bg-success">Disponible</span>
-                                {% elseif chambre.statutChB == 'occupée' %}
-                                    <span class="badge bg-danger">Occupée</span>
-                                {% else %}
-                                    <span class="badge bg-secondary">Indisponible</span>
-                                {% endif %}
-                            </p>
+        <h2 class="section-title text-center mb-4">Liste des Chambres</h2>
+
+        {% if chambres is not empty %}
+            <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-4">
+                {% for chambre in chambres %}
+                    <div class="col">
+                        <div class="card h-100 border-0 shadow-lg rounded">
+                            <!-- Image de la chambre -->
+                            <div class="image-holder">
+                                <a href="{{ path('app_front_chambre', {'id': chambre.id}) }}">
+                                    <img src="{{ chambre.image ? asset('uploads/images/' ~ chambre.image) : asset('images/default-room.jpg') }}"
+                                         alt="Image de la chambre" class="card-img-top rounded-top">
+                                </a>
+                            </div>
+
+                            <!-- Contenu de la carte -->
+                            <div class="card-body d-flex flex-column justify-content-between">
+                                <h5 class="card-title text-center">Chambre {{ chambre.numeroChB }}</h5>
+                                <p class="text-center"><strong>Prix :</strong> {{ chambre.prixChB }} €</p>
+
+                                <!-- Statut -->
+                                <div class="d-flex justify-content-center">
+                                    <p class="text-center">
+                                        <strong>Statut :</strong>
+                                        {% if chambre.statutChB == constant('App\\Enum\\ChambreStatut::DISPONIBLE') %}
+                                            <span class="badge bg-success">Disponible</span>
+                                        {% elseif chambre.statutChB == constant('App\\Enum\\ChambreStatut::OCCUPEE') %}
+                                            <!-- Badge Occupée avec une couleur plus claire -->
+                                            <span class="badge" style="background-color: #f8d7da; color: #721c24;">Occupée</span>
+                                        {% elseif chambre.statutChB == constant('App\\Enum\\ChambreStatut::EN_MAINTENANCE') %}
+                                            <!-- Badge En Maintenance avec une couleur plus claire -->
+                                            <span class="badge" style="background-color: #d6d8d9; color: #383d41;">En maintenance</span>
+                                        {% else %}
+                                            <span class="badge bg-warning">Statut inconnu</span>
+                                        {% endif %}
+                                    </p>
+                                </div>
+
+                                <!-- Ajout de l'icône de cœur en lien avec le SVG -->
+                                <div class="text-center mt-3">
+                                    <a href="#" class="btn btn-light" title="Ajouter aux favoris">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-heart" viewBox="0 0 16 16">
+                                            <path d="m8 2.748-.717-.737C5.6.281 2.514.878 1.4 3.053c-.523 1.023-.641 2.5.314 4.385.92 1.815 2.834 3.989 6.286 6.357 3.452-2.368 5.365-4.542 6.286-6.357.955-1.886.838-3.362.314-4.385C13.486.878 10.4.28 8.717 2.01zM8 15C-7.333 4.868 3.279-3.04 7.824 1.143q.09.083.176.171a3 3 0 0 1 .176-.17C12.72-3.042 23.333 4.867 8 15"/>
+                                        </svg>
+                                    </a>
+                                </div>
+
+                                <!-- Bouton Voir les détails -->
+                                <div class="text-center mt-3">
+                                    <a href="{{ path('app_front_chambre', {'id': chambre.id}) }}" class="btn btn-primary">
+                                        Voir les détails
+                                    </a>
+                                </div>
+                            </div>
                         </div>
                     </div>
-                </div>
-            {% else %}
-                <div class="col-12 text-center">
-                    <p>Aucune chambre n'est disponible pour le moment.</p>
-                </div>
-            {% endfor %}
-        </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="text-center">
+                <p class="text-muted">Aucune chambre n'est disponible pour le moment.</p>
+            </div>
+        {% endif %}
     </div>
 {% endblock %}

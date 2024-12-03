@@ -61,6 +61,20 @@
             </div>
         </div>
 
+        {# Gestion de l'image de l'équipement #}
+        <div class="row mb-3">
+            <label for="{{ form.image.vars.id }}" class="col-sm-2 col-form-label">Image de l'équipement :</label>
+            <div class="col-sm-10">
+                {% if equipement.image %}
+                    <img src="{{ asset('uploads/equipements/' ~ equipement.image) }}" alt="Image de {{ equipement.nomEquipementB }}" width="100" class="mb-3">
+                {% else %}
+                    <p>Aucune image actuelle</p>
+                {% endif %}
+                {{ form_widget(form.image, {'attr': {'class': 'form-control'}}) }}
+                {{ form_errors(form.image) }}
+            </div>
+        </div>
+
         {# Boutons modifiés avec les styles personnalisés #}
         <div class="card-body">
             <button type="submit" class="btn btn-primary">Enregistrer les modifications

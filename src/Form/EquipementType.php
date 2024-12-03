@@ -5,6 +5,7 @@ use App\Entity\Equipement;
 use App\Entity\Chambre; // Import de l'entité Chambre
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\FileType; // Import de FileType
 use Symfony\Component\Form\Extension\Core\Type\DateType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -45,6 +46,14 @@ class EquipementType extends AbstractType
                     'class' => 'form-control',
                     'data-live-search' => 'true', // Ajoute une fonctionnalité de recherche dans le dropdown (facultatif)
                 ],
+            ])
+            ->add('image', FileType::class, [
+                'label' => 'Image de l\'équipement', // Corrigé : Image de l'équipement
+                'required' => false, // Champ facultatif
+                'mapped' => false, // Non mappé directement à l'entité
+                'attr' => [
+                    'class' => 'form-control',
+                ],
             ]);
     }
 
@@ -55,3 +64,4 @@ class EquipementType extends AbstractType
         ]);
     }
 }
+

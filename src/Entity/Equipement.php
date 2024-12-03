@@ -18,7 +18,8 @@ class Equipement
     #[ORM\Column(type: 'string', length: 50)]
     private string $etatEquipementB;
 
-
+    #[ORM\Column(type: 'string', length: 255, nullable: true)]
+    private ?string $image = null;
     #[ORM\Column(type: 'date')]
     private \DateTimeInterface $dateDernierEntretienEquipementB;
 
@@ -84,6 +85,16 @@ class Equipement
     {
         $this->chambre = $chambre;
 
+        return $this;
+    }
+    public function getImage(): ?string
+    {
+        return $this->image;
+    }
+
+    public function setImage(?string $image): self
+    {
+        $this->image = $image;
         return $this;
     }
 }
