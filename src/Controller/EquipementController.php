@@ -161,14 +161,11 @@ class EquipementController extends AbstractController
         // Récupération de tous les équipements pour les afficher
         $equipements = $equipementRepository->findAll();
 
-        // Vérification s'il y a des équipements
-        if (!$equipements) {
-            throw $this->createNotFoundException('Aucun équipement trouvé.');
-        }
-
         // Rendu de la vue pour l'affichage des équipements
         return $this->render('fronttemplates/app_frontequipement.html.twig', [
             'equipements' => $equipements,
+            'noEquipement' => empty($equipements) // Ajouter une variable pour indiquer qu'il n'y a pas d'équipements
         ]);
     }
+
 }
