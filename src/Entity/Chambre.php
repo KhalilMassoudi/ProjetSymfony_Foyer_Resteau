@@ -16,6 +16,10 @@ class Chambre
     private int $id;
 
     #[ORM\Column(type: 'string', length: 50)]
+    #[Assert\Regex(
+        pattern: '/^[A-Z].*$/',
+        message: 'Le numéro de chambre doit commencer par une lettre majuscule.'
+    )]
     private string $numeroChB;
 
     #[ORM\Column(type: 'integer')]
