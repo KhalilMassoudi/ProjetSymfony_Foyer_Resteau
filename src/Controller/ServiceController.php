@@ -11,7 +11,8 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\Validator\Constraints as Assert ;
+use Knp\Component\Pager\PaginatorInterface;
+
 
 
 
@@ -70,14 +71,16 @@ public function AfficherAllServices(ServiceRepository $rep, Request $request, En
         ]);
     }
     #[Route('/servicefront/nos-services', name: 'app_frontend_services')]
-    public function afficherServicesFrontend(ServiceRepository $rep): Response
-    {
-
-    $services = $rep->findAll();
+public function afficherServicesFrontend(Request $request, ServiceRepository $serviceRepository): Response
+{
+    $searchTerm = $request->query->get('search', ''); 
+    $services = $searchTerm ? $serviceRepository->findServiceByName($searchTerm) : $serviceRepository->findAll();
 
     return $this->render('service/Nos_Service.html.twig', [
         'services' => $services,
+        'searchTerm' => $searchTerm, 
     ]);
-    }
+}
+
 
 }

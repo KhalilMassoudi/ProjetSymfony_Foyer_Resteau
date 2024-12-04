@@ -21,20 +21,9 @@ class Service
     private ?string $nom = null;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
-    #[Assert\Date]
-    #[Assert\Range(
-        min: '2024-01-01',
-        max: '2024-12-31',
-        notInRangeMessage: 'La date doit être comprise entre {{ min }} et {{ max }}.'
-    )]
     private ?\DateTimeInterface $date_creation = null;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
-    #[Assert\Date]
-    #[Assert\GreaterThan(
-        value: 'today',
-        message: 'La date doit être après aujourd\'hui.'
-    )]
     private ?\DateTimeInterface $date_fin = null;
 
     #[ORM\Column(length: 255, nullable: true)]
