@@ -1,8 +1,17 @@
 {% extends 'basefront.html.twig' %}
 
-{% block title %}Nos Services{% endblock %}
+
 
 {% block amodifier %}
+
+<!-- Barre de recherche alignée à droite -->
+<div class="d-flex justify-content-end mb-4">
+    <form class="d-flex" method="get" action="{{ path('app_frontend_services') }}">
+        <input class="form-control me-2" type="search" name="search" value="{{ searchTerm }}" placeholder="Rechercher avec Nom d'un service..." aria-label="Search">
+        <button class="btn btn-primary" type="submit">Rechercher</button>
+    </form>
+</div>
+
 <div class="container mt-5">
     <h2 class="text-center mb-5">Découvrez Nos Services</h2>
     <div class="row g-4">
@@ -17,7 +26,7 @@
                         {% if service.dateCreation %}
                             <p class="text-muted small mt-auto">Ajouté le {{ service.dateCreation|date('d/m/Y') }}</p>
                         {% endif %}
-                        {#<a href="{{ path('service_detail', {id: service.id}) }}" class="btn btn-outline-primary mt-3">Voir plus</a>#}
+                        <a {#href="{{ path('service_detail', {id: service.id}) }}"#} class="btn btn-outline-primary mt-3">Voir plus</a>
                     </div>
                 </div>
             </div>
