@@ -17,17 +17,11 @@ use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 
 class UserController extends AbstractController
 {
-    /*#[Route('/', name: 'app_login')]
+
+    #[Route('/', name: 'app_front')]
     public function login(): Response
     {
-        return $this->render('backtemplates/app-login.html.twig', [
-            'controller_name' => 'IndexController',
-        ]);
-    }*/
-    #[Route('/', name: 'app_login')]
-    public function login(): Response
-    {
-        return $this->render('backtemplates/app-login.html.twig', [
+        return $this->render('fronttemplates/basefront.html.twig', [
             'controller_name' => 'UserController',
         ]);
     }
@@ -75,7 +69,7 @@ class UserController extends AbstractController
 
 
 
-    #[Route('/login/check', name: 'app_login_check', methods: ['POST'])]
+    #[Route('/login/check', name: 'app_login_check')]
     public function checkLogin(Request $request): Response
     {
         $email = $request->request->get('email');
@@ -84,28 +78,50 @@ class UserController extends AbstractController
         $user = $this->entityManager->getRepository(User::class)->findOneBy(['email' => $email]);
 
         if ($user && $this->passwordHasher->isPasswordValid($user, $password)) {
-
+            // Démarrer la session et stocker les informations utilisateur
             $session = $request->getSession();
             $session->set('user_id', $user->getId());
+            $session->set('username', $user->getUsername()); // Assurez-vous que la méthode getUsername() existe
 
+            // Vérifier le rôle de l'utilisateur
             if (in_array('ROLE_ADMIN', $user->getRoles())) {
-
                 return $this->render('backtemplates/baseback.html.twig', [
                     'controller_name' => 'UserController',
+                    'user_id' => $user->getId(),
+                    'username' => $user->getUsername(),
                 ]);
             } else {
-
-                return $this->render('fronttemplates/basefront.html.twig', [
+                return $this->render('fronttemplates/home.html.twig', [
                     'controller_name' => 'UserController',
+                    'user_id' => $user->getId(),
+                    'username' => $user->getUsername(),
                 ]);
             }
         } else {
-
+            // Ajouter un message flash pour indiquer une erreur
             $this->addFlash('error', 'Incorrect email or password');
 
             return $this->redirectToRoute('app_login');
         }
     }
+
+    #[Route('/logout', name: 'app_logout')]
+    public function logout(Request $request): Response
+    {
+        // Récupérer la session
+        $session = $request->getSession();
+
+        // Supprimer toutes les données de la session
+        $session->clear();
+
+        // Ajouter un message flash pour confirmation
+        $this->addFlash('success', 'Vous avez été déconnecté avec succès.');
+
+        // Rediriger vers la page de login
+        return $this->redirectToRoute('app_login');
+    }
+
+
     #[Route('/back2', name: 'app_index2')]
     public function listUsers(): Response
     {
@@ -146,13 +162,13 @@ class UserController extends AbstractController
             'controller_name' => 'UserController',
         ]);
     }
-    /*#[Route('/back2', name: 'app_index2')]
+    #[Route('/back2', name: 'app_index2')]
     public function index2(): Response
     {
         return $this->render('backtemplates/baseback2.html.twig', [
             'controller_name' => 'IndexController',
         ]);
-    }*/
+    }
 
 
     /*#[Route('/back/profile', name: 'app_profile')]
@@ -172,10 +188,10 @@ class UserController extends AbstractController
         ]);
     }
 
-    #[Route('/front', name: 'app_front')]
+    #[Route('/login', name: 'app_login')]
     public function front(): Response
     {
-        return $this->render('fronttemplates/basefront.html.twig', [
+        return $this->render('backtemplates/app-login.html.twig', [
             'controller_name' => 'UserController',
         ]);
     }
@@ -227,7 +243,6 @@ class UserController extends AbstractController
 
     /////creation automatique de l'admin
 
-    #[Route('/', name: 'app_login')]
     public function loginAdmin(): Response
     {
         $this->createDefaultAdmin();

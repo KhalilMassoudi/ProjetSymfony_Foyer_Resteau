@@ -46,8 +46,8 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     )]
     private ?string $password = null;
 
-    #[ORM\Column(length: 255)]
-    private ?string $address = null;
+
+    private ?string $address ;
 
     #[ORM\Column(length: 255)]
     #[Assert\NotBlank] // Assurer que l'email
@@ -61,8 +61,14 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     public function getUsername(): ?string
     {
-        return $this->username;
+        return $this->username; // Retourner l'email au lieu du username
     }
+
+    public function getUserIdentifier(): string
+    {
+        return (string) $this->email; // Utiliser l'email comme identifiant
+    }
+
 
     public function setUsername(string $username): static
     {
@@ -71,15 +77,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
-    /**
-     * A visual identifier that represents this user.
-     *
-     * @see UserInterface
-     */
-    public function getUserIdentifier(): string
-    {
-        return (string) $this->username;
-    }
+
 
     /**
      * @see UserInterface
