@@ -1,0 +1,120 @@
+{% extends 'backtemplates/baseback2.html.twig' %}
+
+{% block title %}
+    Gestion des catégories
+{% endblock %}
+
+{% block body %}
+    <div class="container mt-4" style="margin-left: 20%; margin-top: 400px; padding-top: 80px;">
+
+       {# Affichage des messages flash #}
+        {% for message in app.flashes('success') %}
+        <div class="alert alert-success flash-message" id="flash-message">
+        {{ message }}
+        </div>
+         {% endfor %}
+
+
+        {# Bouton pour afficher/masquer le formulaire d'ajout de catégorie #}
+        <button id="toggleFormBtn" class="btn btn-primary mb-4">
+            Ajouter une catégorie <span class="btn-icon-right"><i class="fa fa-plus"></i></span>
+        </button>
+
+        {# Formulaire pour ajouter une nouvelle catégorie #}
+        <div id="ajouterCategorieDiv" class="d-none">
+            <h2>Ajouter une catégorie</h2>
+            {{ form_start(form, {'attr': {'class': 'form-horizontal'}}) }}
+            
+            <div class="mb-3">
+                <label for="{{ form.nomCategorie.vars.id }}" class="form-label">{{ form.nomCategorie.vars.label }}</label>
+                {{ form_widget(form.nomCategorie, {'attr': {'class': 'form-control'}}) }}
+            </div>
+            
+            <div class="mb-3">
+                <label for="{{ form.descrCategorie.vars.id }}" class="form-label">{{ form.descrCategorie.vars.label }}</label>
+                {{ form_widget(form.descrCategorie, {'attr': {'class': 'form-control'}}) }}
+            </div>
+            
+            <button type="submit" class="btn btn-success">
+                Ajouter <span class="btn-icon-right"><i class="fa fa-check"></i></span>
+            </button>
+            
+            {{ form_end(form) }}
+        </div>
+
+        {# Liste des catégories #}
+        <h2 class="mt-4">Liste des catégories</h2>
+        <table class="table table-striped">
+            <thead>
+            <tr>
+                <th>ID</th>
+                <th>Nom</th>
+                <th>Description</th>
+                <th>Actions</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for categorie in categories %}
+                <tr>
+                    <td>{{ categorie.id }}</td>
+                    <td>
+                        <div class="badge-circle">
+                            <a href="javascript:void()" class="badge badge-outline-primary">{{ categorie.nomCategorie }}</a>
+                        </div>
+                    </td>
+                    <td>{{ categorie.descrCategorie }}</td>
+                    <td>
+                        <!-- Boutons de modification et suppression avec le même style -->
+                        <a href="{{ path('app_categorieplat_edit', {'id': categorie.id}) }}" class="btn btn-primary btn-sm mr-3">
+                            <i class="fa fa-edit"></i> Modifier
+                        </a>
+                        <a href="{{ path('app_categorieplat_delete', {'id': categorie.id}) }}" class="btn btn-danger btn-sm" onclick="return confirm('Êtes-vous sûr de vouloir supprimer cette catégorie ?');">
+                            <i class="fa fa-trash"></i> Supprimer
+                        </a>
+                    </td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+{% endblock %}
+
+{% block js %}
+    <script src="{{ asset('assets/back/vendor/global/global.min.js') }}"></script>
+    <script src="{{ asset('assets/back/js/quixnav-init.js') }}"></script>
+    <script src="{{ asset('assets/back/js/custom.min.js') }}"></script>
+    <script src="{{ asset('assets/back/vendor/chartist/js/chartist.min.js') }}"></script>
+    <script src="{{ asset('assets/back/vendor/moment/moment.min.js') }}"></script>
+    <script src="{{ asset('assets/back/vendor/pg-calendar/js/pignose.calendar.min.js') }}"></script>
+    <script src="{{ asset('assets/back/js/dashboard/dashboard-2.js') }}"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const toggleFormBtn = document.getElementById('toggleFormBtn');
+            const ajouterCategorieDiv = document.getElementById('ajouterCategorieDiv');
+
+            // Vérifie si les éléments existent avant d'ajouter l'événement
+            if (toggleFormBtn && ajouterCategorieDiv) {
+                toggleFormBtn.addEventListener('click', () => {
+                    // Ajoute ou retire la classe "d-none" pour afficher/masquer le formulaire
+                    ajouterCategorieDiv.classList.toggle('d-none');
+                });
+            }
+        });
+    </script>
+        <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Sélectionne le message flash
+            var flashMessage = document.getElementById('flash-message');
+            
+            // Si le message flash existe
+            if (flashMessage) {
+                // Après 3 secondes, cache le message
+                setTimeout(function() {
+                    flashMessage.style.display = 'none';
+                }, 2000); // 3000 ms = 3 secondes
+            }
+        });
+    </script>
+{% endblock %}
+{% block footer %}
+{% endblock %}

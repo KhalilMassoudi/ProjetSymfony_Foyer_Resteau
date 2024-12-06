@@ -3,17 +3,17 @@
 namespace App\Controller;
 
 use App\Entity\Service;
-use App\Entity\TypeService;
 use App\Form\ServiceFormType;
-use App\Form\TypeServiceFormType;
 use App\Repository\ServiceRepository;
 use Doctrine\ORM\EntityManagerInterface;
-use App\Repository\TypeServiceRepository;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Knp\Component\Pager\PaginatorInterface;
+
+
 
 
 class ServiceController extends AbstractController
@@ -33,7 +33,7 @@ public function AfficherAllServices(ServiceRepository $rep, Request $request, En
     if ($form->isSubmitted() && $form->isValid()) {
         $em->persist($service);
         $em->flush();
-        
+        $this->addFlash('success', 'New Service has been successfully added.');
         return $this->redirectToRoute('app_service'); 
     }
 
@@ -50,8 +50,37 @@ public function AfficherAllServices(ServiceRepository $rep, Request $request, En
         $em=$doc->getManager();
         $em->remove($service);
         $em->flush();//Commit au niveau du base de données
+        $this->addFlash('success', 'The TypeService has been successfully deleted.');
         return $this->redirectToRoute('app_service');
     }
-    
+    #[Route('/edit/{id}', name: 'app_service_edit')]
+    public function modifyS($id,ServiceRepository $rep , ManagerRegistry $doc,Request $request): Response
+    {
+        $service=$rep->find(($id));
+        $form = $this->createForm(ServiceFormType::class, $service);
+        $form->handleRequest($request);
+        if($form->isSubmitted()  && $form->isValid()){
+            $em=$doc->getManager();
+            $em->flush();
+            $this->addFlash('success', 'The service has been successfully updated.');
+            return $this->redirectToRoute('app_service');
+        }
+        return $this->render('service/edit_Service.html.twig',[
+            'form' => $form->createView(),
+            'service' => $service,
+        ]);
+    }
+    #[Route('/servicefront/nos-services', name: 'app_frontend_services')]
+public function afficherServicesFrontend(Request $request, ServiceRepository $serviceRepository): Response
+{
+    $searchTerm = $request->query->get('search', ''); 
+    $services = $searchTerm ? $serviceRepository->findServiceByName($searchTerm) : $serviceRepository->findAll();
+
+    return $this->render('service/Nos_Service.html.twig', [
+        'services' => $services,
+        'searchTerm' => $searchTerm, 
+    ]);
 }
 
+
+}

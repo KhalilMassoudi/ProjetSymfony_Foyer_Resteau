@@ -1,0 +1,62 @@
+{% extends 'basefront.html.twig' %}
+
+{% block amodifier %}
+    <div class="container mt-5">
+        <h2 class="section-title text-center mb-4">Liste des Équipements</h2>
+
+        {% if equipements is not empty %}
+            <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-4">
+                {% for equipement in equipements %}
+                    <div class="col">
+                        <div class="card h-100 border-0 shadow-lg rounded">
+                            <!-- Image de l'équipement -->
+                            <div class="image-holder">
+                                <a href="{{ path('app_front_equipement', {'id': equipement.idEquipementB}) }}">
+                                    <img src="{{ equipement.image ? asset('uploads/equipements/' ~ equipement.image) : asset('images/default-equipment.jpg') }}"
+                                         alt="Image de l'équipement" class="card-img-top rounded-top">
+                                </a>
+                            </div>
+
+                            <!-- Contenu de la carte -->
+                            <div class="card-body d-flex flex-column justify-content-between">
+                                <h5 class="card-title text-center">{{ equipement.nomEquipementB }}</h5>
+                                <p class="text-center"><strong>État :</strong>
+                                    <span class="badge bg-secondary">{{ equipement.etatEquipementB }}</span>
+                                </p>
+
+                                <!-- Information sur la chambre associée -->
+                                <div class="d-flex justify-content-center mt-2">
+                                    <p class="text-center"><strong>Chambre :</strong>
+                                        {% if equipement.chambre %}
+                                            {{ equipement.chambre.numeroChB }}
+                                        {% else %}
+                                            Non assignée
+                                        {% endif %}
+                                    </p>
+                                </div>
+                                <!-- Ajout de l'icône de cœur en lien avec le SVG -->
+                                <div class="text-center mt-3">
+                                    <a href="#" class="btn btn-light" title="Ajouter aux favoris">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-heart" viewBox="0 0 16 16">
+                                            <path d="m8 2.748-.717-.737C5.6.281 2.514.878 1.4 3.053c-.523 1.023-.641 2.5.314 4.385.92 1.815 2.834 3.989 6.286 6.357 3.452-2.368 5.365-4.542 6.286-6.357.955-1.886.838-3.362.314-4.385C13.486.878 10.4.28 8.717 2.01zM8 15C-7.333 4.868 3.279-3.04 7.824 1.143q.09.083.176.171a3 3 0 0 1 .176-.17C12.72-3.042 23.333 4.867 8 15"/>
+                                        </svg>
+                                    </a>
+                                </div>
+                                <!-- Bouton Voir les détails -->
+                                <div class="text-center mt-3">
+                                    <a href="{{ path('app_front_equipement', {'id': equipement.idEquipementB}) }}" class="btn btn-primary">
+                                        Voir les détails
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="text-center">
+                <p class="text-muted">Aucun équipement n'est disponible pour le moment.</p>
+            </div>
+        {% endif %}
+    </div>
+{% endblock %}

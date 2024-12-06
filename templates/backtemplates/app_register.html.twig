@@ -24,26 +24,49 @@
                             <div class="col-xl-12">
                                 <div class="auth-form">
                                     <h4 class="text-center mb-4">Sign up your account</h4>
+
+                                    {% for message in app.flashes('success') %}
+                                        <div class="alert alert-success">
+                                            {{ message }}
+                                        </div>
+                                    {% endfor %}
+
                                     {{ form_start(form, {attr: {novalidate: 'novalidate'}}) }}
 
                                     <div class="form-group">
                                         <label for="{{ form.username.vars.id }}"><strong>Username</strong></label>
                                         {{ form_widget(form.username, { 'attr': {'class': 'form-control', 'placeholder': 'username'} }) }}
+                                        <div class="text-danger">
+                                            {{ form_errors(form.username) }}
+                                        </div> <!-- Affichage des erreurs -->
+
                                     </div>
 
                                     <div class="form-group">
                                         <label for="{{ form.address.vars.id }}"><strong>Address</strong></label>
                                         {{ form_widget(form.address, { 'attr': {'class': 'form-control', 'placeholder': 'address'} }) }}
+                                        <div class="text-danger">
+                                            {{ form_errors(form.address) }}
+                                        </div> <!-- Affichage des erreurs -->
+
                                     </div>
 
                                     <div class="form-group">
                                         <label for="{{ form.email.vars.id }}"><strong>Email</strong></label>
                                         {{ form_widget(form.email, { 'attr': {'class': 'form-control', 'placeholder': 'hello@example.com'} }) }}
+                                        <div class="text-danger">
+                                            {{ form_errors(form.email) }}
+                                        </div> <!-- Affichage des erreurs -->
+
                                     </div>
 
                                     <div class="form-group">
                                         <label for="{{ form.password.vars.id }}"><strong>Password</strong></label>
                                         {{ form_widget(form.password, { 'attr': {'class': 'form-control', 'placeholder': 'Password'} }) }}
+                                        <div class="text-danger">
+                                            {{ form_errors(form.password) }}
+                                        </div> <!-- Affichage des erreurs -->
+
                                     </div>
 
 

@@ -7,6 +7,7 @@ use Symfony\Component\Form\Extension\Core\Type\EmailType;
 use Symfony\Component\Form\Extension\Core\Type\PasswordType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -24,9 +25,36 @@ class UserType extends AbstractType
                 'label' => 'Email',
                 'attr' => ['class' => 'form-control', 'placeholder' => 'Email']
             ])
-            ->add('address', TextType::class, [
+            ->add('address', ChoiceType::class, [
                 'label' => 'Address',
-                'attr' => ['class' => 'form-control', 'placeholder' => 'Address']
+                'choices' => [
+                    'Ariana' => 'Ariana',
+                    'Béja' => 'Béja',
+                    'Ben Arous' => 'Ben Arous',
+                    'Bizerte' => 'Bizerte',
+                    'Gabès' => 'Gabès',
+                    'Gafsa' => 'Gafsa',
+                    'Jendouba' => 'Jendouba',
+                    'Kairouan' => 'Kairouan',
+                    'Kasserine' => 'Kasserine',
+                    'Kébili' => 'Kébili',
+                    'La Manouba' => 'La Manouba',
+                    'Le Kef' => 'Le Kef',
+                    'Mahdia' => 'Mahdia',
+                    'Médenine' => 'Médenine',
+                    'Monastir' => 'Monastir',
+                    'Nabeul' => 'Nabeul',
+                    'Sfax' => 'Sfax',
+                    'Sidi Bouzid' => 'Sidi Bouzid',
+                    'Siliana' => 'Siliana',
+                    'Sousse' => 'Sousse',
+                    'Tataouine' => 'Tataouine',
+                    'Tozeur' => 'Tozeur',
+                    'Tunis' => 'Tunis',
+                    'Zaghouan' => 'Zaghouan',
+                ],
+                'attr' => ['class' => 'form-control'],
+                'placeholder' => 'sélectionnez votre address',
             ])
             ->add('password', PasswordType::class, [
                 'label' => 'Password',

@@ -18,9 +18,13 @@ class Equipement
     #[ORM\Column(type: 'string', length: 50)]
     private string $etatEquipementB;
 
-
+    #[ORM\Column(type: 'string', length: 255, nullable: true)]
+    private ?string $image = null;
     #[ORM\Column(type: 'date')]
     private \DateTimeInterface $dateDernierEntretienEquipementB;
+
+    #[ORM\ManyToOne(inversedBy: 'equipements')]
+    private ?Chambre $chambre = null;
 
     // Getters and Setters
 
@@ -69,6 +73,28 @@ class Equipement
     {
         $this->dateDernierEntretienEquipementB = $dateDernierEntretienEquipementB;
 
+        return $this;
+    }
+
+    public function getChambre(): ?Chambre
+    {
+        return $this->chambre;
+    }
+
+    public function setChambre(?Chambre $chambre): static
+    {
+        $this->chambre = $chambre;
+
+        return $this;
+    }
+    public function getImage(): ?string
+    {
+        return $this->image;
+    }
+
+    public function setImage(?string $image): self
+    {
+        $this->image = $image;
         return $this;
     }
 }

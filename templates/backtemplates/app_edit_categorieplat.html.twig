@@ -1,0 +1,51 @@
+{% extends 'backtemplates/baseback2.html.twig' %}
+
+{% block body %}
+    <div class="container mt-4" style="margin-left: 20%; margin-top: 400px;padding-top: 80px;">
+
+        {# Affichage du message flash si une catégorie a été modifiée avec succès #}
+        {% for message in app.flashes('success') %}
+            <div class="alert alert-success">
+                {{ message }}
+            </div>
+        {% endfor %}
+
+        {# Formulaire pour modifier la catégorie #}
+        <h2>Modifier la catégorie</h2>
+        {{ form_start(form, {'attr': {'class': 'form-horizontal'}}) }}
+        <div class="row mb-3">
+            <label for="{{ form.nomCategorie.vars.id }}" class="col-sm-2 col-form-label">{{ form.nomCategorie.vars.label }}</label>
+            <div class="col-sm-10">
+                {{ form_widget(form.nomCategorie, {'attr': {'class': 'form-control'}}) }}
+            </div>
+        </div>
+        <div class="row mb-3">
+            <label for="{{ form.descrCategorie.vars.id }}" class="col-sm-2 col-form-label">{{ form.descrCategorie.vars.label }}</label>
+            <div class="col-sm-10">
+                {{ form_widget(form.descrCategorie, {'attr': {'class': 'form-control'}}) }}
+            </div>
+        </div>
+        <button type="submit" class="btn btn-primary">Modifier <span class="btn-icon-right"><i class="fa fa-edit"></i></span></button>
+        <a href="{{ path('app_categorieplat') }}" class="btn btn-secondary">Annuler <span class="btn-icon-right"><i class="fa fa-times"></i></span></a>
+        {{ form_end(form) }}
+
+        {# Affichage des détails de la catégorie en cours d'édition #}
+        <h2 class="mt-4">Détails de la catégorie</h2>
+        <table class="table table-bordered">
+            <tr>
+                <th>ID</th>
+                <td>{{ categoriePlat.id }}</td>  <!-- Updated variable name to 'categoriePlat' -->
+            </tr>
+            <tr>
+                <th>Nom</th>
+                <td>{{ categoriePlat.nomCategorie }}</td>  <!-- Updated variable name to 'categoriePlat' -->
+            </tr>
+            <tr>
+                <th>Description</th>
+                <td>{{ categoriePlat.descrCategorie }}</td>  <!-- Updated variable name to 'categoriePlat' -->
+            </tr>
+        </table>
+    </div>
+{% endblock %}
+{% block footer %}
+{% endblock %}

@@ -5,6 +5,8 @@ namespace App\Entity;
 use App\Repository\ServiceRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert ;
+
 
 #[ORM\Entity(repositoryClass: ServiceRepository::class)]
 class Service
@@ -15,16 +17,25 @@ class Service
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
+    #[Assert\NotBlank(message: "Le nom du service est obligatoire")]
     private ?string $nom = null;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
     private ?\DateTimeInterface $date_creation = null;
 
-    #[ORM\Column(type: Types::DATE_MUTABLE)]
+    #[ORM\Column(type: Types::DATETIME_MUTABLE)]
     private ?\DateTimeInterface $date_fin = null;
 
     #[ORM\Column(length: 255, nullable: true)]
+    #[Assert\Length(min: 10,  minMessage: "Votre description doit contenir entre 10 et 255 caracteres")]
     private ?string $description = null;
+
+    #[ORM\ManyToOne(inversedBy: 'services')]
+    #[ORM\JoinColumn(nullable: false)]
+    #[Assert\NotNull(
+        message: 'Le type de service est obligatoire.'
+    )]
+    private ?TypeService $TypeService = null;
 
     public function getId(): ?int
     {
@@ -46,6 +57,7 @@ class Service
     public function getDateCreation(): ?\DateTime
     {
         return $this->date_creation;
+        
     }
 
     public function setDateCreation(\DateTime $date_creation): self
@@ -75,6 +87,18 @@ class Service
     public function setDescription(?string $description): static
     {
         $this->description = $description;
+
+        return $this;
+    }
+
+    public function getTypeService(): ?TypeService
+    {
+        return $this->TypeService;
+    }
+
+    public function setTypeService(?TypeService $TypeService): static
+    {
+        $this->TypeService = $TypeService;
 
         return $this;
     }

@@ -1,10 +1,10 @@
 services:
-    # Default configuration for services in *this* file
+    # Configuration par défaut des services dans ce fichier
     _defaults:
-        autowire: true      # Automatically injects dependencies in your services.
-        autoconfigure: true # Automatically registers your services as commands, event subscribers, etc.
+        autowire: true      # Injection automatique des dépendances dans vos services
+        autoconfigure: true # Enregistre automatiquement vos services en tant que commandes, abonnés à des événements, etc.
 
-    # Makes classes in src/ available to be used as services
+    # Permet d'utiliser les classes dans src/ comme services
     App\:
         resource: '../src/'
         exclude:
@@ -12,5 +12,11 @@ services:
             - '../src/Entity/'
             - '../src/Kernel.php'
 
-    # Explicitly declare ChambreStatutTransformer as a service
+    # Déclaration explicite de ChambreStatutTransformer en tant que service
     App\Form\DataTransformer\ChambreStatutTransformer: ~
+
+parameters:
+
+    images_directory: '%kernel.project_dir%/public/uploads/images'
+
+    equipements_directory: '%kernel.project_dir%/public/uploads/equipements'

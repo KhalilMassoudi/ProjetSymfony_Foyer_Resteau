@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Enum\ChambreStatut;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity]
@@ -11,9 +13,13 @@ class Chambre
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column(type: 'integer')]
-    private int $idChB;
+    private int $id;
 
     #[ORM\Column(type: 'string', length: 50)]
+    #[Assert\Regex(
+        pattern: '/^[A-Z].*$/',
+        message: 'Le numéro de chambre doit commencer par une lettre majuscule.'
+    )]
     private string $numeroChB;
 
     #[ORM\Column(type: 'integer')]
@@ -23,12 +29,29 @@ class Chambre
     private int $capaciteChB;
 
     #[ORM\Column(type: 'string', length: 20)]
-    private string $statutChB;  // Stocker la valeur de l'énumération sous forme de chaîne
+    private string $statutChB;
 
-    // Getter pour idChB
-    public function getIdChB(): int
+    #[ORM\Column(type: 'string', length: 255, nullable: true)]
+    private ?string $image = null;
+
+    #[ORM\Column(type: 'float')]
+    private float $prixChB;
+
+    /**
+     * @var Collection<int, Equipement>
+     */
+    #[ORM\OneToMany(targetEntity: Equipement::class, mappedBy: 'chambre', cascade: ['remove'])]
+    private Collection $equipements;
+
+    public function __construct()
     {
-        return $this->idChB;
+        $this->equipements = new ArrayCollection();
+    }  // Stocker la valeur de l'énumération sous forme de chaîne
+
+    // Getter pour id
+    public function getId(): int
+    {
+        return $this->id;
     }
 
     // Getter et Setter pour numeroChB
@@ -78,6 +101,56 @@ class Chambre
     {
         // Stocker la valeur de l'énumération sous forme de chaîne
         $this->statutChB = $statut->value;
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Equipement>
+     */
+    public function getEquipements(): Collection
+    {
+        return $this->equipements;
+    }
+
+    public function addEquipement(Equipement $equipement): static
+    {
+        if (!$this->equipements->contains($equipement)) {
+            $this->equipements->add($equipement);
+            $equipement->setChambre($this);
+        }
+
+        return $this;
+    }
+
+    public function removeEquipement(Equipement $equipement): static
+    {
+        if ($this->equipements->removeElement($equipement)) {
+            // set the owning side to null (unless already changed)
+            if ($equipement->getChambre() === $this) {
+                $equipement->setChambre(null);
+            }
+        }
+
+        return $this;
+    }
+    public function getImage(): ?string
+    {
+        return $this->image;
+    }
+
+    public function setImage(?string $image): self
+    {
+        $this->image = $image;
+        return $this;
+    }
+    public function getPrixChB(): float
+    {
+        return $this->prixChB;
+    }
+
+    public function setPrixChB(float $prixChB): self
+    {
+        $this->prixChB = $prixChB;
         return $this;
     }
 }

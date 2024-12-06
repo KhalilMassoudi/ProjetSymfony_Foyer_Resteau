@@ -15,6 +15,13 @@ class ServiceRepository extends ServiceEntityRepository
     {
         parent::__construct($registry, Service::class);
     }
+    public function findServiceByName(string $name)
+    {
+        return $this->getEntityManager()
+            ->createQuery('SELECT s FROM App\Entity\Service s WHERE s.nom LIKE :name')
+            ->setParameter('name', '%' . $name . '%')
+            ->getResult();
+    }
 
     //    /**
     //     * @return Service[] Returns an array of Service objects
