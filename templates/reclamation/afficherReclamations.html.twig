@@ -31,8 +31,25 @@
 
                                 /* Appliquer une couleur différente pour les en-têtes */
                                 .table-custom thead {
-                                    background-color: #b6b8ba;  /* Fond encore plus sombre pour l'en-tête */
+                                    background-color: #d3d6da;  /* Fond encore plus sombre pour l'en-tête */
                                     color: #ffffff;  /* Texte blanc pour l'en-tête */
+                                }
+
+                                .add-btn {
+                                    margin-top: 20px;
+                                    background-color: rgba(70, 150, 230, 0.62); /* Vert */
+                                    color: white;
+                                    border: none;
+                                    padding: 10px 15px;
+                                    border-radius: 5px;
+                                    text-decoration: none;
+                                    transition: background-color 0.3s ease;
+                                }
+
+                                .add-btn:hover {
+                                    background-color: rgba(63, 152, 241, 0.62); /* Vert foncé */
+                                    color: #ffffff;
+                                    text-decoration: none;
                                 }
                             </style>
 
@@ -41,6 +58,7 @@
                                 <thead>
                                 <tr>
                                     <th>Titre de la Réclamation</th>
+                                    <th>Type de la réclamation</th>
                                     <th>Description</th>
                                     <th>Date de Réclamation</th>
                                     <th>État</th>
@@ -52,26 +70,106 @@
                                 {% for reclamation in reclamations %}
                                     <tr>
                                         <td>{{ reclamation.titre }}</td>
-                                        <td>{{ reclamation.description }}</td>
+                                      <td> {% if reclamation.TypeReclamations is not null %}
+                                              {{ reclamation.TypeReclamations.NomTypeReclamation }}
+                                          {% else %}
+                                              No Type Available
+                                          {% endif %}</td>
+                                        <td>
+                                            {% set descriptionWords = reclamation.description|split(' ') %}
+                                            {% if descriptionWords|length > 3 %}
+                                                {{ descriptionWords|slice(0, 3)|join(' ') }}...
+                                            {% else %}
+                                                {{ reclamation.description }}
+                                            {% endif %}
+                                        </td>
                                         <td>{{ reclamation.dateReclamation|date('d/m/Y') }}</td>
                                         <td>{{ reclamation.etat }}</td>
-                                        <td>{{ reclamation.reponse ?: '-' }}</td> <!-- Affiche un tiret si la réponse est vide -->
+                                        <td>
+                                            {% if reclamation.reponse %}
+                                                {% set reponseWords = reclamation.reponse|split(' ') %}
+                                                {% if reponseWords|length > 3 %}
+                                                    {{ reponseWords|slice(0, 3)|join(' ') }}...
+                                                {% else %}
+                                                    {{ reclamation.reponse }}
+                                                {% endif %}
+                                            {% else %}
+                                                -
+                                            {% endif %}
+                                        </td><!-- Affiche un tiret si la réponse est vide -->
                                         <td>
                                             <!-- Icônes d'action -->
-                                            <a href="" class="btn btn-info btn-sm" title="Voir">
+                                            <a href="#" class="btn btn-info btn-sm" data-bs-toggle="modal" data-bs-target="#modalDetails{{ reclamation.id }}" title="Voir">
                                                 <i class="bi bi-eye"></i>
                                             </a>
-                                            <a href="" class="btn btn-warning btn-sm" title="Modifier">
-                                                <i class="bi bi-pencil"></i>
-                                            </a>
-                                            <a href="" class="btn btn-danger btn-sm" title="Supprimer" onclick="return confirm('Êtes-vous sûr de vouloir supprimer cette réclamation ?')">
+
+                                            {% if reclamation.reponse is empty %}
+                                                <a href="{{ path('app_modifierReclamation', { id: reclamation.id }) }}" class="btn btn-danger btn-sm" title="modifier" >
+                                                    <i class="bi bi-pencil"></i>
+                                                </a>
+                                            {% endif %}
+
+                                            <a href="{{ path('app_supprimerReclamation', { id: reclamation.id }) }}" class="btn btn-danger btn-sm" title="Supprimer" onclick="return confirm('Êtes-vous sûr de vouloir supprimer cette réclamation ?')">
                                                 <i class="bi bi-trash"></i>
                                             </a>
                                         </td>
+
+
                                     </tr>
+
+                                    <!-- Modal pour afficher les détails de la réclamation -->
+                                    <div class="modal fade" id="modalDetails{{ reclamation.id }}" tabindex="-1" aria-labelledby="modalDetailsLabel{{ reclamation.id }}" aria-hidden="true">
+                                        <div class="modal-dialog">
+                                            <div class="modal-content">
+                                                <div class="modal-header">
+                                                    <h5 class="modal-title" id="modalDetailsLabel{{ reclamation.id }}">Détails de la réclamation</h5>
+                                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                </div>
+                                                <div class="modal-body">
+                                                    <p><strong>Titre :</strong> {{ reclamation.titre }}</p>
+                                                    <p><strong>Description :</strong> {{ reclamation.description }}</p>
+                                                    <p><strong>Date de Réclamation :</strong> {{ reclamation.dateReclamation|date('d/m/Y') }}</p>
+                                                    <p><strong>État :</strong> {{ reclamation.etat }}</p>
+                                                    <p><strong>Réponse :</strong> {{ reclamation.reponse ?: '-' }}</p>
+                                                </div>
+                                                <div class="modal-footer">
+                                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
                                 {% endfor %}
                                 </tbody>
                             </table>
+
+                            <div class="text-end mb-3">
+                                <!-- Bouton pour ouvrir le modal d'ajout -->
+                                <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#ajoutModal">
+                                    Ajouter une Réclamation
+                                </button>
+                            </div>
+
+                            <!-- Modal d'ajout -->
+                            <div class="modal fade" id="ajoutModal" tabindex="-1" aria-labelledby="ajoutModalLabel" aria-hidden="true">
+                                <div class="modal-dialog">
+                                    <div class="modal-content">
+                                        <form id="form-ajout" action="{{ path('app_ajouterReclamationn') }}" method="POST">
+                                            <div class="modal-header">
+                                                <h5 class="modal-title" id="ajoutModalLabel">Ajouter une Réclamation</h5>
+                                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                            </div>
+                                            <div class="modal-body">
+                                                {{ form_start(formAjout, { 'attr': { 'id': 'ajoutForm' } }) }}
+                                                {{ form_widget(formAjout) }}
+                                                {{ form_end(formAjout) }}
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+
+
                         </div>
                     </div>
                 </div>

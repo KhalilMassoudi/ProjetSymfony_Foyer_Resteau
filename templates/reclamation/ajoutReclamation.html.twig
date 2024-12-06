@@ -334,6 +334,16 @@
                                         }
                                     }) }}
                                 </div>
+                                <div class="mb-3">
+                                    <!-- Champ TypeReclamation (dropdown) -->
+                                    <label for="TypeReclamation" class="form-label">Type de réclamation</label>
+                                    {{ form_widget(f.TypeReclamations, {
+                                        'attr': {
+                                            'class': 'form-control form-control-lg',
+                                            'placeholder': 'Sélectionner un type de réclamation'
+                                        }
+                                    }) }}
+                                </div>
 
                                 <!-- Champs cachés pour 'etat' et 'reponse' avec les valeurs par défaut -->
                                 <input type="hidden" name="etat" value="suspendue">

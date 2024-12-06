@@ -27,7 +27,10 @@ class Reclamation
     private ?string $etat = 'suspendue'; // Etat par défaut
 
     #[ORM\Column(length: 255)]
-    private ?string $reponse = ''; // Réponse par défaut est une chaîne vide
+    private ?string $reponse = '';
+
+    #[ORM\ManyToOne]
+    private ?TypeReclamation $TypeReclamations = null; // Réponse par défaut est une chaîne vide
 
     // Constructeur pour définir les valeurs par défaut (facultatif)
     public function __construct()
@@ -94,6 +97,24 @@ class Reclamation
     public function setReponse(string $reponse): static
     {
         $this->reponse = $reponse;
+
+        // Si une réponse est définie, l'état devient "répondue"
+        if (!empty($reponse)) {
+            $this->etat = 'répondue';
+        }
+
+        return $this;
+    }
+
+    public function getTypeReclamations(): ?TypeReclamation
+    {
+        return $this->TypeReclamations;
+    }
+
+    public function setTypeReclamations(?TypeReclamation $TypeReclamations): static
+    {
+        $this->TypeReclamations = $TypeReclamations;
+
         return $this;
     }
 }
