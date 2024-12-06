@@ -16,9 +16,16 @@
                     <a class="nav-link" href="{{ path('app_type_service') }}">Types Services <span class="sr-only">(current)</span></a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="#">Demandes</a>
+                    <a class="nav-link" href="{{ path('app_demande') }}">Demandes</a>
                 </li>
             </ul>
+        </div>
+        <!-- Barre de recherche alignée à droite -->
+        <div class="d-flex justify-content-end mb-4">
+            <form class="d-flex" method="get" action="{{ path('app_service') }}">
+                <input class="form-control me-2" type="search" name="search" value="{{ searchTerm }}" placeholder="Rechercher avec Nom d'un service..." aria-label="Search">
+                <button class="btn btn-primary" type="submit">Rechercher</button>
+            </form>
         </div>
     </nav>
 

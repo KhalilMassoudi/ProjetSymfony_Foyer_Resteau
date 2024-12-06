@@ -21,9 +21,12 @@ class ServiceController extends AbstractController
      
 #[Route('/service', name: 'app_service')]
 public function AfficherAllServices(ServiceRepository $rep, Request $request, EntityManagerInterface $em): Response
-{
-    $services = $rep->findAll();
-    
+{   
+    $searchTerm = $request->query->get('search', ''); 
+    $services = $searchTerm 
+        ? $rep->findServiceByNameOrType($searchTerm) 
+        : $rep->findAll();
+
     
     $service = new Service();
     $form = $this->createForm(ServiceFormType::class, $service);
@@ -40,6 +43,7 @@ public function AfficherAllServices(ServiceRepository $rep, Request $request, En
     return $this->render('service/GestionServices.html.twig', [
         'service' => $services, // List of services
         'form' => $form->createView(), // The form for adding a new service
+        'searchTerm' => $searchTerm,
     ]);
 }
     #[Route('/supp/{id}', name: 'app_ServiceSupprim')]
@@ -71,16 +75,20 @@ public function AfficherAllServices(ServiceRepository $rep, Request $request, En
         ]);
     }
     #[Route('/servicefront/nos-services', name: 'app_frontend_services')]
-public function afficherServicesFrontend(Request $request, ServiceRepository $serviceRepository): Response
-{
-    $searchTerm = $request->query->get('search', ''); 
-    $services = $searchTerm ? $serviceRepository->findServiceByName($searchTerm) : $serviceRepository->findAll();
-
-    return $this->render('service/Nos_Service.html.twig', [
-        'services' => $services,
-        'searchTerm' => $searchTerm, 
-    ]);
-}
+    public function afficherServicesFrontend(Request $request, ServiceRepository $serviceRepository): Response
+    {
+        $searchTerm = $request->query->get('search', '');
+    
+        $services = $searchTerm 
+        ? $serviceRepository->findServiceByNameOrType($searchTerm) 
+        : $serviceRepository->findAll();
+    
+        return $this->render('service/Nos_Service.html.twig', [
+            'services' => $services,
+            'searchTerm' => $searchTerm,
+        ]);
+    }
+    
 
 
 }
