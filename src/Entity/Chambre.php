@@ -5,6 +5,7 @@ namespace App\Entity;
 use App\Enum\ChambreStatut;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use Symfony\Component\Validator\Constraints as Assert;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity]
@@ -16,26 +17,45 @@ class Chambre
     private int $id;
 
     #[ORM\Column(type: 'string', length: 50)]
+    #[Assert\NotBlank(message: "Le numéro de la chambre est obligatoire.")]
     #[Assert\Regex(
-        pattern: '/^[A-Z].*$/',
+        pattern: '/^[A-Z]/',
         message: 'Le numéro de chambre doit commencer par une lettre majuscule.'
     )]
     private string $numeroChB;
 
     #[ORM\Column(type: 'integer')]
+    #[Assert\NotBlank(message: "L'étage de la chambre est obligatoire.")]
+    #[Assert\Range(
+        min: 1,
+        max: 10,
+        notInRangeMessage: 'L\'étage doit être compris entre {{ min }} et {{ max }}.'
+    )]
     private int $etageChB;
 
     #[ORM\Column(type: 'integer')]
+    #[Assert\NotBlank(message: "La capacité de la chambre est obligatoire.")]
+    #[Assert\Range(
+        min: 1,
+        max: 4,
+        notInRangeMessage: 'La capacité doit être comprise entre {{ min }} et {{ max }}.'
+    )]
     private int $capaciteChB;
 
     #[ORM\Column(type: 'string', length: 20)]
+    #[Assert\NotBlank(message: "Le statut de la chambre est obligatoire.")]
     private string $statutChB;
 
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
+    #[Assert\NotBlank(message: "L'image de la chambre est obligatoire.")]
     private ?string $image = null;
 
     #[ORM\Column(type: 'float')]
+    #[Assert\NotBlank(message: "Le prix de la chambre est obligatoire.")]
+    #[Assert\Positive(message: "Le prix de la chambre doit être un nombre positif.")]
     private float $prixChB;
+
+    private $term;
 
     /**
      * @var Collection<int, Equipement>
@@ -46,15 +66,14 @@ class Chambre
     public function __construct()
     {
         $this->equipements = new ArrayCollection();
-    }  // Stocker la valeur de l'énumération sous forme de chaîne
+    }
 
-    // Getter pour id
+
     public function getId(): int
     {
         return $this->id;
     }
 
-    // Getter et Setter pour numeroChB
     public function getNumeroChB(): string
     {
         return $this->numeroChB;
@@ -66,7 +85,6 @@ class Chambre
         return $this;
     }
 
-    // Getter et Setter pour etageChB
     public function getEtageChB(): int
     {
         return $this->etageChB;
@@ -78,7 +96,6 @@ class Chambre
         return $this;
     }
 
-    // Getter et Setter pour capaciteChB
     public function getCapaciteChB(): int
     {
         return $this->capaciteChB;
@@ -90,23 +107,39 @@ class Chambre
         return $this;
     }
 
-    // Getter et Setter pour statutChB
     public function getStatutChB(): ChambreStatut
     {
-        // Retourner l'énumération en la convertissant depuis la chaîne stockée
         return ChambreStatut::from($this->statutChB);
     }
 
     public function setStatutChB(ChambreStatut $statut): self
     {
-        // Stocker la valeur de l'énumération sous forme de chaîne
         $this->statutChB = $statut->value;
         return $this;
     }
 
-    /**
-     * @return Collection<int, Equipement>
-     */
+    public function getImage(): ?string
+    {
+        return $this->image;
+    }
+
+    public function setImage(?string $image): self
+    {
+        $this->image = $image;
+        return $this;
+    }
+
+    public function getPrixChB(): float
+    {
+        return $this->prixChB;
+    }
+
+    public function setPrixChB(float $prixChB): self
+    {
+        $this->prixChB = $prixChB;
+        return $this;
+    }
+
     public function getEquipements(): Collection
     {
         return $this->equipements;
@@ -125,7 +158,6 @@ class Chambre
     public function removeEquipement(Equipement $equipement): static
     {
         if ($this->equipements->removeElement($equipement)) {
-            // set the owning side to null (unless already changed)
             if ($equipement->getChambre() === $this) {
                 $equipement->setChambre(null);
             }
@@ -133,24 +165,14 @@ class Chambre
 
         return $this;
     }
-    public function getImage(): ?string
+    public function getTerm(): ?string
     {
-        return $this->image;
+        return $this->term;
     }
 
-    public function setImage(?string $image): self
+    public function setTerm(?string $term): self
     {
-        $this->image = $image;
-        return $this;
-    }
-    public function getPrixChB(): float
-    {
-        return $this->prixChB;
-    }
-
-    public function setPrixChB(float $prixChB): self
-    {
-        $this->prixChB = $prixChB;
+        $this->term = $term;
         return $this;
     }
 }

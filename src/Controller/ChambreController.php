@@ -1,17 +1,14 @@
 <?php
-
 namespace App\Controller;
 
 use App\Entity\Chambre;
 use App\Form\ChambreType;
 use App\Repository\ChambreRepository;
-use App\Enum\ChambreStatut;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\String\Slugger\SluggerInterface;
 
 class ChambreController extends AbstractController
@@ -28,28 +25,16 @@ class ChambreController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            // Vérification du numéro de chambre
-            $numeroChB = $form->get('numeroChB')->getData();
-            if (!preg_match('/^[A-Z]/', $numeroChB)) {
-                $this->addFlash('error', 'Le numéro de chambre doit commencer par une lettre majuscule.');
-                return $this->redirectToRoute('app_chamber');
-            }
-            $chambre->setNumeroChB($numeroChB);
-
             // Gestion de l'image
-            /** @var UploadedFile $imageFile */
             $imageFile = $form->get('image')->getData();
             if ($imageFile) {
-                $originalFilename = pathinfo($imageFile->getClientOriginalName(), PATHINFO_FILENAME);
-                $safeFilename = $slugger->slug($originalFilename);
-                $newFilename = $safeFilename . '-' . uniqid() . '.' . $imageFile->guessExtension();
+                $newFilename = $chambreRepository->handleImageUpload(
+                    $imageFile,
+                    $slugger,
+                    $this->getParameter('images_directory')
+                );
 
-                try {
-                    $imageFile->move(
-                        $this->getParameter('images_directory'), // Répertoire défini dans services.yaml
-                        $newFilename
-                    );
-                } catch (FileException $e) {
+                if ($newFilename === null) {
                     $this->addFlash('error', 'Erreur lors de l\'upload de l\'image.');
                     return $this->redirectToRoute('app_chamber');
                 }
@@ -72,6 +57,39 @@ class ChambreController extends AbstractController
         ]);
     }
 
+    // Dans votre contrôleur
+    #[Route("/chambre/search", name: "app_chambre_search")]
+    public function search(Request $request, ChambreRepository $chambreRepository): Response
+    {
+        // Récupération des critères de recherche depuis la requête
+        $numero = $request->query->get('numeroChB', '');  // Le champ de recherche par numéro de chambre
+        $etage = $request->query->get('etageChB', '');  // Le champ de recherche par étage
+        $capacite = $request->query->get('capaciteChB', '');  // Le champ de recherche par capacité
+        $statut = $request->query->get('statutChB', '');  // Le champ de recherche par statut
+        $prix = $request->query->get('prixChB', '');  // Le champ de recherche par prix exact
+
+        // Création d'un tableau avec les critères de recherche
+        $searchTerms = [
+            'numeroChB' => $numero,
+            'etageChB' => $etage,
+            'capaciteChB' => $capacite,
+            'statutChB' => $statut,
+            'prixChB' => $prix,  // Utilisation du champ de prix exact
+        ];
+
+        // Appel à la méthode de recherche avec le tableau de critères
+        $chambres = $chambreRepository->findByTerm($searchTerms);
+
+        return $this->render('backtemplates/app_search_chambre.html.twig', [
+            'chambres' => $chambres,
+            'numero' => $numero,
+            'etage' => $etage,
+            'capacite' => $capacite,
+            'statut' => $statut,
+            'prix' => $prix,  // Passage du prix exact à la vue
+        ]);
+    }
+
     #[Route("/chambre/edit/{id}", name: "app_chambre_edit")]
     public function edit(
         int $id,
@@ -90,27 +108,16 @@ class ChambreController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            // Vérification du numéro de chambre
-            $numeroChB = $form->get('numeroChB')->getData();
-            if (!preg_match('/^[A-Z]/', $numeroChB)) {
-                $this->addFlash('error', 'Le numéro de chambre doit commencer par une lettre majuscule.');
-                return $this->redirectToRoute('app_chambre_edit', ['id' => $id]);
-            }
-            $chambre->setNumeroChB($numeroChB);
-
-            /** @var UploadedFile $imageFile */
+            // Gestion de l'image
             $imageFile = $form->get('image')->getData();
             if ($imageFile) {
-                $originalFilename = pathinfo($imageFile->getClientOriginalName(), PATHINFO_FILENAME);
-                $safeFilename = $slugger->slug($originalFilename);
-                $newFilename = $safeFilename . '-' . uniqid() . '.' . $imageFile->guessExtension();
+                $newFilename = $chambreRepository->handleImageUpload(
+                    $imageFile,
+                    $slugger,
+                    $this->getParameter('images_directory')
+                );
 
-                try {
-                    $imageFile->move(
-                        $this->getParameter('images_directory'),
-                        $newFilename
-                    );
-                } catch (FileException $e) {
+                if ($newFilename === null) {
                     $this->addFlash('error', 'Erreur lors de l\'upload de l\'image.');
                     return $this->redirectToRoute('app_chambre_edit', ['id' => $id]);
                 }
@@ -131,7 +138,11 @@ class ChambreController extends AbstractController
     }
 
     #[Route("/chambre/delete/{id}", name: "app_chambre_delete")]
-    public function delete(int $id, EntityManagerInterface $entityManager, ChambreRepository $chambreRepository): Response {
+    public function delete(
+        int $id,
+        EntityManagerInterface $entityManager,
+        ChambreRepository $chambreRepository
+    ): Response {
         $chambre = $chambreRepository->find($id);
 
         if (!$chambre) {
@@ -148,10 +159,6 @@ class ChambreController extends AbstractController
     #[Route("/front/chambre", name: "app_front_chambre")]
     public function frontChambre(ChambreRepository $chambreRepository): Response {
         $chambres = $chambreRepository->findAll();
-
-        if (!$chambres) {
-            throw $this->createNotFoundException('Aucune chambre trouvée.');
-        }
 
         return $this->render('fronttemplates/app_frontchambre.html.twig', [
             'chambres' => $chambres,
