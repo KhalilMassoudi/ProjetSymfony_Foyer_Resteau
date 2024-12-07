@@ -56,37 +56,32 @@ class ChambreController extends AbstractController
             'chambres' => $chambres,
         ]);
     }
-
-    // Dans votre contrôleur
     #[Route("/chambre/search", name: "app_chambre_search")]
     public function search(Request $request, ChambreRepository $chambreRepository): Response
     {
-        // Récupération des critères de recherche depuis la requête
+
         $numero = $request->query->get('numeroChB', '');  // Le champ de recherche par numéro de chambre
         $etage = $request->query->get('etageChB', '');  // Le champ de recherche par étage
         $capacite = $request->query->get('capaciteChB', '');  // Le champ de recherche par capacité
         $statut = $request->query->get('statutChB', '');  // Le champ de recherche par statut
         $prix = $request->query->get('prixChB', '');  // Le champ de recherche par prix exact
 
-        // Création d'un tableau avec les critères de recherche
+
         $searchTerms = [
             'numeroChB' => $numero,
             'etageChB' => $etage,
             'capaciteChB' => $capacite,
             'statutChB' => $statut,
-            'prixChB' => $prix,  // Utilisation du champ de prix exact
+            'prixChB' => $prix,
         ];
-
-        // Appel à la méthode de recherche avec le tableau de critères
         $chambres = $chambreRepository->findByTerm($searchTerms);
-
         return $this->render('backtemplates/app_search_chambre.html.twig', [
             'chambres' => $chambres,
             'numero' => $numero,
             'etage' => $etage,
             'capacite' => $capacite,
             'statut' => $statut,
-            'prix' => $prix,  // Passage du prix exact à la vue
+            'prix' => $prix,
         ]);
     }
 
@@ -158,21 +153,20 @@ class ChambreController extends AbstractController
 
     #[Route("/front/chambre", name: "app_front_chambre")]
     public function frontChambre(Request $request, ChambreRepository $chambreRepository): Response {
-        // Récupérer les termes de recherche depuis la requête (valeurs de recherche, par exemple par numéro, étage, etc.)
+
         $searchTerms = [
-            'numeroChB' => $request->query->get('numeroChB', ''), // Récupérer les paramètres de recherche
+            'numeroChB' => $request->query->get('numeroChB', ''),
             'etageChB' => $request->query->get('etageChB', ''),
             'capaciteChB' => $request->query->get('capaciteChB', ''),
             'statutChB' => $request->query->get('statutChB', ''),
             'prixChB' => $request->query->get('prixChB', ''),
         ];
 
-        // Appel à la méthode de recherche avec les critères
         $chambres = $chambreRepository->findByTerm($searchTerms);
 
         return $this->render('fronttemplates/app_frontchambre.html.twig', [
             'chambres' => $chambres,
-            'searchTerms' => $searchTerms, // Passer les termes de recherche à la vue
+            'searchTerms' => $searchTerms,
         ]);
     }
 

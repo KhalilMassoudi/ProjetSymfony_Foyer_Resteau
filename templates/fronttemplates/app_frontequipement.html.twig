@@ -2,6 +2,14 @@
 
 {% block amodifier %}
     <div class="container mt-5">
+        <div class="d-flex justify-content-end mb-4">
+            <form class="d-flex" method="get" action="{{ path('app_front_equipement') }}">
+                <input class="form-control me-2" type="search" name="nomEquipementB" value="{{ searchTerms.nomEquipementB }}" placeholder="Rechercher par nom d'équipement..." aria-label="Search">
+                <input class="form-control me-2" type="search" name="etatEquipementB" value="{{ searchTerms.etatEquipementB }}" placeholder="Rechercher par état..." aria-label="Search">
+                <input class="form-control me-2" type="search" name="numeroChB" value="{{ searchTerms.numeroChB }}" placeholder="Rechercher par nméro de chambre..." aria-label="Search">
+                <button class="btn btn-primary" type="submit">Rechercher</button>
+            </form>
+        </div>
         <h2 class="section-title text-center mb-4">Liste des Équipements</h2>
 
         {% if equipements is not empty %}
