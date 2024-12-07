@@ -38,8 +38,6 @@ class EquipementController extends AbstractController
         ]);
     }
 
-    // ChambreController.php
-
     #[Route("/equipement/search", name: "app_equipement_search")]
     public function search(Request $request, EquipementRepository $equipementRepository): Response
     {
@@ -47,17 +45,15 @@ class EquipementController extends AbstractController
         $etatEquipement = $request->query->get('etatEquipementB', '');
         $numeroChB = $request->query->get('chambre', '');
 
-        // Création des critères de recherche
         $searchTerms = [
             'nomEquipementB' => $nomEquipement,
             'etatEquipementB' => $etatEquipement,
             'numeroChB' => $numeroChB,
         ];
 
-        // Recherche des équipements
+
         $equipements = $equipementRepository->findByTerm($searchTerms);
 
-        // Rendu de la vue
         return $this->render('backtemplates/app_search_equipement.html.twig', [
             'equipements' => $equipements,
             'nomEquipementB' => $nomEquipement,
@@ -116,11 +112,24 @@ class EquipementController extends AbstractController
     }
 
     #[Route("/front/equipement", name: "app_front_equipement")]
-    public function frontEquipement(EquipementRepository $equipementRepository): Response {
-        $equipements = $equipementRepository->findAll();
+    public function frontEquipement(Request $request, EquipementRepository $equipementRepository): Response
+    {
+        $nomEquipement = $request->query->get('nomEquipementB', '');
+        $etatEquipement = $request->query->get('etatEquipementB', '');
+        $numeroChB = $request->query->get('chambre', '');
+
+        $searchTerms = [
+            'nomEquipementB' => $nomEquipement,
+            'etatEquipementB' => $etatEquipement,
+            'numeroChB' => $numeroChB,
+        ];
+
+        $equipements = $equipementRepository->findByTerm($searchTerms);
 
         return $this->render('fronttemplates/app_frontequipement.html.twig', [
             'equipements' => $equipements,
+            'searchTerms' => $searchTerms,
         ]);
     }
+
 }
