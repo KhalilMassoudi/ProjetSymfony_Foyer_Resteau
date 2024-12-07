@@ -1,0 +1,98 @@
+{% extends 'backtemplates/baseback2.html.twig' %}
+
+{% block body %}
+    <div class="container mt-4" style="margin-left: 20%; margin-top: 80px;">
+        <h1>Recherche de chambres</h1>
+
+        {# Affichage des messages flash pour les erreurs #}
+        {% for message in app.flashes('error') %}
+            <div class="alert alert-danger solid alert-rounded">
+                <strong>Erreur!</strong> {{ message }}
+            </div>
+        {% endfor %}
+
+        {# Affichage des messages flash pour les succès #}
+        {% for message in app.flashes('success') %}
+            <div class="alert alert-success solid alert-rounded">
+                <strong>Succès!</strong> {{ message }}
+            </div>
+        {% endfor %}
+
+        {# Formulaire de recherche de chambres #}
+        <form method="get" action="{{ path('app_chambre_search') }}" class="mb-4">
+            <div class="row">
+                <div class="col-md-4">
+                    <label for="numeroChB">Numéro de chambre</label>
+                    <input type="text" name="numeroChB" id="numeroChB" class="form-control" value="{{ numero }}">
+                </div>
+
+                <div class="col-md-4">
+                    <label for="etageChB">Étage</label>
+                    <input type="text" name="etageChB" id="etageChB" class="form-control" value="{{ etage }}">
+                </div>
+
+                <div class="col-md-4">
+                    <label for="capaciteChB">Capacité</label>
+                    <input type="text" name="capaciteChB" id="capaciteChB" class="form-control" value="{{ capacite }}">
+                </div>
+            </div>
+
+            <div class="row mt-3">
+                <div class="col-md-4">
+                    <label for="statutChB">Statut</label>
+                    <select name="statutChB" id="statutChB" class="form-control">
+                        <option value="Disponible" {% if statut == 'Disponible' %}selected{% endif %}>Disponible</option>
+                        <option value="Occupée" {% if statut == 'Occupée' %}selected{% endif %}>Occupée</option>
+                        <option value="En maintenance" {% if statut == 'En maintenance' %}selected{% endif %}>En maintenance</option>
+                    </select>
+                </div>
+
+                <div class="col-md-4">
+                    <label for="prixChB">Prix</label>
+                    <input type="number" name="prixChB" id="prixChB" class="form-control" value="{{ prix }}" step="0.01">
+                </div>
+            </div>
+
+            <button type="submit" class="btn btn-primary mt-3">Rechercher</button>
+            <a href="{{ path('app_chamber') }}" class="btn btn-secondary mt-3">Annuler</a>
+        </form>
+
+        {# Résultats de la recherche #}
+        {% if chambres is not empty %}
+            <h2>Résultats de la recherche</h2>
+            <table class="table table-striped">
+                <thead>
+                <tr>
+                    <th>Numéro</th>
+                    <th>Étage</th>
+                    <th>Capacité</th>
+                    <th>Statut</th>
+                    <th>Prix</th>
+                    <th>Actions</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for chambre in chambres %}
+                    <tr>
+                        <td>{{ chambre.numeroChB }}</td>
+                        <td>{{ chambre.etageChB }}</td>
+                        <td>{{ chambre.capaciteChB }}</td>
+                        <td>{{ chambre.statutChB.getValue() }}</td>
+                        <td>{{ chambre.prixChB }} €</td>
+                        <td>
+                            <a href="{{ path('app_chambre_edit', {'id': chambre.id}) }}" class="btn btn-primary btn-sm mr-3">
+                                <i class="fa fa-edit"></i> Modifier
+                            </a>
+                            <a href="{{ path('app_chambre_delete', {'id': chambre.id}) }}" class="btn btn-danger btn-sm" onclick="return confirm('Êtes-vous sûr de vouloir supprimer cette chambre ?');">
+                                <i class="fa fa-trash"></i> Supprimer
+                            </a>
+                        </td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        {% else %}
+            <p>Aucune chambre ne correspond à votre recherche.</p>
+        {% endif %}
+    </div>
+{% endblock %}
