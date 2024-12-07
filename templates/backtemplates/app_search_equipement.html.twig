@@ -22,33 +22,20 @@
         <!-- Formulaire de recherche -->
         <form method="get" action="{{ path('app_equipement_search') }}" class="mb-4">
             <div class="row">
-                <!-- Champ de recherche : Nom de l'équipement -->
-                <div class="col-md-4">
-                    <label for="nomEquipementB">Nom de l'équipement</label>
-                    <input type="text" name="nomEquipementB" id="nomEquipementB" class="form-control" value="{{ nomEquipementB }}">
+                <!-- Champ de recherche unique -->
+                <div class="col-md-8">
+                    <label for="searchTerm">Rechercher un équipement</label>
+                    <input type="text" name="searchTerm" id="searchTerm" class="form-control" value="{{ searchTerm }}">
                 </div>
-
-                <!-- Champ de recherche : État de l'équipement -->
-                <div class="col-md-4">
-                    <label for="etatEquipementB">État</label>
-                    <input type="text" name="etatEquipementB" id="etatEquipementB" class="form-control" value="{{ etatEquipementB }}">
+                <div class="col-md-4 d-flex align-items-end">
+                    <!-- Boutons de soumission -->
+                    <button type="submit" class="btn btn-primary">
+                        Rechercher <span class="btn-icon-right"><i class="fa fa-search"></i></span>
+                    </button>
+                    <a href="{{ path('app_equipement') }}" class="btn btn-secondary ms-2">
+                        Annuler <span class="btn-icon-right"><i class="fa fa-times"></i></span>
+                    </a>
                 </div>
-
-                <!-- Champ de recherche : Chambre associée -->
-                <div class="col-md-4">
-                    <label for="chambre">Chambre associée</label>
-                    <input type="text" name="chambre" id="chambre" class="form-control" value="{{ chambre }}">
-                </div>
-            </div>
-
-            <!-- Boutons de soumission -->
-            <div class="mt-3">
-                <button type="submit" class="btn btn-primary">
-                    Rechercher <span class="btn-icon-right"><i class="fa fa-search"></i></span>
-                </button>
-                <a href="{{ path('app_equipement') }}" class="btn btn-secondary">
-                    Annuler <span class="btn-icon-right"><i class="fa fa-times"></i></span>
-                </a>
             </div>
         </form>
 
