@@ -153,9 +153,9 @@ class ChambreController extends AbstractController
 
     #[Route("/front/chambre", name: "app_front_chambre")]
     public function frontChambre(Request $request, ChambreRepository $chambreRepository): Response {
-        // Récupérer les termes de recherche depuis la requête (valeurs de recherche, par exemple par numéro, étage, etc.)
+
         $searchTerms = [
-            'numeroChB' => $request->query->get('numeroChB', ''), // Récupérer les paramètres de recherche
+            'numeroChB' => $request->query->get('numeroChB', ''),
             'etageChB' => $request->query->get('etageChB', ''),
             'capaciteChB' => $request->query->get('capaciteChB', ''),
             'statutChB' => $request->query->get('statutChB', ''),
@@ -166,7 +166,7 @@ class ChambreController extends AbstractController
 
         return $this->render('fronttemplates/app_frontchambre.html.twig', [
             'chambres' => $chambres,
-            'searchTerms' => $searchTerms, // Passer les termes de recherche à la vue
+            'searchTerms' => $searchTerms,
         ]);
     }
 

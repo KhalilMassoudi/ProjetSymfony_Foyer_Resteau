@@ -116,13 +116,13 @@ class EquipementController extends AbstractController
     {
         $nomEquipement = $request->query->get('nomEquipementB', '');
         $etatEquipement = $request->query->get('etatEquipementB', '');
-        $numeroChB = $request->query->get('chambre', '');
-
+        $numeroChB = $request->query->get('numeroChB', '');
         $searchTerms = [
             'nomEquipementB' => $nomEquipement,
             'etatEquipementB' => $etatEquipement,
             'numeroChB' => $numeroChB,
         ];
+
 
         $equipements = $equipementRepository->findByTerm($searchTerms);
 
