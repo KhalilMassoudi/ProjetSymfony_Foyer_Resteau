@@ -60,32 +60,38 @@ class ChambreController extends AbstractController
     #[Route("/chambre/search", name: "app_chambre_search")]
     public function search(Request $request, ChambreRepository $chambreRepository): Response
     {
+        // Récupérer les valeurs de la requête pour chaque critère
+        $numero = $request->query->get('numeroChB', '');
+        $etageMin = $request->query->get('etage_min', 1); // Valeur par défaut 1
+        $etageMax = $request->query->get('etage_max', 10); // Valeur par défaut 10
+        $capaciteMin = $request->query->get('capacite_min', 1); // Valeur par défaut 1
+        $capaciteMax = $request->query->get('capacite_max', 5); // Valeur par défaut 5
+        $statut = $request->query->get('statutChB', ''); // Statut de chambre
+        $prixMin = $request->query->get('prix_min', '');
+        $prixMax = $request->query->get('prix_max', '');
 
-        $numero = $request->query->get('numeroChB', '');  // Le champ de recherche par numéro de chambre
-        $etage = $request->query->get('etageChB', '');  // Le champ de recherche par étage
-        $capacite = $request->query->get('capaciteChB', '');  // Le champ de recherche par capacité
-        $statut = $request->query->get('statutChB', '');  // Le champ de recherche par statut
-        $prix = $request->query->get('prixChB', '');  // Le champ de recherche par prix exact
-
-
+        // Créer un tableau avec les critères
         $searchTerms = [
             'numeroChB' => $numero,
-            'etageChB' => $etage,
-            'capaciteChB' => $capacite,
+            'etage_min' => $etageMin,
+            'etage_max' => $etageMax,
+            'capacite_min' => $capaciteMin,
+            'capacite_max' => $capaciteMax,
             'statutChB' => $statut,
-            'prixChB' => $prix,
+            'prix_min' => $prixMin,
+            'prix_max' => $prixMax,
         ];
-        $chambres = $chambreRepository->findByTerm($searchTerms);
+
+        // Effectuer la recherche et le filtrage via le repository
+        $chambres = $chambreRepository->searchAndFilter($searchTerms);
+
+        // Retourner les résultats avec les critères utilisés pour afficher les options du formulaire
         return $this->render('backtemplates/app_search_chambre.html.twig', [
             'chambres' => $chambres,
-            'numero' => $numero,
-            'etage' => $etage,
-            'capacite' => $capacite,
-            'statut' => $statut,
-            'prix' => $prix,
+            'searchTerms' => $searchTerms,
+            'statuts' => array_map(fn($statut) => $statut->getValue(), ChambreStatut::cases()), // Convertir les statuts en chaînes de caractères
         ]);
     }
-
     #[Route("/chambre/edit/{id}", name: "app_chambre_edit")]
     public function edit(
         int $id,
@@ -173,7 +179,4 @@ class ChambreController extends AbstractController
             'statuts' => array_map(fn($statut) => $statut->getValue(), ChambreStatut::cases()), // Convertir les statuts en chaînes de caractères
         ]);
     }
-
-
-
 }

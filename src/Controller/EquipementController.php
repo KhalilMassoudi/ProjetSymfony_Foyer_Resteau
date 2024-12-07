@@ -41,28 +41,16 @@ class EquipementController extends AbstractController
     #[Route("/equipement/search", name: "app_equipement_search")]
     public function search(Request $request, EquipementRepository $equipementRepository): Response
     {
-        $nomEquipement = $request->query->get('nomEquipementB', '');
-        $etatEquipement = $request->query->get('etatEquipementB', '');
-        $numeroChB = $request->query->get('chambre', '');
-
+        $searchTerm = $request->query->get('searchTerm', '');
         $searchTerms = [
-            'nomEquipementB' => $nomEquipement,
-            'etatEquipementB' => $etatEquipement,
-            'numeroChB' => $numeroChB,
+            'searchTerm' => $searchTerm,
         ];
-
-
         $equipements = $equipementRepository->findByTerm($searchTerms);
-
         return $this->render('backtemplates/app_search_equipement.html.twig', [
             'equipements' => $equipements,
-            'nomEquipementB' => $nomEquipement,
-            'etatEquipementB' => $etatEquipement,
-            'chambre' => $numeroChB,
+            'searchTerm' => $searchTerm,  // Transmettre le terme de recherche à la vue
         ]);
     }
-
-
     #[Route("/equipement/edit/{id}", name: "app_equipement_edit")]
     public function edit(
         int $id,
@@ -114,17 +102,11 @@ class EquipementController extends AbstractController
     #[Route("/front/equipement", name: "app_front_equipement")]
     public function frontEquipement(Request $request, EquipementRepository $equipementRepository): Response
     {
-        // Récupération de la chaîne de recherche
         $searchTerm = $request->query->get('searchTerm', '');
-
-        // Préparer les termes de recherche
         $searchTerms = [
             'searchTerm' => $searchTerm,
         ];
-
-        // Rechercher les équipements en fonction des termes
         $equipements = $equipementRepository->findByTerm($searchTerms);
-
         return $this->render('fronttemplates/app_frontequipement.html.twig', [
             'equipements' => $equipements,
             'searchTerms' => $searchTerms,
