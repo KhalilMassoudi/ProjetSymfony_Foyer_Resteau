@@ -114,16 +114,15 @@ class EquipementController extends AbstractController
     #[Route("/front/equipement", name: "app_front_equipement")]
     public function frontEquipement(Request $request, EquipementRepository $equipementRepository): Response
     {
-        $nomEquipement = $request->query->get('nomEquipementB', '');
-        $etatEquipement = $request->query->get('etatEquipementB', '');
-        $numeroChB = $request->query->get('numeroChB', '');
+        // Récupération de la chaîne de recherche
+        $searchTerm = $request->query->get('searchTerm', '');
+
+        // Préparer les termes de recherche
         $searchTerms = [
-            'nomEquipementB' => $nomEquipement,
-            'etatEquipementB' => $etatEquipement,
-            'numeroChB' => $numeroChB,
+            'searchTerm' => $searchTerm,
         ];
 
-
+        // Rechercher les équipements en fonction des termes
         $equipements = $equipementRepository->findByTerm($searchTerms);
 
         return $this->render('fronttemplates/app_frontequipement.html.twig', [
