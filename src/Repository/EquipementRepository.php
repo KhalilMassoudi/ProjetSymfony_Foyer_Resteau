@@ -27,33 +27,28 @@ class EquipementRepository extends ServiceEntityRepository
             return null;
         }
     }
-    // EquipementRepository.php
-
-    public function findByTerm(array $criteria): array
+    public function findByTerm(array $searchTerms)
     {
-        $queryBuilder = $this->createQueryBuilder('e');
+        $queryBuilder = $this->createQueryBuilder('e')
+            ->leftJoin('e.chambre', 'c');  // Join avec Chambre pour numéro de chambre
 
-        if (!empty($criteria['nomEquipementB'])) {
-            $queryBuilder->andWhere('LOWER(e.nomEquipementB) LIKE :nomEquipementB')
-                ->setParameter('nomEquipementB', '%' . strtolower($criteria['nomEquipementB']) . '%');
+        // Si un terme de recherche est fourni
+        if (!empty($searchTerms['searchTerm'])) {
+            $searchWords = explode(' ', $searchTerms['searchTerm']);  // Divisez les termes de recherche
+
+            // On va appliquer le filtre sur chaque terme de recherche dans tous les champs
+            foreach ($searchWords as $word) {
+                $queryBuilder->andWhere('
+                e.nomEquipementB LIKE :word OR 
+                e.etatEquipementB LIKE :word OR 
+                c.numeroChB LIKE :word')
+                    ->setParameter('word', '%' . $word . '%');
+            }
         }
 
-
-        if (!empty($criteria['etatEquipementB'])) {
-            $queryBuilder->andWhere('LOWER(e.etatEquipementB) LIKE :etatEquipementB')
-                ->setParameter('etatEquipementB', '%' . strtolower($criteria['etatEquipementB']) . '%');
-        }
-
-
-        if (!empty($criteria['numeroChB'])) {
-            $queryBuilder->innerJoin('e.chambre', 'c')
-                ->andWhere('LOWER(c.numeroChB) LIKE :numeroChB')
-                ->setParameter('numeroChB', '%' . strtolower($criteria['numeroChB']) . '%');
-        }
-
+        // Exécution de la requête et retour des résultats
         return $queryBuilder->getQuery()->getResult();
     }
-
 
 
 }

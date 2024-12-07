@@ -30,43 +30,45 @@ class ChambreRepository extends ServiceEntityRepository
         }
     }
 
-    public function findByTerm(array $searchTerms)
+    public function searchAndFilter(array $criteria): array
     {
         $qb = $this->createQueryBuilder('c');
 
-        // Recherche par numéro de chambre
-        if (!empty($searchTerms['numeroChB'])) {
+        // Barre de recherche pour le numéro de chambre
+        if (!empty($criteria['numeroChB'])) {
             $qb->andWhere('c.numeroChB LIKE :numeroChB')
-                ->setParameter('numeroChB', '%' . $searchTerms['numeroChB'] . '%');
+                ->setParameter('numeroChB', '%' . $criteria['numeroChB'] . '%');
         }
 
-        // Recherche par étage
-        if (!empty($searchTerms['etageChB'])) {
-            $qb->andWhere('c.etageChB = :etageChB')
-                ->setParameter('etageChB', $searchTerms['etageChB']);
+        // Filtrage par étage (intervalle 1 à 10)
+        if (!empty($criteria['etage_min']) && !empty($criteria['etage_max'])) {
+            $qb->andWhere('c.etageChB BETWEEN :etage_min AND :etage_max')
+                ->setParameter('etage_min', $criteria['etage_min'])
+                ->setParameter('etage_max', $criteria['etage_max']);
         }
 
-        // Recherche par capacité
-        if (!empty($searchTerms['capaciteChB'])) {
-            $qb->andWhere('c.capaciteChB = :capaciteChB')
-                ->setParameter('capaciteChB', $searchTerms['capaciteChB']);
+        // Filtrage par capacité (intervalle 1 à 5)
+        if (!empty($criteria['capacite_min']) && !empty($criteria['capacite_max'])) {
+            $qb->andWhere('c.capaciteChB BETWEEN :capacite_min AND :capacite_max')
+                ->setParameter('capacite_min', $criteria['capacite_min'])
+                ->setParameter('capacite_max', $criteria['capacite_max']);
         }
 
-        // Recherche par statut
-        if (!empty($searchTerms['statutChB'])) {
+        // Filtrage par statut
+        if (!empty($criteria['statutChB'])) {
             $qb->andWhere('c.statutChB = :statutChB')
-                ->setParameter('statutChB', $searchTerms['statutChB']);
+                ->setParameter('statutChB', $criteria['statutChB']);
         }
 
-        // Recherche par prix exact
-        if (!empty($searchTerms['prixChB'])) {
-            $qb->andWhere('c.prixChB = :prixChB')
-                ->setParameter('prixChB', $searchTerms['prixChB']);
+
+        // Filtrage par prix (intervalle)
+        if (!empty($criteria['prix_min']) && !empty($criteria['prix_max'])) {
+            $qb->andWhere('c.prixChB BETWEEN :prix_min AND :prix_max')
+                ->setParameter('prix_min', $criteria['prix_min'])
+                ->setParameter('prix_max', $criteria['prix_max']);
         }
 
         return $qb->getQuery()->getResult();
     }
-
-
 
 }

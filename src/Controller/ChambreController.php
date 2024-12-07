@@ -3,6 +3,7 @@ namespace App\Controller;
 
 use App\Entity\Chambre;
 use App\Form\ChambreType;
+use App\Enum\ChambreStatut;
 use App\Repository\ChambreRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -150,24 +151,29 @@ class ChambreController extends AbstractController
         $this->addFlash('success', 'Chambre supprimée avec succès !');
         return $this->redirectToRoute('app_chamber');
     }
-
     #[Route("/front/chambre", name: "app_front_chambre")]
-    public function frontChambre(Request $request, ChambreRepository $chambreRepository): Response {
-
+    public function frontChambre(Request $request, ChambreRepository $chambreRepository): Response
+    {
         $searchTerms = [
             'numeroChB' => $request->query->get('numeroChB', ''),
-            'etageChB' => $request->query->get('etageChB', ''),
-            'capaciteChB' => $request->query->get('capaciteChB', ''),
+            'etage_min' => $request->query->get('etage_min', 1),
+            'etage_max' => $request->query->get('etage_max', 10),
+            'capacite_min' => $request->query->get('capacite_min', 1),
+            'capacite_max' => $request->query->get('capacite_max', 5),
             'statutChB' => $request->query->get('statutChB', ''),
-            'prixChB' => $request->query->get('prixChB', ''),
+            'prix_min' => $request->query->get('prix_min', ''),
+            'prix_max' => $request->query->get('prix_max', ''),
         ];
 
-        $chambres = $chambreRepository->findByTerm($searchTerms);
+        $chambres = $chambreRepository->searchAndFilter($searchTerms);
 
         return $this->render('fronttemplates/app_frontchambre.html.twig', [
             'chambres' => $chambres,
             'searchTerms' => $searchTerms,
+            'statuts' => array_map(fn($statut) => $statut->getValue(), ChambreStatut::cases()), // Convertir les statuts en chaînes de caractères
         ]);
     }
+
+
 
 }
