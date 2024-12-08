@@ -7,7 +7,7 @@
 <!-- Barre de recherche alignée à droite -->
 <div class="d-flex justify-content-end mb-4">
     <form class="d-flex" method="get" action="{{ path('app_frontend_services') }}">
-        <input class="form-control me-2" type="search" name="search" value="{{ searchTerm }}" placeholder="Rechercher avec Nom d'un service..." aria-label="Search">
+        <input class="form-control me-2" type="search" name="search" value="{{ searchTerm }}" placeholder="Rechercher service ..." aria-label="Search">
         <button class="btn btn-primary" type="submit">Rechercher</button>
     </form>
 </div>
@@ -28,7 +28,7 @@
                         {% if service.TypeService %}
                             <p class="text-muted small mt-auto">Type du Service : {{ service.TypeService }}</p>
                         {% endif %}
-                        <a {#href="{{ path('service_detail', {id: service.id}) }}"#} class="btn btn-outline-primary mt-3">Voir plus</a>
+                        <a href="{{ path('app_demande_ajout', {id: service.id}) }}" class="btn btn-outline-primary mt-3">Voir plus</a>
                     </div>
                 </div>
             </div>
