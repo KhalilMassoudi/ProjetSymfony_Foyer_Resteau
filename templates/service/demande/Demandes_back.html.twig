@@ -22,12 +22,60 @@
         </div>
     </nav>
 
-    {# Section Service List #}
     <div class="card mt-4">
         <div class="card-header">
-            <h4 class="card-title">List of Demandes</h4>
+            <h4 class="card-title">List of Services</h4>
+            <h4 class="card-title d-flex justify-content-between">
+                <button id="toggleFormBtn" class="btn btn-primary mb-4">
+                    Ajouter un Service <span class="btn-icon-right"><i class="fa fa-plus"></i></span>
+                </button>
+            </h4>
         </div>
-    </div>
+                <div class="card-body">
+            <div class="table-responsive">
+                <table class="table student-data-table m-t-20">
+                    <thead>
+                        <tr>
+                            <th>Nom</th>
+                            <th>Prenom</th>
+                            <th>Description</th>
+                            <th>Date</th>
+                            <th>Telephone</th>
+                            <th>Email</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for message in app.flashes('success') %}
+                        <div class="alert alert-success">
+                            {{ message }}
+                        </div>
+                        {% endfor %}
+                        {% for s in demandes %}
+                        <tr>
+                            <td>{{ s.nom }}</td>
+                            <td>{{ s.prenom }}</td>
+                            <td>{{ s.description }}</td>
+                            <td>{{ s.dateCreation ? s.dateCreation|date('Y-m-d') : 'No date available' }}</td>
+                            <td>{{ s.telephone }}</td>
+                            <td>{{ s.email }}</td>
+                            <td>
+                                <a href="{{ path('app_service_edit', { 'id': s.id }) }}" class="btn btn-primary btn-sm">
+                                    <i class="fa fa-edit"></i>
+                                </a>
+                                <a href="{{ path('app_ServiceSupprim', { 'id': s.id }) }}" class="btn btn-danger btn-sm" onclick="return confirm('Êtes-vous sûr de vouloir supprimer ce service ?')" title="Delete">
+                                    <i class="fa fa-trash"></i>
+                                </a>
+                            </td>
+                        </tr>
+                        {% else %}
+                        <tr>
+                            <td colspan="7">Aucun service trouvé.</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
 </div>
 {% endblock %}
 
