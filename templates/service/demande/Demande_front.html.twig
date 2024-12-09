@@ -50,11 +50,7 @@
                         {{ form_widget(form.description, {'attr': {'class': 'form-control'}}) }}
                         {{ form_errors(form.description) }}
                     </div>
-                    <div class="mb-3">
-                        {{ form_label(form.date_demande, 'Date de la demande', {'label_attr': {'class': 'form-label'}}) }}
-                        {{ form_widget(form.date_demande, {'attr': {'class': 'form-control'}}) }}
-                        {{ form_errors(form.date_demande) }}
-                    </div>
+
                     <button type="submit" class="btn btn-primary w-100">Envoyer la demande</button>
                     {{ form_end(form) }}
                 </div>

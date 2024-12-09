@@ -1,5 +1,4 @@
 security:
-
     providers:
         app_user_provider:
             entity:
@@ -16,10 +15,15 @@ security:
             security: false
 
         main:
-
             lazy: true
             provider: app_user_provider
             custom_authenticator: App\Security\UserAuthenticator
             logout:
                 path: app_logout
-                target: app_login
+                target: app_front
+            # No access_control here anymore
+
+    # Move access_control here, outside of firewalls
+    access_control:
+        - { path: ^/demande, roles: ROLE_USER }
+        - { path: ^/admin, roles: ROLE_ADMIN }

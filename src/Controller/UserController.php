@@ -5,26 +5,35 @@ namespace App\Controller;
 use App\Entity\User;
 use App\Form\UserType;
 use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\HttpFoundation\RedirectResponse;
+use Symfony\Bundle\SecurityBundle\Security;
+use App\Repository\DemandeServiceRepository;
+use Doctrine\ORM\Mapping\Id;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
-use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
+use Symfony\Component\HttpFoundation\RedirectResponse;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
+use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
+use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 
 
 
 class UserController extends AbstractController
 {
 
-    #[Route('/', name: 'app_front')]
-    public function login(): Response
-    {
-        return $this->render('fronttemplates/basefront.html.twig', [
-            'controller_name' => 'UserController',
-        ]);
-    }
+    #[Route('/', name: 'app_front')] 
+public function front(Security $security): Response
+{
+    // Get the currently authenticated user
+    $user = $security->getUser();
+
+    // Pass the user to the template
+    return $this->render('fronttemplates/basefront.html.twig', [
+        'user' => $user,
+    ]);
+}
+
 
     private $entityManager;
     private $passwordHasher;
@@ -69,58 +78,33 @@ class UserController extends AbstractController
 
 
 
-    #[Route('/login/check', name: 'app_login_check')]
-    public function checkLogin(Request $request): Response
-    {
-        $email = $request->request->get('email');
-        $password = $request->request->get('password');
+    /*#[Route('/login', name: 'app_login')]
+public function login(AuthenticationUtils $authenticationUtils): Response
+{
+    // Retrieve login errors, if any
+    $error = $authenticationUtils->getLastAuthenticationError();
+    $lastUsername = $authenticationUtils->getLastUsername();
 
-        $user = $this->entityManager->getRepository(User::class)->findOneBy(['email' => $email]);
+    return $this->render('security/login.html.twig', [
+        'last_username' => $lastUsername,
+        'error' => $error,
+    ]);
+}
 
-        if ($user && $this->passwordHasher->isPasswordValid($user, $password)) {
-            // Démarrer la session et stocker les informations utilisateur
-            $session = $request->getSession();
-            $session->set('user_id', $user->getId());
-            $session->set('username', $user->getUsername()); // Assurez-vous que la méthode getUsername() existe
-
-            // Vérifier le rôle de l'utilisateur
-            if (in_array('ROLE_ADMIN', $user->getRoles())) {
-                return $this->render('backtemplates/baseback.html.twig', [
-                    'controller_name' => 'UserController',
-                    'user_id' => $user->getId(),
-                    'username' => $user->getUsername(),
-                ]);
-            } else {
-                return $this->render('fronttemplates/home.html.twig', [
-                    'controller_name' => 'UserController',
-                    'user_id' => $user->getId(),
-                    'username' => $user->getUsername(),
-                ]);
-            }
-        } else {
-            // Ajouter un message flash pour indiquer une erreur
-            $this->addFlash('error', 'Incorrect email or password');
-
-            return $this->redirectToRoute('app_login');
-        }
-    }
 
     #[Route('/logout', name: 'app_logout')]
     public function logout(Request $request): Response
     {
-        // Récupérer la session
-        $session = $request->getSession();
+        // Symfony automatically handles session logout.
+        // You don't need to manually clear the session here.
 
-        // Supprimer toutes les données de la session
-        $session->clear();
+        // Add a flash message for logout success (optional)
+        $this->addFlash('success', 'You have been logged out successfully.');
 
-        // Ajouter un message flash pour confirmation
-        $this->addFlash('success', 'Vous avez été déconnecté avec succès.');
-
-        // Rediriger vers la page de login
+        // Symfony will handle redirection to the login page based on the security configuration
         return $this->redirectToRoute('app_login');
     }
-
+*/
 
     #[Route('/back2', name: 'app_index2')]
     public function listUsers(): Response
@@ -188,13 +172,7 @@ class UserController extends AbstractController
         ]);
     }
 
-    #[Route('/login', name: 'app_login')]
-    public function front(): Response
-    {
-        return $this->render('backtemplates/app-login.html.twig', [
-            'controller_name' => 'UserController',
-        ]);
-    }
+
 
     //update
 
@@ -252,6 +230,21 @@ class UserController extends AbstractController
         ]);
     }
 
+    #[Route('/profile', name: 'app_user_profile')]
+    public function profileUser(DemandeServiceRepository $demandeServiceRepository): Response
+    {
+        // Get the logged-in user
+        $user = $this->getUser();
+
+        // Retrieve all demandes for this user
+        $demandes = $demandeServiceRepository->findByUser($user);
+
+        // Pass the demandes to the template
+        return $this->render('fronttemplates/profile.html.twig', [
+            'user' => $user,
+            'demandes' => $demandes,
+        ]);
+    }   
 
 
 
@@ -279,8 +272,5 @@ class UserController extends AbstractController
 
         }
     }
-
-
-
 
 }

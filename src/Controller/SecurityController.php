@@ -1,47 +1,49 @@
 <?php
-
+// src/Controller/SecurityController.php
 namespace App\Controller;
 
+use App\Security\UserAuthenticator;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Security\Core\Security;
 use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
-use Symfony\Component\Security\Core\Security; // Importer le service Security
 
 class SecurityController extends AbstractController
 {
-    /*#[Route(path: '/', name: 'app_login')]
-    public function login(AuthenticationUtils $authenticationUtils, Security $security): Response
+    // The login form route
+    #[Route('/login', name: 'app_login')]
+    public function login(AuthenticationUtils $authenticationUtils): Response
     {
-        // Si l'utilisateur est déjà authentifié, redirigez vers la page d'accueil
-        if ($this->getUser()) {
-            // Récupérer le token de sécurité pour déterminer les rôles de l'utilisateur
-            $token = $security->getToken();
-            $roles = $token ? $token->getRoleNames() : [];
-
-            // Rediriger en fonction des rôles de l'utilisateur
-            if (in_array('ROLE_ADMIN', $roles)) {
-                return $this->redirectToRoute('app_index2'); // Page admin
-            } elseif (in_array('ROLE_USER', $roles)) {
-                return $this->redirectToRoute('app_front'); // Page front
-            }
-
-            return $this->redirectToRoute('app_login'); // Redirection par défaut
-        }
-
-        // Récupérer les erreurs de connexion et le dernier nom d'utilisateur saisi
+        // Get the login error if there is one
         $error = $authenticationUtils->getLastAuthenticationError();
+        // Get the last username entered (for re-populating the form)
         $lastUsername = $authenticationUtils->getLastUsername();
 
-        return $this->render('backtemplates/app-login.html.twig', [
+        return $this->render('security/login.html.twig', [
             'last_username' => $lastUsername,
             'error' => $error,
         ]);
-    }*/
+    }
 
-    #[Route(path: '/logout', name: 'app_logout')]
+    // Redirect the user to the appropriate page after successful authentication
+    #[Route('/logout', name: 'app_logout')]
     public function logout(): void
     {
-        throw new \LogicException('This method can be blank - it will be intercepted by the logout key on your firewall.');
+        // Symfony will intercept this route and handle the logout automatically
+        // You can add any custom logout behavior here if needed
+    }
+
+    // Protects the routes based on roles (e.g., redirect after login)
+    #[Route('/back', name: 'app_index')]
+    public function index(Security $security): Response
+    {
+        // Check if the user is logged in and has the appropriate role
+        if ($this->isGranted('ROLE_ADMIN')) {
+            return $this->render('backtemplates/baseback.html.twig');
+        }
+
+        // If the user is not an admin, redirect to the login page
+        return $this->redirectToRoute('app_login');
     }
 }

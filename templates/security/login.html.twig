@@ -1,31 +1,106 @@
-{% extends 'base.html.twig' %}
+{% extends 'backtemplates/baseback.html.twig' %}
 
-{% block title %}Log in!{% endblock %}
+{% block nav %}
+    {# Your navigation content here #}
+{% endblock %}
+
+{% block side %}
+    {# Your sidebar content here #}
+{% endblock %}
+
+{% block footer %}
+    {# Your footer content here #}
+{% endblock %}
+
+{% block head %}
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- Favicon icon -->
+    <link rel="icon" type="image/png" sizes="16x16" href="{{ asset('assets/back/images/favicon.png') }}">
+    <link href="{{ asset('assets/back/css/style.css') }}" rel="stylesheet">
+{% endblock %}
 
 {% block body %}
-<form method="post">
-    {% if error %}
-        <div class="alert alert-danger">{{ error.messageKey|trans(error.messageData, 'security') }}</div>
-    {% endif %}
+    <body class="h-100">
+        <div class="authincation h-100">
+            <div class="container-fluid h-100">
+                <div class="row justify-content-center h-100 align-items-center">
+                    <div class="col-md-6">
+                        <div class="authincation-content">
+                            <div class="row no-gutters">
+                                <div class="col-xl-12">
+                                    <div class="auth-form">
+                                        <h4 class="text-center mb-4">Sign in your account</h4>
 
-    {% if app.user %}
-        <div class="mb-3">
-            You are logged in as {{ app.user.userIdentifier }}, <a href="{{ path('app_logout') }}">Logout</a>
+                                        <!-- Display any authentication error -->
+                                        {% if error %}
+                                            <div class="alert alert-danger">
+                                                {{ error.messageKey|trans(error.messageData, 'security') }}
+                                            </div>
+                                        {% endif %}
+
+                                        <!-- Display flash messages -->
+                                        {% for message in app.flashes('error') %}
+                                            <div class="alert alert-danger">
+                                                {{ message }}
+                                            </div>
+                                        {% endfor %}
+                                        {% for message in app.flashes('success') %}
+                                            <div class="alert alert-success">
+                                                {{ message }}
+                                            </div>
+                                        {% endfor %}
+
+                                        <!-- Login Form -->
+                                        <form action="{{ path('app_login') }}" method="post">
+
+                                            <!-- CSRF Token -->
+                                            <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}" />
+
+                                            <div class="form-group">
+                                                <label for="email">Email</label>
+                                                <input type="email" id="email" name="email" value="{{ last_username }}" required class="form-control" />
+                                            </div>
+
+                                            <div class="form-group">
+                                                <label for="password">Password</label>
+                                                <input type="password" id="password" name="password" required class="form-control" />
+                                            </div>
+
+                                            <!-- Remember Me Checkbox -->
+                                            <div class="form-check">
+                                                <input type="checkbox" class="form-check-input" id="remember_me" name="_remember_me">
+                                                <label class="form-check-label" for="remember_me">Remember me</label>
+                                            </div>
+
+                                            <!-- Forgot Password Link -->
+                                            <div class="form-group">
+                                                <a href="#">Forgot Password?</a>
+                                            </div>
+
+                                            <!-- Submit Button -->
+                                            <button type="submit" class="btn btn-primary btn-block">Sign me in</button>
+                                        </form>
+
+                                        <!-- Register Link -->
+                                        <div class="new-account mt-3">
+                                            <p>Don't have an account? <a class="text-primary" href="{{ path('app_register') }}">Sign up</a></p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
-    {% endif %}
+    </body>
+{% endblock %}
 
-    <h1 class="h3 mb-3 font-weight-normal">Please sign in</h1>
-    <label for="inputEmail">Email</label>
-    <input type="email" value="{{ last_username }}" name="email" id="inputEmail" class="form-control" autocomplete="email" required autofocus>
-    <label for="inputPassword">Password</label>
-    <input type="password" name="password" id="inputPassword" class="form-control" autocomplete="current-password" required>
-
-    <input type="hidden" name="_csrf_token"
-           value="{{ csrf_token('authenticate') }}"
-    >
-
-    <button class="btn btn-lg btn-primary" type="submit">
-        Sign in
-    </button>
-</form>
+{% block js %}
+    <!-- Required vendors -->
+    <script src="{{ asset('assets/back/vendor/global/global.min.js') }}"></script>
+    <script src="{{ asset('assets/back/js/quixnav-init.js') }}"></script>
+    <script src="{{ asset('assets/back/js/custom.min.js') }}"></script>
 {% endblock %}
