@@ -55,19 +55,19 @@ class Chambre
     #[Assert\Positive(message: "Le prix de la chambre doit être un nombre positif.")]
     private float $prixChB;
 
-    private $term;
+    #[ORM\OneToMany(mappedBy: 'chambre', targetEntity: Reservation::class, cascade: ['remove'])]
+    private Collection $reservations;
 
-    /**
-     * @var Collection<int, Equipement>
-     */
     #[ORM\OneToMany(targetEntity: Equipement::class, mappedBy: 'chambre', cascade: ['remove'])]
     private Collection $equipements;
 
+    private $term;
+
     public function __construct()
     {
+        $this->reservations = new ArrayCollection();
         $this->equipements = new ArrayCollection();
     }
-
 
     public function getId(): int
     {
@@ -165,6 +165,7 @@ class Chambre
 
         return $this;
     }
+
     public function getTerm(): ?string
     {
         return $this->term;
@@ -173,6 +174,26 @@ class Chambre
     public function setTerm(?string $term): self
     {
         $this->term = $term;
+        return $this;
+    }
+
+    public function getReservations(): Collection
+    {
+        return $this->reservations;
+    }
+
+    public function addReservation(Reservation $reservation): self
+    {
+        if (!$this->reservations->contains($reservation)) {
+            $this->reservations[] = $reservation;
+            $reservation->setChambre($this);
+        }
+        return $this;
+    }
+
+    public function removeReservation(Reservation $reservation): self
+    {
+        $this->reservations->removeElement($reservation);
         return $this;
     }
 }

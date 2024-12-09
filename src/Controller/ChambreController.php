@@ -5,12 +5,15 @@ use App\Entity\Chambre;
 use App\Form\ChambreType;
 use App\Enum\ChambreStatut;
 use App\Repository\ChambreRepository;
+use App\Entity\Reservation;
+use App\Form\ReservationType;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\String\Slugger\SluggerInterface;
+
 
 class ChambreController extends AbstractController
 {
@@ -179,4 +182,45 @@ class ChambreController extends AbstractController
             'statuts' => array_map(fn($statut) => $statut->getValue(), ChambreStatut::cases()), // Convertir les statuts en chaînes de caractères
         ]);
     }
+    #[Route("/front/chambre/reserver/{id}", name: "app_reserver_chambre")]
+    public function reserver(
+        int $id,
+        Request $request,
+        EntityManagerInterface $entityManager,
+        ChambreRepository $chambreRepository
+    ): Response {
+        // Récupérer la chambre choisie
+        $chambre = $chambreRepository->find($id);
+
+        if (!$chambre) {
+            throw $this->createNotFoundException('La chambre n\'existe pas.');
+        }
+
+        // Créer un nouvel objet Reservation
+        $reservation = new Reservation();
+        $reservation->setChambre($chambre);
+
+        // Créer un formulaire de réservation
+        $form = $this->createForm(ReservationType::class, $reservation);
+        $form->handleRequest($request);
+
+        // Si le formulaire est soumis et valide, enregistrer la réservation
+        if ($form->isSubmitted() && $form->isValid()) {
+            $entityManager->persist($reservation);
+            $entityManager->flush();
+
+            $this->addFlash('success', 'Réservation effectuée avec succès!');
+            return $this->redirectToRoute('app_front_chambre');
+        }
+
+        // Passer l'entité Reservation à la vue
+        return $this->render('fronttemplates/reservation_form.html.twig', [
+            'form' => $form->createView(),
+            'reservation' => $reservation,
+        ]);
+    }
+
+
+
+
 }
