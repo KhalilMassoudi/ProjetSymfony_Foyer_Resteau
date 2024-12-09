@@ -12,9 +12,6 @@ class DemandeFormType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
-            ->add('date_demande', null, [
-                'widget' => 'single_text',
-            ])
             ->add('description')
             ->add('nom')
             ->add('prenom')

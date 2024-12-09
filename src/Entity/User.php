@@ -2,11 +2,13 @@
 
 namespace App\Entity;
 
-use App\Repository\UserRepository;
 use Doctrine\ORM\Mapping as ORM;
-use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
-use Symfony\Component\Security\Core\User\UserInterface;
+use App\Repository\UserRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 #[ORM\UniqueConstraint(name: 'UNIQ_IDENTIFIER_USERNAME', fields: ['username'])]
@@ -53,6 +55,47 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[Assert\NotBlank] // Assurer que l'email
     #[Assert\Email(message: "L'email '{{ value }}' n'est pas valide.")]
     private ?string $email = null;
+
+    /**
+     * @ORM\OneToMany(targetEntity=DemandeService::class, mappedBy="user")
+     */
+    private  $demandeServices;
+
+    public function __construct()
+    {
+        $this->demandeServices = new ArrayCollection(); // Correct initialization
+    }
+
+    /**
+     * @return Collection|DemandeService[]
+     */
+    public function getDemandeServices(): Collection
+{
+    // Ensure it always returns a collection, even if empty
+    return $this->demandeServices ?? new ArrayCollection();
+}
+
+    public function addDemande(DemandeService $demande): self
+    {
+        if (!$this->demandeServices->contains($demande)) {
+            $this->demandeServices[] = $demande;
+            $demande->setUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removeDemande(DemandeService $demande): self
+    {
+        if ($this->demandeServices->removeElement($demande)) {
+            // Set the owning side to null (unless already changed)
+            if ($demande->getUser() === $this) {
+                $demande->setUser(null);
+            }
+        }
+
+        return $this;
+    }
 
     public function getId(): ?int
     {

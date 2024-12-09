@@ -24,11 +24,8 @@
 
     <div class="card mt-4">
         <div class="card-header">
-            <h4 class="card-title">List of Services</h4>
+            <h4 class="card-title">List of Demandes</h4>
             <h4 class="card-title d-flex justify-content-between">
-                <button id="toggleFormBtn" class="btn btn-primary mb-4">
-                    Ajouter un Service <span class="btn-icon-right"><i class="fa fa-plus"></i></span>
-                </button>
             </h4>
         </div>
                 <div class="card-body">
@@ -42,6 +39,7 @@
                             <th>Date</th>
                             <th>Telephone</th>
                             <th>Email</th>
+                            <th>Service</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -55,21 +53,22 @@
                             <td>{{ s.nom }}</td>
                             <td>{{ s.prenom }}</td>
                             <td>{{ s.description }}</td>
-                            <td>{{ s.dateCreation ? s.dateCreation|date('Y-m-d') : 'No date available' }}</td>
+                            <td>{{ s.DateDemande ? s.DateDemande|date('Y-m-d') : 'No date available' }}</td>
                             <td>{{ s.telephone }}</td>
                             <td>{{ s.email }}</td>
+                            <td>{{ s.service.nom }}</td>
                             <td>
-                                <a href="{{ path('app_service_edit', { 'id': s.id }) }}" class="btn btn-primary btn-sm">
-                                    <i class="fa fa-edit"></i>
+                                <a href="{{ path('app_demande_accept', { id: s.id }) }}" class="btn btn-success btn-sm">
+                                    Accept
                                 </a>
-                                <a href="{{ path('app_ServiceSupprim', { 'id': s.id }) }}" class="btn btn-danger btn-sm" onclick="return confirm('Êtes-vous sûr de vouloir supprimer ce service ?')" title="Delete">
-                                    <i class="fa fa-trash"></i>
+                                <a href="{{ path('app_demande_reject', { id: s.id }) }}" class="btn btn-danger btn-sm">
+                                    Reject
                                 </a>
                             </td>
                         </tr>
                         {% else %}
                         <tr>
-                            <td colspan="7">Aucun service trouvé.</td>
+                            <td colspan="7">Aucun demande trouvé.</td>
                         </tr>
                         {% endfor %}
                     </tbody>
