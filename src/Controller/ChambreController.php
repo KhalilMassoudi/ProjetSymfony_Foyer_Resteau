@@ -7,13 +7,14 @@ use App\Enum\ChambreStatut;
 use App\Repository\ChambreRepository;
 use App\Entity\Reservation;
 use App\Form\ReservationType;
+use App\Repository\ReservationRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\String\Slugger\SluggerInterface;
-
+use Symfony\Component\Security\Core\User\UserInterface;
 
 class ChambreController extends AbstractController
 {
@@ -187,18 +188,25 @@ class ChambreController extends AbstractController
         int $id,
         Request $request,
         EntityManagerInterface $entityManager,
-        ChambreRepository $chambreRepository
+        ChambreRepository $chambreRepository,
+        UserInterface $user // Injection de l'utilisateur connecté
     ): Response {
+        // Vérification que l'utilisateur est connecté
+        if (!$user) {
+            throw $this->createAccessDeniedException('Vous devez être connecté pour effectuer une réservation.');
+        }
+
         // Récupérer la chambre choisie
         $chambre = $chambreRepository->find($id);
 
         if (!$chambre) {
-            throw $this->createNotFoundException('La chambre n\'existe pas.');
+            throw $this->createNotFoundException('La chambre demandée n\'existe pas.');
         }
 
         // Créer un nouvel objet Reservation
         $reservation = new Reservation();
         $reservation->setChambre($chambre);
+        $reservation->setUser($user); // Associer la réservation à l'utilisateur connecté
 
         // Créer un formulaire de réservation
         $form = $this->createForm(ReservationType::class, $reservation);
@@ -206,6 +214,7 @@ class ChambreController extends AbstractController
 
         // Si le formulaire est soumis et valide, enregistrer la réservation
         if ($form->isSubmitted() && $form->isValid()) {
+            $reservation->setDateReservation(new \DateTime()); // Ajouter une date de réservation
             $entityManager->persist($reservation);
             $entityManager->flush();
 
@@ -219,8 +228,5 @@ class ChambreController extends AbstractController
             'reservation' => $reservation,
         ]);
     }
-
-
-
 
 }
