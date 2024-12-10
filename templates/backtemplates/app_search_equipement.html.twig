@@ -1,0 +1,101 @@
+{% extends 'backtemplates/baseback2.html.twig' %}
+
+{% block body %}
+    <div class="container mt-4" style="margin-left: 20%; margin-top: 80px; padding-top: 80px;">
+        <!-- Titre de la page -->
+        <h2>Recherche des équipements</h2>
+
+        <!-- Affichage des messages flash pour les erreurs -->
+        {% for message in app.flashes('error') %}
+            <div class="alert alert-danger solid alert-rounded">
+                <strong>Erreur!</strong> {{ message }}
+            </div>
+        {% endfor %}
+
+        <!-- Affichage des messages flash pour les succès -->
+        {% for message in app.flashes('success') %}
+            <div class="alert alert-success solid alert-rounded">
+                <strong>Succès!</strong> {{ message }}
+            </div>
+        {% endfor %}
+
+        <!-- Formulaire de recherche -->
+        <form method="get" action="{{ path('app_equipement_search') }}" class="mb-4">
+            <div class="row">
+                <!-- Champ de recherche unique -->
+                <div class="col-md-8">
+                    <label for="searchTerm">Rechercher un équipement</label>
+                    <input type="text" name="searchTerm" id="searchTerm" class="form-control" value="{{ searchTerm }}">
+                </div>
+                <div class="col-md-4 d-flex align-items-end">
+                    <!-- Boutons de soumission -->
+                    <button type="submit" class="btn btn-primary">
+                        Rechercher <span class="btn-icon-right"><i class="fa fa-search"></i></span>
+                    </button>
+                    <a href="{{ path('app_equipement') }}" class="btn btn-secondary ms-2">
+                        Annuler <span class="btn-icon-right"><i class="fa fa-times"></i></span>
+                    </a>
+                </div>
+            </div>
+        </form>
+
+        <!-- Résultats de la recherche -->
+        {% if equipements is not empty %}
+            <h2 class="mt-4">Résultats de la recherche</h2>
+            <table class="table table-striped">
+                <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Nom de l'équipement</th>
+                    <th>État</th>
+                    <th>Date du dernier entretien</th>
+                    <th>Chambre associée</th>
+                    <th>Image</th>
+                    <th>Actions</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for equipement in equipements %}
+                    <tr>
+                        <td>{{ equipement.idEquipementB }}</td>
+                        <td>{{ equipement.nomEquipementB }}</td>
+                        <td>{{ equipement.etatEquipementB }}</td>
+                        <td>
+                            {% if equipement.dateDernierEntretienEquipementB is not null %}
+                                {{ equipement.dateDernierEntretienEquipementB|date('Y-m-d') }}
+                            {% else %}
+                                Non spécifiée
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if equipement.chambre is not null %}
+                                {{ equipement.chambre.numeroChB }}
+                            {% else %}
+                                Non assignée
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if equipement.image is not null %}
+                                <img src="{{ asset('uploads/equipements/' ~ equipement.image) }}" alt="Image de {{ equipement.nomEquipementB }}" width="100">
+                            {% else %}
+                                Pas d'image
+                            {% endif %}
+                        </td>
+                        <td>
+                            <!-- Actions : Modifier ou Supprimer -->
+                            <a href="{{ path('app_equipement_edit', {'id': equipement.idEquipementB}) }}" class="btn btn-primary btn-sm">
+                                <i class="fa fa-edit"></i> Modifier
+                            </a>
+                            <a href="{{ path('app_equipement_delete', {'id': equipement.idEquipementB}) }}" class="btn btn-danger btn-sm" onclick="return confirm('Êtes-vous sûr de vouloir supprimer cet équipement ?');">
+                                <i class="fa fa-trash"></i> Supprimer
+                            </a>
+                        </td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        {% else %}
+            <p>Aucun équipement ne correspond à votre recherche.</p>
+        {% endif %}
+    </div>
+{% endblock %}

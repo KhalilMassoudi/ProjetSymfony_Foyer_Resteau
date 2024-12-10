@@ -1,0 +1,26 @@
+{% extends 'fronttemplates/basefront.html.twig' %}
+{% block body %}
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <div class="container-fluid">
+        <a class="navbar-brand" href="#">Mon Site</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav me-auto">
+                <li class="nav-item">
+                    <a class="nav-link" {#href="{{ path('app_home') }}"#}>Accueil</a>
+                </li>
+                <!-- Ajoutez d'autres liens ici -->
+            </ul>
+            <!-- Boutons pour les catégories -->
+            <div class="d-flex">
+                <a class="btn btn-outline-primary me-2" href="{{ path('app_front_chambre') }}">Chambres</a>
+                <a class="btn btn-outline-secondary me-2" href="{{ path('app_front_equipement') }}">Equipements</a>
+                <a class="btn btn-outline-success" href="{{ path('app_frontend_services') }}">Services</a>
+            </div>
+        </div>
+    </div>
+</nav>
+
+{% endblock %}

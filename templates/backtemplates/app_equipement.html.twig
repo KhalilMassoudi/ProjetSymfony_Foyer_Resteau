@@ -1,9 +1,10 @@
 {% extends 'backtemplates/baseback2.html.twig' %}
 
-{% block title %}Gestion des équipements{% endblock %}
-
 {% block body %}
     <div class="container mt-4" style="margin-left: 20%; margin-top: 400px; padding-top: 80px;">
+
+
+
 
         <!-- Section des équipements -->
         <h2>Gestion des équipements</h2>
@@ -11,7 +12,10 @@
             Ajouter un équipement
             <span class="btn-icon-right"><i class="fa fa-plus"></i></span>
         </button>
-
+        <a href="{{ path('app_equipement_search') }}" class="btn btn-secondary mb-3">
+            Rechercher un équipement
+            <span class="btn-icon-right"><i class="fa fa-search"></i></span>
+        </a>
         <!-- Formulaire d'ajout d'équipement masqué par défaut -->
         <div id="addFormEquipement" style="display: none;">
             <h2>Ajouter un nouvel équipement</h2>

@@ -1,0 +1,149 @@
+{% extends 'backtemplates/baseback2.html.twig' %}
+
+{% block body %}
+    <div class="container mt-4" style="margin-left: 20%; margin-top: 80px;">
+        <h1>Recherche de chambres</h1>
+
+        <!-- Affichage des messages flash -->
+        {% for message in app.flashes('error') %}
+            <div class="alert alert-danger solid alert-rounded">
+                <strong>Erreur!</strong> {{ message }}
+            </div>
+        {% endfor %}
+        {% for message in app.flashes('success') %}
+            <div class="alert alert-success solid alert-rounded">
+                <strong>Succès!</strong> {{ message }}
+            </div>
+        {% endfor %}
+
+        <!-- Barre de recherche principale -->
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <form class="d-flex" method="get" action="{{ path('app_chambre_search') }}">
+                <input type="text"
+                       name="numeroChB"
+                       class="form-control me-2"
+                       placeholder="Numéro de chambre"
+                       value="{{ searchTerms.numeroChB }}" />
+                <button type="submit" class="btn btn-primary">Rechercher</button>
+            </form>
+            <!-- Bouton pour basculer les filtres -->
+            <button id="toggle-filters-btn" class="btn btn-secondary">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-sliders" viewBox="0 0 16 16">
+                    <path fill-rule="evenodd" d="M11.5 2a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3M9.05 3a2.5 2.5 0 0 1 4.9 0H16v1h-2.05a2.5 2.5 0 0 1-4.9 0H0V3zM4.5 7a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3M2.05 8a2.5 2.5 0 0 1 4.9 0H16v1H6.95a2.5 2.5 0 0 1-4.9 0H0V8zm9.45 4a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3m-2.45 1a2.5 2.5 0 0 1 4.9 0H16v1h-2.05a2.5 2.5 0 0 1-4.9 0H0v-1z"/>
+                </svg>
+            </button>
+        </div>
+
+        <!-- Filtres avancés -->
+        <div id="advanced-filters" class="mt-4" style="display: none;">
+            <form method="get" action="{{ path('app_chambre_search') }}">
+                <div class="row">
+                    <div class="col-md-4">
+                        <label for="etage_min">Étage minimum</label>
+                        <input type="number" class="form-control" name="etage_min" value="{{ searchTerms.etage_min }}" />
+                    </div>
+                    <div class="col-md-4">
+                        <label for="etage_max">Étage maximum</label>
+                        <input type="number" class="form-control" name="etage_max" value="{{ searchTerms.etage_max }}" />
+                    </div>
+                    <div class="col-md-4">
+                        <label for="capacite_min">Capacité minimum</label>
+                        <input type="number" class="form-control" name="capacite_min" value="{{ searchTerms.capacite_min }}" />
+                    </div>
+                </div>
+                <div class="row mt-2">
+                    <div class="col-md-4">
+                        <label for="capacite_max">Capacité maximum</label>
+                        <input type="number" class="form-control" name="capacite_max" value="{{ searchTerms.capacite_max }}" />
+                    </div>
+                    <div class="col-md-4">
+                        <label for="statutChB">Statut</label>
+                        <select class="form-control" name="statutChB">
+                            <option value="">-- Choisir un statut --</option>
+                            {% for statut in statuts %}
+                                <option value="{{ statut }}" {% if statut == searchTerms.statutChB %} selected {% endif %}>{{ statut }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="col-md-4">
+                        <label for="prix_min">Prix minimum</label>
+                        <input type="number" class="form-control" name="prix_min" value="{{ searchTerms.prix_min }}" />
+                    </div>
+                </div>
+                <div class="row mt-2">
+                    <div class="col-md-4">
+                        <label for="prix_max">Prix maximum</label>
+                        <input type="number" class="form-control" name="prix_max" value="{{ searchTerms.prix_max }}" />
+                    </div>
+                </div>
+                <button type="submit" class="btn btn-primary mt-3">Appliquer les filtres</button>
+            </form>
+        </div>
+
+        <!-- Tableau des résultats -->
+        <div class="mt-5">
+            <h2>Résultats</h2>
+            {% if chambres|length > 0 %}
+                <table class="table table-striped">
+                    <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Numéro</th>
+                        <th>Étage</th>
+                        <th>Capacité</th>
+                        <th>Statut</th>
+                        <th>Prix</th>
+                        <th>Image</th>
+                        <th>Actions</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for chambre in chambres %}
+                        <tr>
+                            <td>{{ chambre.id }}</td>
+                            <td>{{ chambre.numeroChB }}</td>
+                            <td>{{ chambre.etageChB }}</td>
+                            <td>{{ chambre.capaciteChB }}</td>
+                            <td>{{ chambre.statutChB.getValue() }}</td>
+                            <td>{{ chambre.prixChB }} €</td>
+                            <td>
+                                {% if chambre.image is not null %}
+                                    <img src="{{ asset('uploads/images/' ~ chambre.image) }}" alt="Image de la chambre" width="50" height="50">
+                                {% else %}
+                                    <span>Aucune image</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                <a href="{{ path('app_chambre_edit', {'id': chambre.id}) }}" class="btn btn-primary btn-sm mr-3">
+                                    <i class="fa fa-edit"></i> Modifier
+                                </a>
+                                <a href="{{ path('app_chambre_delete', {'id': chambre.id}) }}" class="btn btn-danger btn-sm" onclick="return confirm('Êtes-vous sûr de vouloir supprimer cette chambre ?');">
+                                    <i class="fa fa-trash"></i> Supprimer
+                                </a>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            {% else %}
+                <div class="alert alert-warning mt-4">
+                    <strong>Aucun résultat trouvé.</strong> Essayez d'élargir vos critères de recherche.
+                </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <script>
+        // Script pour basculer l'affichage des critères avancés
+        document.getElementById('toggle-filters-btn').addEventListener('click', function () {
+            const filters = document.getElementById('advanced-filters');
+            filters.style.display = filters.style.display === 'none' ? 'block' : 'none';
+        });
+    </script>
+    <script>
+        // Script pour fermer les critères avancés
+        document.getElementById('close-filters-btn').addEventListener('click', function () {
+            document.getElementById('advanced-filters').style.display = 'none';
+        });
+    </script>
+{% endblock %}

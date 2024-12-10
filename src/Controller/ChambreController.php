@@ -1,18 +1,19 @@
 <?php
-
 namespace App\Controller;
 
 use App\Entity\Chambre;
 use App\Form\ChambreType;
-use App\Repository\ChambreRepository;
 use App\Enum\ChambreStatut;
+use App\Repository\ChambreRepository;
+use App\Entity\Reservation;
+use App\Form\ReservationType;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\String\Slugger\SluggerInterface;
+
 
 class ChambreController extends AbstractController
 {
@@ -28,28 +29,16 @@ class ChambreController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            // Vérification du numéro de chambre
-            $numeroChB = $form->get('numeroChB')->getData();
-            if (!preg_match('/^[A-Z]/', $numeroChB)) {
-                $this->addFlash('error', 'Le numéro de chambre doit commencer par une lettre majuscule.');
-                return $this->redirectToRoute('app_chamber');
-            }
-            $chambre->setNumeroChB($numeroChB);
-
             // Gestion de l'image
-            /** @var UploadedFile $imageFile */
             $imageFile = $form->get('image')->getData();
             if ($imageFile) {
-                $originalFilename = pathinfo($imageFile->getClientOriginalName(), PATHINFO_FILENAME);
-                $safeFilename = $slugger->slug($originalFilename);
-                $newFilename = $safeFilename . '-' . uniqid() . '.' . $imageFile->guessExtension();
+                $newFilename = $chambreRepository->handleImageUpload(
+                    $imageFile,
+                    $slugger,
+                    $this->getParameter('images_directory')
+                );
 
-                try {
-                    $imageFile->move(
-                        $this->getParameter('images_directory'), // Répertoire défini dans services.yaml
-                        $newFilename
-                    );
-                } catch (FileException $e) {
+                if ($newFilename === null) {
                     $this->addFlash('error', 'Erreur lors de l\'upload de l\'image.');
                     return $this->redirectToRoute('app_chamber');
                 }
@@ -71,7 +60,41 @@ class ChambreController extends AbstractController
             'chambres' => $chambres,
         ]);
     }
+    #[Route("/chambre/search", name: "app_chambre_search")]
+    public function search(Request $request, ChambreRepository $chambreRepository): Response
+    {
+        // Récupérer les valeurs de la requête pour chaque critère
+        $numero = $request->query->get('numeroChB', '');
+        $etageMin = $request->query->get('etage_min', 1); // Valeur par défaut 1
+        $etageMax = $request->query->get('etage_max', 10); // Valeur par défaut 10
+        $capaciteMin = $request->query->get('capacite_min', 1); // Valeur par défaut 1
+        $capaciteMax = $request->query->get('capacite_max', 5); // Valeur par défaut 5
+        $statut = $request->query->get('statutChB', ''); // Statut de chambre
+        $prixMin = $request->query->get('prix_min', '');
+        $prixMax = $request->query->get('prix_max', '');
 
+        // Créer un tableau avec les critères
+        $searchTerms = [
+            'numeroChB' => $numero,
+            'etage_min' => $etageMin,
+            'etage_max' => $etageMax,
+            'capacite_min' => $capaciteMin,
+            'capacite_max' => $capaciteMax,
+            'statutChB' => $statut,
+            'prix_min' => $prixMin,
+            'prix_max' => $prixMax,
+        ];
+
+        // Effectuer la recherche et le filtrage via le repository
+        $chambres = $chambreRepository->searchAndFilter($searchTerms);
+
+        // Retourner les résultats avec les critères utilisés pour afficher les options du formulaire
+        return $this->render('backtemplates/app_search_chambre.html.twig', [
+            'chambres' => $chambres,
+            'searchTerms' => $searchTerms,
+            'statuts' => array_map(fn($statut) => $statut->getValue(), ChambreStatut::cases()), // Convertir les statuts en chaînes de caractères
+        ]);
+    }
     #[Route("/chambre/edit/{id}", name: "app_chambre_edit")]
     public function edit(
         int $id,
@@ -90,27 +113,16 @@ class ChambreController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            // Vérification du numéro de chambre
-            $numeroChB = $form->get('numeroChB')->getData();
-            if (!preg_match('/^[A-Z]/', $numeroChB)) {
-                $this->addFlash('error', 'Le numéro de chambre doit commencer par une lettre majuscule.');
-                return $this->redirectToRoute('app_chambre_edit', ['id' => $id]);
-            }
-            $chambre->setNumeroChB($numeroChB);
-
-            /** @var UploadedFile $imageFile */
+            // Gestion de l'image
             $imageFile = $form->get('image')->getData();
             if ($imageFile) {
-                $originalFilename = pathinfo($imageFile->getClientOriginalName(), PATHINFO_FILENAME);
-                $safeFilename = $slugger->slug($originalFilename);
-                $newFilename = $safeFilename . '-' . uniqid() . '.' . $imageFile->guessExtension();
+                $newFilename = $chambreRepository->handleImageUpload(
+                    $imageFile,
+                    $slugger,
+                    $this->getParameter('images_directory')
+                );
 
-                try {
-                    $imageFile->move(
-                        $this->getParameter('images_directory'),
-                        $newFilename
-                    );
-                } catch (FileException $e) {
+                if ($newFilename === null) {
                     $this->addFlash('error', 'Erreur lors de l\'upload de l\'image.');
                     return $this->redirectToRoute('app_chambre_edit', ['id' => $id]);
                 }
@@ -131,7 +143,11 @@ class ChambreController extends AbstractController
     }
 
     #[Route("/chambre/delete/{id}", name: "app_chambre_delete")]
-    public function delete(int $id, EntityManagerInterface $entityManager, ChambreRepository $chambreRepository): Response {
+    public function delete(
+        int $id,
+        EntityManagerInterface $entityManager,
+        ChambreRepository $chambreRepository
+    ): Response {
         $chambre = $chambreRepository->find($id);
 
         if (!$chambre) {
@@ -144,17 +160,67 @@ class ChambreController extends AbstractController
         $this->addFlash('success', 'Chambre supprimée avec succès !');
         return $this->redirectToRoute('app_chamber');
     }
-
     #[Route("/front/chambre", name: "app_front_chambre")]
-    public function frontChambre(ChambreRepository $chambreRepository): Response {
-        $chambres = $chambreRepository->findAll();
+    public function frontChambre(Request $request, ChambreRepository $chambreRepository): Response
+    {
+        $searchTerms = [
+            'numeroChB' => $request->query->get('numeroChB', ''),
+            'etage_min' => $request->query->get('etage_min', 1),
+            'etage_max' => $request->query->get('etage_max', 10),
+            'capacite_min' => $request->query->get('capacite_min', 1),
+            'capacite_max' => $request->query->get('capacite_max', 5),
+            'statutChB' => $request->query->get('statutChB', ''),
+            'prix_min' => $request->query->get('prix_min', ''),
+            'prix_max' => $request->query->get('prix_max', ''),
+        ];
 
-        if (!$chambres) {
-            throw $this->createNotFoundException('Aucune chambre trouvée.');
-        }
+        $chambres = $chambreRepository->searchAndFilter($searchTerms);
 
         return $this->render('fronttemplates/app_frontchambre.html.twig', [
             'chambres' => $chambres,
+            'searchTerms' => $searchTerms,
+            'statuts' => array_map(fn($statut) => $statut->getValue(), ChambreStatut::cases()), // Convertir les statuts en chaînes de caractères
         ]);
     }
+    #[Route("/front/chambre/reserver/{id}", name: "app_reserver_chambre")]
+    public function reserver(
+        int $id,
+        Request $request,
+        EntityManagerInterface $entityManager,
+        ChambreRepository $chambreRepository
+    ): Response {
+        // Récupérer la chambre choisie
+        $chambre = $chambreRepository->find($id);
+
+        if (!$chambre) {
+            throw $this->createNotFoundException('La chambre n\'existe pas.');
+        }
+
+        // Créer un nouvel objet Reservation
+        $reservation = new Reservation();
+        $reservation->setChambre($chambre);
+
+        // Créer un formulaire de réservation
+        $form = $this->createForm(ReservationType::class, $reservation);
+        $form->handleRequest($request);
+
+        // Si le formulaire est soumis et valide, enregistrer la réservation
+        if ($form->isSubmitted() && $form->isValid()) {
+            $entityManager->persist($reservation);
+            $entityManager->flush();
+
+            $this->addFlash('success', 'Réservation effectuée avec succès!');
+            return $this->redirectToRoute('app_front_chambre');
+        }
+
+        // Passer l'entité Reservation à la vue
+        return $this->render('fronttemplates/reservation_form.html.twig', [
+            'form' => $form->createView(),
+            'reservation' => $reservation,
+        ]);
+    }
+
+
+
+
 }

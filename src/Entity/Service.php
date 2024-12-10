@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\ServiceRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert ;
@@ -36,6 +38,17 @@ class Service
         message: 'Le type de service est obligatoire.'
     )]
     private ?TypeService $TypeService = null;
+
+    /**
+     * @var Collection<int, DemandeService>
+     */
+    #[ORM\OneToMany(targetEntity: DemandeService::class, mappedBy: 'service', orphanRemoval: true)]
+    private Collection $demandes;
+
+    public function __construct()
+    {
+        $this->demandes = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -99,6 +112,36 @@ class Service
     public function setTypeService(?TypeService $TypeService): static
     {
         $this->TypeService = $TypeService;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, DemandeService>
+     */
+    public function getDemandes(): Collection
+    {
+        return $this->demandes;
+    }
+
+    public function addDemande(DemandeService $demande): static
+    {
+        if (!$this->demandes->contains($demande)) {
+            $this->demandes->add($demande);
+            $demande->setService($this);
+        }
+
+        return $this;
+    }
+
+    public function removeDemande(DemandeService $demande): static
+    {
+        if ($this->demandes->removeElement($demande)) {
+            // set the owning side to null (unless already changed)
+            if ($demande->getService() === $this) {
+                $demande->setService(null);
+            }
+        }
 
         return $this;
     }

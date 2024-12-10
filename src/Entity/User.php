@@ -70,10 +70,10 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      * @return Collection|DemandeService[]
      */
     public function getDemandeServices(): Collection
-    {
-        // Ensure it always returns a collection, even if empty
-        return $this->demandeServices ?? new ArrayCollection();
-    }
+{
+    // Ensure it always returns a collection, even if empty
+    return $this->demandeServices ?? new ArrayCollection();
+}
 
     public function addDemande(DemandeService $demande): self
     {

@@ -1,14 +1,8 @@
-{# backtemplates/app_edit_equipement.html.twig #}
-
 {% extends 'backtemplates/baseback2.html.twig' %}
-
-{% block title %}
-    Modifier l'équipement - {{ equipement.nomEquipementB }}
-{% endblock %}
 
 {% block body %}
     <div class="container mt-4" style="margin-left: 20%; margin-top: 400px; padding-top: 80px;">
-        <h1>Modifier l'équipement</h1>
+        <h1>Modifier l'équipement - {{ equipement.nomEquipementB }}</h1>
 
         {# Message flash pour les succès ou les erreurs #}
         {% for message in app.flashes('success') %}
@@ -30,7 +24,11 @@
             <label for="{{ form.nomEquipementB.vars.id }}" class="col-sm-2 col-form-label">{{ form.nomEquipementB.vars.label }}</label>
             <div class="col-sm-10">
                 {{ form_widget(form.nomEquipementB, {'attr': {'class': 'form-control'}}) }}
-                {{ form_errors(form.nomEquipementB) }}
+                {% for error in form.nomEquipementB.vars.errors %}
+                    <div class="alert alert-danger solid alert-rounded mt-2">
+                        <strong>Error!</strong> {{ error.message }}
+                    </div>
+                {% endfor %}
             </div>
         </div>
 
@@ -38,7 +36,11 @@
             <label for="{{ form.etatEquipementB.vars.id }}" class="col-sm-2 col-form-label">{{ form.etatEquipementB.vars.label }}</label>
             <div class="col-sm-10">
                 {{ form_widget(form.etatEquipementB, {'attr': {'class': 'form-control'}}) }}
-                {{ form_errors(form.etatEquipementB) }}
+                {% for error in form.etatEquipementB.vars.errors %}
+                    <div class="alert alert-danger solid alert-rounded mt-2">
+                        <strong>Error!</strong> {{ error.message }}
+                    </div>
+                {% endfor %}
             </div>
         </div>
 
@@ -48,7 +50,11 @@
                 {{ form_widget(form.dateDernierEntretienEquipementB, {
                     'attr': {'class': 'form-control', 'placeholder': 'dd-mm-yyyy'}
                 }) }}
-                {{ form_errors(form.dateDernierEntretienEquipementB) }}
+                {% for error in form.dateDernierEntretienEquipementB.vars.errors %}
+                    <div class="alert alert-danger solid alert-rounded mt-2">
+                        <strong>Error!</strong> {{ error.message }}
+                    </div>
+                {% endfor %}
             </div>
         </div>
 
@@ -57,7 +63,11 @@
             <label for="{{ form.chambre.vars.id }}" class="col-sm-2 col-form-label">{{ form.chambre.vars.label }}</label>
             <div class="col-sm-10">
                 {{ form_widget(form.chambre, {'attr': {'class': 'form-control'}}) }}
-                {{ form_errors(form.chambre) }}
+                {% for error in form.chambre.vars.errors %}
+                    <div class="alert alert-danger solid alert-rounded mt-2">
+                        <strong>Error!</strong> {{ error.message }}
+                    </div>
+                {% endfor %}
             </div>
         </div>
 
@@ -71,7 +81,11 @@
                     <p>Aucune image actuelle</p>
                 {% endif %}
                 {{ form_widget(form.image, {'attr': {'class': 'form-control'}}) }}
-                {{ form_errors(form.image) }}
+                {% for error in form.image.vars.errors %}
+                    <div class="alert alert-danger solid alert-rounded mt-2">
+                        <strong>Error!</strong> {{ error.message }}
+                    </div>
+                {% endfor %}
             </div>
         </div>
 

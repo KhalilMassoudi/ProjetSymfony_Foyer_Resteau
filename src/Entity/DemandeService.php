@@ -32,10 +32,43 @@ class DemandeService
     #[ORM\Column(length: 255)]
     private ?string $email = null;
 
-    public function getId(): ?int
-    {
-        return $this->id;
-    }
+    #[ORM\ManyToOne(inversedBy: 'demandes')]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?Service $service = null;
+
+        #[ORM\ManyToOne]
+        #[ORM\JoinColumn(nullable: false)]
+        private ?User $user = null;
+
+        #[ORM\Column(type: 'string', length: 20)]
+        private $status = 'Under review'; 
+
+        public function getStatus(): ?string
+        {
+            return $this->status;
+        }
+
+        public function setStatus(string $status): self
+        {
+            $this->status = $status;
+            return $this;
+        }
+
+        public function getId(): ?int
+        {
+            return $this->id;
+        }
+        public function getUser(): ?User
+        {
+            return $this->user;
+        }
+
+        public function setUser(?User $user): static
+        {
+            $this->user = $user;
+
+            return $this;
+        }
 
     public function getDateDemande(): ?\DateTimeInterface
     {
@@ -105,6 +138,18 @@ class DemandeService
     public function setEmail(string $email): static
     {
         $this->email = $email;
+
+        return $this;
+    }
+
+    public function getService(): ?Service
+    {
+        return $this->service;
+    }
+
+    public function setService(?Service $service): static
+    {
+        $this->service = $service;
 
         return $this;
     }

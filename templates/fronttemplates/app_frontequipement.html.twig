@@ -2,6 +2,12 @@
 
 {% block amodifier %}
     <div class="container mt-5">
+        <div class="d-flex justify-content-end mb-4">
+            <form class="d-flex" method="get" action="{{ path('app_front_equipement') }}">
+                <input class="form-control me-2" type="search" name="searchTerm" value="{{ searchTerms.searchTerm }}" placeholder="Rechercher par nom, état ou numéro de chambre..." aria-label="Search">
+                <button class="btn btn-primary" type="submit">Rechercher</button>
+            </form>
+        </div>
         <h2 class="section-title text-center mb-4">Liste des Équipements</h2>
 
         {% if equipements is not empty %}

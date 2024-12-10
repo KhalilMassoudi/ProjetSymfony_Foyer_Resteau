@@ -1,0 +1,50 @@
+{% extends 'basefront.html.twig' %}
+
+{% block title %}Profile{% endblock %}
+
+{% block body %}
+<div class="container mt-5">
+    <h2>Welcome, {{ user.username }}</h2>
+    <p>Email: {{ user.email }}</p>
+    <p>ID: {{ user.id }}</p>
+    <h3>Your Demandes</h3>
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Status</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% if user.demandeServices is not empty %}
+    {% for demande in user.demandeServices %}
+        <p>{{ demande.id }} - {{ demande.status }}</p>
+    {% endfor %}
+    {% else %}
+        <p>No demandes available.</p>
+    {% endif %}
+            <h3>Your Demandes</h3>
+<table>
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Status</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for demande in demandes %}
+            <tr>
+                <td>{{ demande.id }}</td>
+                <td>{{ demande.status }}</td>
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="2">No demandes found.</td>
+            </tr>
+        {% endfor %}
+    </tbody>
+</table>
+        </tbody>
+    </table>
+</div>
+{% endblock %}

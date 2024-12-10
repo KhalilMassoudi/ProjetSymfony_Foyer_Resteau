@@ -5,32 +5,35 @@ namespace App\Controller;
 use App\Entity\User;
 use App\Form\UserType;
 use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\HttpFoundation\RedirectResponse;
+use Symfony\Bundle\SecurityBundle\Security;
+use App\Repository\DemandeServiceRepository;
+use Doctrine\ORM\Mapping\Id;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
-use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
+use Symfony\Component\HttpFoundation\RedirectResponse;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
+use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
+use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 
 
 
 class UserController extends AbstractController
 {
-    /*#[Route('/', name: 'app_login')]
-    public function login(): Response
-    {
-        return $this->render('backtemplates/app-login.html.twig', [
-            'controller_name' => 'IndexController',
-        ]);
-    }*/
-    #[Route('/', name: 'app_login')]
-    public function login(): Response
-    {
-        return $this->render('backtemplates/app-login.html.twig', [
-            'controller_name' => 'UserController',
-        ]);
-    }
+
+    #[Route('/', name: 'app_front')] 
+public function front(Security $security): Response
+{
+    // Get the currently authenticated user
+    $user = $security->getUser();
+
+    // Pass the user to the template
+    return $this->render('fronttemplates/basefront.html.twig', [
+        'user' => $user,
+    ]);
+}
+
 
     private $entityManager;
     private $passwordHasher;
@@ -75,37 +78,34 @@ class UserController extends AbstractController
 
 
 
-    #[Route('/login/check', name: 'app_login_check', methods: ['POST'])]
-    public function checkLogin(Request $request): Response
+    /*#[Route('/login', name: 'app_login')]
+public function login(AuthenticationUtils $authenticationUtils): Response
+{
+    // Retrieve login errors, if any
+    $error = $authenticationUtils->getLastAuthenticationError();
+    $lastUsername = $authenticationUtils->getLastUsername();
+
+    return $this->render('security/login.html.twig', [
+        'last_username' => $lastUsername,
+        'error' => $error,
+    ]);
+}
+
+
+    #[Route('/logout', name: 'app_logout')]
+    public function logout(Request $request): Response
     {
-        $email = $request->request->get('email');
-        $password = $request->request->get('password');
+        // Symfony automatically handles session logout.
+        // You don't need to manually clear the session here.
 
-        $user = $this->entityManager->getRepository(User::class)->findOneBy(['email' => $email]);
+        // Add a flash message for logout success (optional)
+        $this->addFlash('success', 'You have been logged out successfully.');
 
-        if ($user && $this->passwordHasher->isPasswordValid($user, $password)) {
-
-            $session = $request->getSession();
-            $session->set('user_id', $user->getId());
-
-            if (in_array('ROLE_ADMIN', $user->getRoles())) {
-
-                return $this->render('backtemplates/baseback.html.twig', [
-                    'controller_name' => 'UserController',
-                ]);
-            } else {
-
-                return $this->render('fronttemplates/basefront.html.twig', [
-                    'controller_name' => 'UserController',
-                ]);
-            }
-        } else {
-
-            $this->addFlash('error', 'Incorrect email or password');
-
-            return $this->redirectToRoute('app_login');
-        }
+        // Symfony will handle redirection to the login page based on the security configuration
+        return $this->redirectToRoute('app_login');
     }
+*/
+
     #[Route('/back2', name: 'app_index2')]
     public function listUsers(): Response
     {
@@ -146,13 +146,13 @@ class UserController extends AbstractController
             'controller_name' => 'UserController',
         ]);
     }
-    /*#[Route('/back2', name: 'app_index2')]
+    #[Route('/back2', name: 'app_index2')]
     public function index2(): Response
     {
         return $this->render('backtemplates/baseback2.html.twig', [
             'controller_name' => 'IndexController',
         ]);
-    }*/
+    }
 
 
     /*#[Route('/back/profile', name: 'app_profile')]
@@ -172,13 +172,7 @@ class UserController extends AbstractController
         ]);
     }
 
-    #[Route('/front', name: 'app_front')]
-    public function front(): Response
-    {
-        return $this->render('fronttemplates/basefront.html.twig', [
-            'controller_name' => 'UserController',
-        ]);
-    }
+
 
     //update
 
@@ -227,7 +221,6 @@ class UserController extends AbstractController
 
     /////creation automatique de l'admin
 
-    #[Route('/', name: 'app_login')]
     public function loginAdmin(): Response
     {
         $this->createDefaultAdmin();
@@ -237,6 +230,21 @@ class UserController extends AbstractController
         ]);
     }
 
+    #[Route('/profile', name: 'app_user_profile')]
+    public function profileUser(DemandeServiceRepository $demandeServiceRepository): Response
+    {
+        // Get the logged-in user
+        $user = $this->getUser();
+
+        // Retrieve all demandes for this user
+        $demandes = $demandeServiceRepository->findByUser($user);
+
+        // Pass the demandes to the template
+        return $this->render('fronttemplates/profile.html.twig', [
+            'user' => $user,
+            'demandes' => $demandes,
+        ]);
+    }   
 
 
 
@@ -264,8 +272,5 @@ class UserController extends AbstractController
 
         }
     }
-
-
-
 
 }

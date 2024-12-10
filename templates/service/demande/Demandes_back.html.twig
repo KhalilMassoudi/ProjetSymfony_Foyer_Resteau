@@ -1,0 +1,89 @@
+{% extends 'baseback2.html.twig' %}
+
+{% block body %}
+<div class="content-body">
+    {# navbar Gestion service #}
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNavDropdown">
+            <ul class="navbar-nav">
+                <li class="nav-item active">
+                    <a class="nav-link" href="{{ path('app_service') }}">Service </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ path('app_type_service') }}">Types Services <span class="sr-only">(current)</span></a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ path('app_demande') }}">Demandes</a>
+                </li>
+            </ul>
+        </div>
+    </nav>
+
+    <div class="card mt-4">
+        <div class="card-header">
+            <h4 class="card-title">List of Demandes</h4>
+            <h4 class="card-title d-flex justify-content-between">
+            </h4>
+        </div>
+                <div class="card-body">
+            <div class="table-responsive">
+                <table class="table student-data-table m-t-20">
+                    <thead>
+                        <tr>
+                            <th>Nom</th>
+                            <th>Prenom</th>
+                            <th>Description</th>
+                            <th>Date</th>
+                            <th>Telephone</th>
+                            <th>Email</th>
+                            <th>Service</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for message in app.flashes('success') %}
+                        <div class="alert alert-success">
+                            {{ message }}
+                        </div>
+                        {% endfor %}
+                        {% for s in demandes %}
+                        <tr>
+                            <td>{{ s.nom }}</td>
+                            <td>{{ s.prenom }}</td>
+                            <td>{{ s.description }}</td>
+                            <td>{{ s.DateDemande ? s.DateDemande|date('Y-m-d') : 'No date available' }}</td>
+                            <td>{{ s.telephone }}</td>
+                            <td>{{ s.email }}</td>
+                            <td>{{ s.service.nom }}</td>
+                            <td>
+                                <a href="{{ path('app_demande_accept', { id: s.id }) }}" class="btn btn-success btn-sm">
+                                    Accept
+                                </a>
+                                <a href="{{ path('app_demande_reject', { id: s.id }) }}" class="btn btn-danger btn-sm">
+                                    Reject
+                                </a>
+                            </td>
+                        </tr>
+                        {% else %}
+                        <tr>
+                            <td colspan="7">Aucun demande trouvé.</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+</div>
+{% endblock %}
+
+{% block js %}
+<script src="{{ asset('assets/back/vendor/global/global.min.js') }}"></script>
+<script src="{{ asset('assets/back/js/quixnav-init.js') }}"></script>
+<script src="{{ asset('assets/back/js/custom.min.js') }}"></script>
+<script src="{{ asset('assets/back/vendor/chartist/js/chartist.min.js') }}"></script>
+<script src="{{ asset('assets/back/vendor/moment/moment.min.js') }}"></script>
+<script src="{{ asset('assets/back/vendor/pg-calendar/js/pignose.calendar.min.js') }}"></script>
+<script src="{{ asset('assets/back/js/dashboard/dashboard-2.js') }}"></script>
+{% endblock %}
