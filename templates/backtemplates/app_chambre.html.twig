@@ -32,7 +32,37 @@
         <div id="ajouterChambreDiv" class="d-none">
             <h2>Ajouter une chambre</h2>
             {{ form_start(form, {'attr': {'class': 'form-horizontal'}}) }}
-            <!-- Formulaire de chambre ici -->
+            <div class="form-row">
+                <div class="form-group col-md-6">
+                    {{ form_label(form.numeroChB) }}
+                    {{ form_widget(form.numeroChB, {'attr': {'class': 'form-control', 'placeholder': 'Numéro de chambre'}}) }}
+                </div>
+                <div class="form-group col-md-6">
+                    {{ form_label(form.etageChB) }}
+                    {{ form_widget(form.etageChB, {'attr': {'class': 'form-control', 'placeholder': 'Étage'}}) }}
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group col-md-6">
+                    {{ form_label(form.capaciteChB) }}
+                    {{ form_widget(form.capaciteChB, {'attr': {'class': 'form-control', 'placeholder': 'Capacité'}}) }}
+                </div>
+                <div class="form-group col-md-6">
+                    {{ form_label(form.prixChB) }}
+                    {{ form_widget(form.prixChB, {'attr': {'class': 'form-control', 'placeholder': 'Prix'}}) }}
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group col-md-6">
+                    {{ form_label(form.statutChB) }}
+                    {{ form_widget(form.statutChB, {'attr': {'class': 'form-control'}}) }}
+                </div>
+                <div class="form-group col-md-6">
+                    {{ form_label(form.image) }}
+                    {{ form_widget(form.image, {'attr': {'class': 'form-control'}}) }}
+                </div>
+            </div>
+            <button type="submit" class="btn btn-primary">Ajouter</button>
             {{ form_end(form) }}
         </div>
 

@@ -55,7 +55,8 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[Assert\NotBlank] // Assurer que l'email
     #[Assert\Email(message: "L'email '{{ value }}' n'est pas valide.")]
     private ?string $email = null;
-
+    #[ORM\OneToOne(mappedBy: 'user', cascade: ['remove'])]
+    private ?Reservation $reservation = null;
     /**
      * @ORM\OneToMany(targetEntity=DemandeService::class, mappedBy="user")
      */
@@ -189,6 +190,16 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setEmail(string $email): static
     {
         $this->email = $email;
+
+        return $this;
+    }
+    public function getReservation(): ?Reservation
+    {
+        return $this->reservation;
+    }
+    public function setReservation(?Reservation $reservation): self
+    {
+        $this->reservation = $reservation;
 
         return $this;
     }
