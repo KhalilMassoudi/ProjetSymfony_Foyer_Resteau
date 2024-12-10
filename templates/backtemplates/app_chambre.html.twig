@@ -1,8 +1,40 @@
 {% extends 'backtemplates/baseback2.html.twig' %}
 
 {% block body %}
-    <div class="container mt-4" style="margin-left: 20%; margin-top: 400px;padding-top: 80px;">
+    <div class="container mt-4" style="margin-left: 20%; margin-top: 400px; padding-top: 80px;">
         <h1>Gestion des chambres</h1>
+
+        <!-- Conteneur pour les boutons et l'icône de notification -->
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <!-- Boutons Ajouter une chambre et Rechercher une chambre -->
+            <div>
+                <button id="toggleFormBtn" class="btn btn-primary mb-4">
+                    Ajouter une chambre <span class="btn-icon-right"><i class="fa fa-plus"></i></span>
+                </button>
+                <a href="{{ path('app_chambre_search') }}" class="btn btn-secondary mb-4 ml-2">
+                    Rechercher une chambre <span class="btn-icon-right"><i class="fa fa-search"></i></span>
+                </a>
+            </div>
+
+            <!-- Icône de notification avec le style pulse -->
+            <div style="position: relative;">
+                <i class="mdi mdi-bell" style="font-size: 24px; cursor: pointer;" id="notificationIcon"></i>
+                <div class="pulse-css"></div>
+                <div id="notificationDropdown" class="d-none" style="position: absolute; top: 30px; right: 0; background: white; border: 1px solid #ccc; border-radius: 5px; width: 300px; max-height: 300px; overflow-y: auto; z-index: 1000;">
+                    <h5 class="p-2">Réservations</h5>
+                    <ul class="list-group list-group-flush">
+                        {% for reservation in reservations %}
+                            <li class="list-group-item">
+                                <strong>Client :</strong> {{ reservation.nomEtudiant }}<br>
+                                <strong>Chambre :</strong> {{ reservation.chambre.numeroChB }}<br>
+                            </li>
+                        {% else %}
+                            <li class="list-group-item text-center">Aucune réservation</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+        </div>
 
         {# Affichage des messages flash pour les erreurs #}
         {% for message in app.flashes('error') %}
@@ -17,16 +49,6 @@
                 <strong>Succès!</strong> {{ message }}
             </div>
         {% endfor %}
-
-        {# Bouton pour afficher/masquer le formulaire d'ajout de chambre #}
-        <button id="toggleFormBtn" class="btn btn-primary mb-4">
-            Ajouter une chambre <span class="btn-icon-right"><i class="fa fa-plus"></i></span>
-        </button>
-
-        {# Nouveau bouton pour la recherche des chambres #}
-        <a href="{{ path('app_chambre_search') }}" class="btn btn-secondary mb-4 ml-2">
-            Rechercher une chambre <span class="btn-icon-right"><i class="fa fa-search"></i></span>
-        </a>
 
         {# Formulaire pour ajouter une nouvelle chambre #}
         <div id="ajouterChambreDiv" class="d-none">
@@ -110,18 +132,16 @@
             </tbody>
         </table>
     </div>
-{% endblock %}
 
-{% block js %}
-    <script src="{{ asset('assets/back/vendor/global/global.min.js') }}"></script>
-    <script src="{{ asset('assets/back/js/quixnav-init.js') }}"></script>
-    <script src="{{ asset('assets/back/js/custom.min.js') }}"></script>
-    <script src="{{ asset('assets/back/vendor/chartist/js/chartist.min.js') }}"></script>
-    <script src="{{ asset('assets/back/vendor/moment/moment.min.js') }}"></script>
-    <script src="{{ asset('assets/back/vendor/pg-calendar/js/pignose.calendar.min.js') }}"></script>
-    <script src="{{ asset('assets/back/js/dashboard/dashboard-2.js') }}"></script>
     <script>
         document.addEventListener('DOMContentLoaded', () => {
+            const notificationIcon = document.getElementById('notificationIcon');
+            const notificationDropdown = document.getElementById('notificationDropdown');
+
+            notificationIcon.addEventListener('click', () => {
+                notificationDropdown.classList.toggle('d-none');
+            });
+
             const toggleFormBtn = document.getElementById('toggleFormBtn');
             const ajouterChambreDiv = document.getElementById('ajouterChambreDiv');
 
@@ -132,4 +152,5 @@
             }
         });
     </script>
+
 {% endblock %}
