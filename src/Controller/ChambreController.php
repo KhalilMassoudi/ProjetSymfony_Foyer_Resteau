@@ -23,6 +23,7 @@ class ChambreController extends AbstractController
         Request $request,
         EntityManagerInterface $entityManager,
         ChambreRepository $chambreRepository,
+        ReservationRepository $reservationRepository, // Ajout du repository des réservations
         SluggerInterface $slugger
     ): Response {
         $chambre = new Chambre();
@@ -55,10 +56,13 @@ class ChambreController extends AbstractController
         }
 
         $chambres = $chambreRepository->findAll();
+        // Récupérer les dernières réservations
+        $reservations = $reservationRepository->findBy([], ['dateReservation' => 'DESC'], 5);
 
         return $this->render('backtemplates/app_chambre.html.twig', [
             'form' => $form->createView(),
             'chambres' => $chambres,
+            'reservations' => $reservations, // Passer les réservations à la vue
         ]);
     }
     #[Route("/chambre/search", name: "app_chambre_search")]
@@ -189,21 +193,31 @@ class ChambreController extends AbstractController
         Request $request,
         EntityManagerInterface $entityManager,
         ChambreRepository $chambreRepository,
+        ReservationRepository $reservationRepository, // Ajout du repository des réservations
         UserInterface $user // Injection de l'utilisateur connecté
     ): Response {
-        // Vérification que l'utilisateur est connecté
+
         if (!$user) {
             throw $this->createAccessDeniedException('Vous devez être connecté pour effectuer une réservation.');
         }
 
-        // Récupérer la chambre choisie
+        // Vérifier si l'utilisateur a déjà une réservation
+        $existingReservation = $reservationRepository->findOneBy(['user' => $user]);
+
+        if ($existingReservation) {
+            // Si l'utilisateur a déjà une réservation, afficher un message d'alerte et rediriger
+            $this->addFlash('warning', 'Vous pouvez réserver une chambre qu\'une seule fois.');
+            return $this->redirectToRoute('app_front_chambre'); // Redirige vers la page des chambres
+        }
+
+        // Récupérer la chambre demandée
         $chambre = $chambreRepository->find($id);
 
         if (!$chambre) {
             throw $this->createNotFoundException('La chambre demandée n\'existe pas.');
         }
 
-        // Créer un nouvel objet Reservation
+        // Créer une nouvelle réservation
         $reservation = new Reservation();
         $reservation->setChambre($chambre);
         $reservation->setUser($user); // Associer la réservation à l'utilisateur connecté
@@ -227,6 +241,24 @@ class ChambreController extends AbstractController
             'form' => $form->createView(),
             'reservation' => $reservation,
         ]);
+    }
+    #[Route('/back/notifications', name: 'app_notifications')]
+    public function notifications(ReservationRepository $reservationRepository): JsonResponse
+    {
+        // Récupérer les réservations récentes (par exemple, les 5 dernières)
+        $reservations = $reservationRepository->findBy([], ['dateReservation' => 'DESC'], 5);
+
+        // Transformer les données en JSON pour l'envoyer à la vue
+        $data = [];
+        foreach ($reservations as $reservation) {
+            $data[] = [
+                'id' => $reservation->getId(),
+                'nomEtudiant' => $reservation->getNomEtudiant(),
+                'dateReservation' => $reservation->getDateReservation()->format('d-m-Y H:i'),
+            ];
+        }
+
+        return new JsonResponse($data);
     }
 
 }

@@ -1,6 +1,15 @@
 {% extends 'fronttemplates/basefront.html.twig' %}
 
 {% block body %}
+       <!-- Afficher les messages flash -->
+       {% for label, messages in app.flashes %}
+           <div class="alert alert-{{ label == 'success' ? 'success' : 'warning' }} alert-dismissible fade show" role="alert">
+               {% for message in messages %}
+                   {{ message }}
+               {% endfor %}
+               <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+           </div>
+       {% endfor %}
     <div class="container mt-5">
         <div class="d-flex justify-content-end mb-4">
             <div class="row g-3">
@@ -179,6 +188,21 @@
         document.getElementById('close-filters-btn').addEventListener('click', function () {
             const advancedFilters = document.getElementById('advanced-filters');
             advancedFilters.style.display = 'none';
+        });
+    </script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            // Récupérer tous les messages d'alerte
+            const alerts = document.querySelectorAll('.alert');
+
+            // Faire disparaître chaque alerte après 5 secondes
+            alerts.forEach(alert => {
+                setTimeout(() => {
+                    alert.classList.add('fade');
+                    alert.classList.remove('show');
+                    setTimeout(() => alert.remove(), 500); // Supprimer complètement après l'animation
+                }, 5000); // 5 secondes
+            });
         });
     </script>
 {% endblock %}
