@@ -1,0 +1,9 @@
+knp_paginator:
+  default_options:
+    # Options valides :
+    # "default_limit", "distinct", "filter_field_name", "filter_value_name", "page_name", "page_out_of_range", "sort_direction_name", "sort_field_name"
+    default_limit: 10  # Nombre d'éléments par page par défaut
+    page_name: page    # Nom du paramètre de la page
+    sort_field_name: sort_field  # Nom du paramètre pour le tri
+    sort_direction_name: sort_direction  # Nom du paramètre pour la direction du tri
+  # ... autres configurations possibles

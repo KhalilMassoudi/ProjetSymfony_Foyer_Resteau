@@ -6,18 +6,22 @@ use App\Entity\Reclamation;
 use App\Entity\TypeReclamation;
 
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\FileType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
+use Symfony\Component\Validator\Constraints\File;
+
 
 class ReclamationType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
+            // Champ titre
             // Champ titre
             ->add('titre', TextType::class, [
                 'label' => 'Titre de la réclamation',
@@ -45,10 +49,26 @@ class ReclamationType extends AbstractType
                 ],
                 'required' => true,
             ])
+            // Champ Image (avec validation correcte)
+            ->add('image', FileType::class, [
+                'label' => 'Image de la chambre',
+                'required' => false, // Permet d'envoyer le formulaire sans fichier
+                'mapped' => false, // Ne lie pas directement ce champ à l'entité (vous gérez le fichier séparément)
+                'constraints' => [
+                    new File([
+                        'maxSize' => '2M', // Taille maximale du fichier
+                        'mimeTypes' => ['image/jpeg', 'image/png', 'image/gif'],
+                        'mimeTypesMessage' => 'Veuillez télécharger une image valide.',
+                    ]),
+                ],
+                'attr' => ['class' => 'form-control'],
+            ])
             // Bouton de soumission
             ->add('submit', SubmitType::class, [
                 'label' => 'Ajouter la réclamation',
             ]);
+            // Bouton de soumission
+
     }
 
     public function configureOptions(OptionsResolver $resolver): void

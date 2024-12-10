@@ -5,6 +5,11 @@ namespace App\Entity;
 use App\Repository\ReclamationRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Knp\RatingBundle\Annotation as Rating;
+
+/**
+ * @Rating\Rateable
+ */
 
 #[ORM\Entity(repositoryClass: ReclamationRepository::class)]
 class Reclamation
@@ -17,9 +22,12 @@ class Reclamation
     #[ORM\Column(length: 255)]
     private ?string $titre = null; // Nouveau champ titre obligatoire
 
+    #[ORM\Column(type: 'string', length: 255, nullable: true)]
+    private ?string $image;
     #[ORM\Column(length: 255)]
     private ?string $description = null;
-
+    #[ORM\Column(type: "integer")]
+    private ?int $user_id = null;
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
     private ?\DateTimeInterface $date_Reclamation = null;
 
@@ -30,8 +38,23 @@ class Reclamation
     private ?string $reponse = '';
 
     #[ORM\ManyToOne]
-    private ?TypeReclamation $TypeReclamations = null; // Réponse par défaut est une chaîne vide
+    private ?TypeReclamation $typeReclamations = null; // Réponse par défaut est une chaîne vide
 
+    #[ORM\Column(type: "integer")]
+    private $rating = 0;
+
+    // Getter et Setter pour rating
+    public function getRating(): ?int
+    {
+        return $this->rating;
+    }
+
+    public function setRating(?int $rating): self
+    {
+        $this->rating = $rating;
+
+        return $this;
+    }
     // Constructeur pour définir les valeurs par défaut (facultatif)
     public function __construct()
     {
@@ -108,13 +131,33 @@ class Reclamation
 
     public function getTypeReclamations(): ?TypeReclamation
     {
-        return $this->TypeReclamations;
+        return $this->typeReclamations;
     }
 
-    public function setTypeReclamations(?TypeReclamation $TypeReclamations): static
+    public function setTypeReclamations(?TypeReclamation $typeReclamations): static
     {
-        $this->TypeReclamations = $TypeReclamations;
-
+        $this->typeReclamations = $typeReclamations;
         return $this;
     }
+    public function getUserId(): ?int
+    {
+        return $this->user_id;
+    }
+
+    public function setUserId(int $user_id): static
+    {
+        $this->user_id = $user_id;
+        return $this;
+    }
+    public function getImage(): ?string
+    {
+        return $this->image;
+    }
+
+    public function setImage(?string $image): self
+    {
+        $this->image = $image;
+        return $this;
+    }
+
 }

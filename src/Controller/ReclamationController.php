@@ -7,12 +7,17 @@ use App\Repository\ReclamationRepository;
 
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Doctrine\ORM\EntityManagerInterface;
+use App\Entity\User;
+use Knp\Component\Pager\PaginatorInterface;
+use Symfony\Component\String\Slugger\SluggerInterface;
+
 
 
 
@@ -26,21 +31,85 @@ class ReclamationController extends AbstractController
             'controller_name' => 'ReclamationController',
         ]);
     }
-    #[Route('/afficherreclamations', name: 'app_afficherReclamations')]
-    public function afficherReclamation(ReclamationRepository $rep): Response
-    {
-        // Récupérer toutes les réclamations
-        $reclamations = $rep->findAll();
+    private $entityManager;
 
-        // Créer un formulaire vide pour modification
+    // Injecter l'EntityManager via le constructeur
+    public function __construct(EntityManagerInterface $entityManager)
+    {
+        $this->entityManager = $entityManager;
+    }
+    #[Route('/adminafficherreclamations', name: 'app_adminafficherReclamations')]
+    public function adminafficherReclamation(Request $request, ReclamationRepository $rep, PaginatorInterface $paginator): Response
+    {
+        $limit = 3;
+
+        // Tri (optionnel)
+        $sortField = $request->query->get('sort_field', 'titre');  // Par défaut, trier par 'titre'
+        $sortDirection = $request->query->get('sort_direction', 'asc');  // Par défaut, ordre ascendant
+
+        // Récupérer les réclamations avec la pagination et le tri
+        $reclamations = $rep->findBy([], [$sortField => $sortDirection]);
+
+        // Pagination
+        $pagination = $paginator->paginate(
+            $reclamations,  // La requête de réclamations triées
+            $request->query->getInt('page', 1),  // La page actuelle, 1 par défaut
+            $limit  // Nombre d'éléments par page
+        );
+
+        // Récupérer les utilisateurs associés aux réclamations
+        $users = [];
+        foreach ($reclamations as $reclamation) {
+            // Récupérer l'utilisateur associé à la réclamation en utilisant user_id
+            $users[$reclamation->getId()] = $this->entityManager
+                ->getRepository(User::class)
+                ->find($reclamation->getUserId());
+        }
+
+        // Créer le formulaire de modification
         $formModif = $this->createForm(ReclamationType::class);
 
-        // Renvoyer la liste des réclamations et le formulaire de modification au template
-        return $this->render('reclamation/afficherReclamations.html.twig', [
-            'reclamations' => $reclamations,
+        // Renvoyer la vue avec la pagination, les réclamations et le formulaire
+        return $this->render('backtemplates/backreclamations.html.twig', [
+            'reclamations' => $pagination,  // Utilisation de la pagination
             'formModif' => $formModif->createView(),
-            'formAjout' => $formModif->createView()
+            'pagination' => $pagination,
+            'users' => $users
         ]);
+    }
+
+
+
+
+    #[Route('//afficherreclamations', name: 'app_afficherReclamations')]
+    public function afficherReclamation(ReclamationRepository $rep, Request $request, PaginatorInterface $paginator): Response
+    {
+        // Nombre d'éléments par page
+        // Nombre d'éléments par page
+        $limit = 3;
+
+        // Tri (optionnel)
+        $sortField = $request->query->get('sort_field', 'titre');  // Par défaut, trier par 'titre'
+        $sortDirection = $request->query->get('sort_direction', 'asc');  // Par défaut, ordre ascendant
+        $formModif = $this->createForm(ReclamationType::class);
+        // Pagination
+        $pagination = $paginator->paginate(
+            $rep->findAll(),  // La requête de base
+            $request->query->getInt('page', 1),  // La page actuelle, 1 par défaut
+            $limit,  // Nombre d'éléments par page
+            [
+                'sortField' => $sortField,  // Champ par défaut pour trier
+                'sortDirection' => $sortDirection,  // Direction par défaut
+            ]
+        );
+        return $this->render('reclamation/afficherReclamations.html.twig', [
+            'reclamations' => $rep->findAll(),
+            'formModif' => $formModif->createView(),
+            'formAjout' => $formModif->createView(),
+            'pagination' => $pagination,
+        ]);
+        // Renvoyer la vue avec la pagination
+
     }
     #[Route('/backreclamationdetails/{id}', name: 'app_reclamation_details', methods: ['GET'])]
     public function details(int $id, ManagerRegistry $doctrine): Response
@@ -58,57 +127,74 @@ class ReclamationController extends AbstractController
             'reclamation' => $reclamation,
         ]);
     }
-    #[Route('/adminafficherreclamations', name: 'app_adminafficherReclamations')]
-    public function adminafficherReclamation(ReclamationRepository $rep): Response
-    {
 
-        // Récupérer toutes les réclamations
-        $reclamations = $rep->findAll();
-
-        // Créer un formulaire vide pour modification
-        $formModif = $this->createForm(ReclamationType::class);
-
-        // Renvoyer la liste des réclamations et le formulaire de modification au template
-        return $this->render('backtemplates/backreclamations.html.twig', [
-            'reclamations' => $reclamations,
-            'formModif' => $formModif->createView()
-
-        ]);
-    }
 
 
 
 
     #[Route('/ajoutReclamation', name: 'app_ajouterReclamation')]
-    public function ajoutReclamation(ManagerRegistry $doctrine, Request $request): Response
+    // Ajouter une réclamation
+    public function ajouterReclamation(Request $request, ManagerRegistry $doctrine, SluggerInterface $slugger): Response
     {
-        // Création d'une nouvelle instance de Reclamation
+        // Créer une nouvelle instance de Reclamation
         $reclamation = new Reclamation();
 
-        // Création du formulaire
+        // Créer le formulaire
         $form = $this->createForm(ReclamationType::class, $reclamation);
-
-        // Traitement des données saisies dans le formulaire
         $form->handleRequest($request);
 
-        // Si le formulaire est soumis et valide
+        // Vérifier si le formulaire est soumis et valide
         if ($form->isSubmitted() && $form->isValid()) {
-            // Récupération de l'Entity Manager
-            $em = $doctrine->getManager();
-            // Persistance de la réclamation dans la base de données
-            $em->persist($reclamation);
-            // Sauvegarde des données
-            $em->flush();
+            $entityManager = $doctrine->getManager();
 
-            // Redirection vers la page d'affichage des réclamations
+            // Assigner un utilisateur par défaut (ou récupérer l'utilisateur connecté si nécessaire)
+            $reclamation->setUserId(2); // À modifier selon vos besoins
+
+            // Récupérer l'image téléchargée et la traiter
+            /** @var UploadedFile $imageFile */
+            $imageFile = $form->get('image')->getData();
+            if (!$imageFile) {
+                throw new \Exception('Le champ image n’a pas reçu de fichier.');
+            }
+            if ($imageFile) {
+                // Créer un nom unique pour le fichier
+                $originalFilename = pathinfo($imageFile->getClientOriginalName(), PATHINFO_FILENAME);
+                $safeFilename = $slugger->slug($originalFilename);
+                $newFilename = $safeFilename . '-' . uniqid() . '.' . $imageFile->guessExtension();
+
+                try {
+                    // Déplacer le fichier dans le répertoire d'upload
+                    $imageFile->move(
+                        $this->getParameter('reclamations_directory'), // Répertoire d'upload défini dans services.yaml
+                        $newFilename
+                    );
+                    // Assigner le nom du fichier à l'entité Reclamation
+                    $reclamation->setImage($newFilename);
+                } catch (FileException $e) {
+                    // En cas d'erreur, ajouter un message flash
+                    $this->addFlash('error', 'Erreur lors de l\'upload de l\'image.');
+                    return $this->redirectToRoute('app_ajouterReclamation');
+                }
+            }
+
+            // Enregistrer l'entité dans la base de données
+            $entityManager->persist($reclamation);
+            $entityManager->flush();
+
+            // Message flash de succès
+            $this->addFlash('success', 'Réclamation ajoutée avec succès !');
+
+            // Rediriger vers la liste des réclamations
             return $this->redirectToRoute('app_afficherReclamations');
         }
 
-        // Rendu de la vue avec le formulaire
+        // Afficher le formulaire dans la vue
         return $this->render('reclamation/ajoutReclamation.html.twig', [
-            'f' => $form->createView(), // Passer la vue du formulaire à la vue Twig
+            'form' => $form->createView(),
         ]);
     }
+
+
     #[Route('/modifierReclamation/{id}', name: 'app_modifierReclamation')]
     public function modifierReclamation(int $id, ManagerRegistry $doctrine, Request $request): Response
     {
@@ -141,7 +227,7 @@ class ReclamationController extends AbstractController
 
         // Rendu de la vue avec le formulaire
         return $this->render('reclamation/ajoutReclamation.html.twig', [
-            'f' => $form->createView(), // Passer la vue du formulaire à la vue Twig
+            'form' => $form->createView(), // Passer la vue du formulaire à la vue Twig
         ]);
     }
     #[Route('/supprimerReclamation/{id}', name: 'app_supprimerReclamation', methods: ['POST', 'GET'])]
@@ -279,6 +365,42 @@ class ReclamationController extends AbstractController
         ]);
     }
 
+
+    #[Route('/update-rating', name: 'update_rating', methods: ['POST'])]
+
+    public function updateRating(Request $request, EntityManagerInterface $entityManager): JsonResponse
+    {
+        // Récupérer les données envoyées par l'AJAX (ID de la réclamation et la nouvelle note)
+        $data = json_decode($request->getContent(), true);
+
+        // Vérifier que les paramètres nécessaires sont présents dans la requête
+        $reclamationId = $data['reclamation_id'] ?? null;
+        $newRating = $data['rating'] ?? null;
+
+        if ($reclamationId === null || $newRating === null) {
+            return new JsonResponse(['error' => 'Invalid data'], JsonResponse::HTTP_BAD_REQUEST);
+        }
+
+        // Trouver la réclamation dans la base de données
+        $reclamation = $entityManager->getRepository(Reclamation::class)->find($reclamationId);
+
+        if (!$reclamation) {
+            return new JsonResponse(['error' => 'Reclamation not found'], JsonResponse::HTTP_NOT_FOUND);
+        }
+
+        // Mettre à jour la note
+        $reclamation->setRating($newRating);
+
+        // Sauvegarder les changements
+        $entityManager->flush();
+
+        return new JsonResponse(['success' => 'Rating updated successfully'], JsonResponse::HTTP_OK);
+    }
+    #[Route('/ajouter-favori/{id}', name: 'app_ajouter_favori')]
+    public function ajouterAuxFavoris(Reclamation $reclamation): Response
+    {
+        // Logique pour ajouter la réclamation aux favoris (ex. enregistrement dans une base de données)
+    }
 
 
 }

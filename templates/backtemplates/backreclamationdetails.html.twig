@@ -19,6 +19,10 @@
                 <td>{{ reclamation.id }}</td>
             </tr>
             <tr>
+                <th>Date de Réclamation</th>
+                <td>{{ reclamation.dateReclamation|date('d-m-Y H:i') }}</td>
+            </tr>
+            <tr>
                 <th>Titre</th>
                 <td>{{ reclamation.titre }}</td>
             </tr>
@@ -26,10 +30,7 @@
                 <th>Description</th>
                 <td>{{ reclamation.description }}</td>
             </tr>
-            <tr>
-                <th>Date de Réclamation</th>
-                <td>{{ reclamation.dateReclamation|date('d-m-Y H:i') }}</td>
-            </tr>
+
             <tr>
                 <th>Réponse</th>
                 <td>
@@ -37,9 +38,20 @@
                         {{ reclamation.reponse }}
                     {% else %}
                         <span class="text-muted">Pas encore de réponse.</span>
+                        <a href="{{ path('app_reclamation_repondre', { 'id': reclamation.id }) }}" class="btn btn-primary mt-3">Répondre</a>
                     {% endif %}
                 </td>
             </tr>
+            {% if reclamation.image %}
+            <tr>
+                <th>Image</th>
+                <td>
+
+                        <img src="{{ asset('uploads/reclamations/' ~ reclamation.image) }}" alt="Image de la réclamation" class="img-fluid" style="max-width: 200px;">
+
+                </td>
+            </tr>
+            {% endif %}
         </table>
     </div>
 {% endblock %}

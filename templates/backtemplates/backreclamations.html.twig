@@ -20,10 +20,13 @@
         <table class="table table-striped">
             <thead>
             <tr>
-                <th>ID</th>
+
+                <th>nom étudiant</th>
+                <th>email</th>
                 <th>Titre</th>
                 <th>Description</th>
                 <th>Date de réclamation</th>
+                <th>image</th>
                 <th>État</th>
                 <th>Action</th>
             </tr>
@@ -31,10 +34,31 @@
             <tbody>
             {% for reclamation in reclamations %}
                 <tr>
-                    <td>{{ reclamation.id }}</td>
+
+                    <td>
+                        {% if users[reclamation.id] is not null %}
+                            {{ users[reclamation.id].username }}
+                        {% else %}
+                            Utilisateur inconnu
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if users[reclamation.id] is not null %}
+                            {{ users[reclamation.id].email }}
+                        {% else %}
+                            Utilisateur inconnu
+                        {% endif %}
+                    </td>
                     <td>{{ reclamation.titre }}</td>
                     <td>{{ reclamation.description }}</td>
                     <td>{{ reclamation.dateReclamation ? reclamation.dateReclamation|date('d-m-Y') : 'N/A' }}</td>
+                    <td>
+                        {% if reclamation.image is not null %}
+                            <img src="{{ asset('uploads/reclamations/' ~ reclamation.image) }}" alt="Image de {{ reclamation.id }}" width="100">
+                        {% else %}
+                            Pas d'image
+                        {% endif %}
+                    </td>
                     <td>{{ reclamation.etat }}</td>
                     <td>
                         <!-- Bouton pour afficher les détails d'une réclamation -->
@@ -54,6 +78,10 @@
             {% endfor %}
             </tbody>
         </table>
+        <div class="pagination">
+            {{ knp_pagination_render(pagination) }}
+        </div>
+
     </div>
 {% endblock %}
 

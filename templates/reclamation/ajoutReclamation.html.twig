@@ -292,83 +292,93 @@
 
 
     <section class="py-5">
-        <div class="container-fluid">
+        <div class="container-fluid vh-100 d-flex align-items-center justify-content-center" style="background: linear-gradient(to right, #f7f9fc, #d3e5ff);">
+            <div class="row w-100 align-items-center px-3">
+                <!-- Section de description à gauche -->
+                <div class="col-md-5 text-center p-4">
+                    <h3 class="mb-3" style="color: #4a90e2; font-weight: bold;">Bienvenue sur notre plateforme</h3>
+                    <p style="color: #5a5a5a; line-height: 1.6;">
+                        Veuillez remplir ce formulaire pour soumettre votre réclamation. Nous nous engageons à traiter vos demandes dans les plus brefs délais.
+                    </p>
+                </div>
 
-            <div class="bg-secondary py-5 my-5 rounded-5" style="background: url('images/bg-leaves-img-pattern.png') no-repeat;">
-                <div class="container my-5">
-                    <div class="row">
-                        <div class="col-md-6 p-5">
-                            <div class="section-header">
-                                <h2 class="section-title display-4">Get <span class="text-primary">25% Discount</span> on your first purchase</h2>
+                <!-- Formulaire à droite -->
+                <div class="col-md-6 offset-md-1">
+                    <div class="card p-4 shadow-lg rounded-4" style="background: #ffffff; margin-top: 20px;">
+                        <h2 class="text-center mb-4" style="color: #4a90e2; font-weight: bold;">Ajouter une nouvelle réclamation</h2>
+
+                        <!-- Formulaire -->
+                        <form method="POST" action="{{ path('app_ajouterReclamation') }}" class="needs-validation" enctype="multipart/form-data" novalidate>
+
+                            {{ form_start(form, { 'attr': { 'enctype': 'multipart/form-data' } }) }}
+
+                            <div class="mb-3">
+                                <!-- Champ Titre -->
+                                <label for="titre" class="form-label fw-semibold">Titre de la réclamation</label>
+                                {{ form_widget(form.titre, {
+                                    'attr': {
+                                        'class': 'form-control',
+                                        'placeholder': 'Entrez le titre de la réclamation'
+                                    }
+                                }) }}
                             </div>
-                            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Dictumst amet, metus, sit massa posuere maecenas. At tellus ut nunc amet vel egestas.</p>
-                        </div>
-                        <div class="col-md-6 p-5">
-                            <p>Ajouter une réclamation</p>
 
-                            <h1>Ajouter une nouvelle réclamation</h1>
+                            <div class="mb-3">
+                                <!-- Champ Description -->
+                                <label for="description" class="form-label fw-semibold">Description de la réclamation</label>
+                                {{ form_widget(form.description, {
+                                    'attr': {
+                                        'class': 'form-control',
+                                        'placeholder': 'Décrivez votre réclamation',
+                                        'style': 'height: 150px;'
+                                    }
+                                }) }}
+                            </div>
 
-                            {# Afficher le formulaire #}
-                            <form method="POST" action="{{ path('app_ajouterReclamation') }}">
-                                {{ form_start(f) }} <!-- Début du formulaire -->
+                            <div class="mb-3">
+                                <!-- Champ TypeReclamation (dropdown) -->
+                                <label for="TypeReclamation" class="form-label fw-semibold">Type de réclamation</label>
+                                {{ form_widget(form.TypeReclamations, {
+                                    'attr': {
+                                        'class': 'form-control',
+                                        'placeholder': 'Sélectionnez un type'
+                                    }
+                                }) }}
+                            </div>
 
-                                <div class="mb-3">
-                                    <!-- Champ Titre -->
-                                    <label for="titre" class="form-label">Titre de la réclamation</label>
-                                    {{ form_widget(f.titre, {
-                                        'attr': {
-                                            'class': 'form-control form-control-lg',
-                                            'placeholder': 'Entrez le titre de la réclamation'
-                                        }
-                                    }) }}
-                                </div>
+                            <div class="mb-3">
+                                <!-- Champ Image -->
+                                <label for="image" class="form-label fw-semibold">Ajouter une image (optionnel)</label>
+                                {{ form_widget(form.image, {
+                                    'attr': {
+                                        'class': 'form-control'
+                                    }
+                                }) }}
+                            </div>
 
-                                <div class="mb-3">
-                                    <!-- Champ Description -->
-                                    <label for="description" class="form-label">Description de la réclamation</label>
-                                    {{ form_widget(f.description, {
-                                        'attr': {
-                                            'class': 'form-control form-control-lg',
-                                            'style': 'height: 150px; white-space: pre-wrap; overflow-wrap: break-word;',
-                                            'rows': '5'
-                                        }
-                                    }) }}
-                                </div>
-                                <div class="mb-3">
-                                    <!-- Champ TypeReclamation (dropdown) -->
-                                    <label for="TypeReclamation" class="form-label">Type de réclamation</label>
-                                    {{ form_widget(f.TypeReclamations, {
-                                        'attr': {
-                                            'class': 'form-control form-control-lg',
-                                            'placeholder': 'Sélectionner un type de réclamation'
-                                        }
-                                    }) }}
-                                </div>
+                            <!-- Champs cachés -->
+                            <input type="hidden" name="etat" value="suspendue">
+                            <input type="hidden" name="reponse" value="">
 
-                                <!-- Champs cachés pour 'etat' et 'reponse' avec les valeurs par défaut -->
-                                <input type="hidden" name="etat" value="suspendue">
-                                <input type="hidden" name="reponse" value="">
+                            <div class="d-grid">
+                                <!-- Bouton Soumettre -->
+                                {{ form_widget(form.submit, {
+                                    'label': 'Soumettre la réclamation',
+                                    'attr': {
+                                        'class': 'btn btn-primary'
+                                    }
+                                }) }}
+                            </div>
 
-                                <div class="d-grid gap-2">
-                                    {{ form_widget(f.submit, {
-                                        'label': 'Soumettre la réclamation',
-                                        'attr': {
-                                            'class': 'btn btn-primary btn-lg'
-                                        }
-                                    }) }} <!-- Bouton de soumission -->
-                                </div>
-
-                                {{ form_end(f) }} <!-- Fin du formulaire -->
-                            </form>
-                        </div>
-
-
+                            {{ form_end(form) }}
+                        </form>
                     </div>
-
                 </div>
             </div>
+        </div>
 
         </div>
+
     </section>
 
 
