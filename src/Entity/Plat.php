@@ -16,12 +16,12 @@ class Plat
 
     #[ORM\Column(length: 255,nullable: true)]
     #[Assert\NotBlank(message: 'Le nom du plat est obligatoire.')]
-    
+
     #[Assert\Length(
         max: 255,
         maxMessage: 'Le nom du plat ne peut pas dépasser {{ limit }} caractères.'
     )]
-    
+
     private ?string $nomPlat = null;
 
     #[ORM\Column(type: 'text', nullable: true)]
@@ -53,8 +53,47 @@ class Plat
     private ?CategoriePlat $categoriePlat = null;
 
     #[ORM\Column(length: 255, nullable: true)]
-
     private ?string $image = null;
+
+    // Ajout de la relation OneToMany vers DemandePlat
+    #[ORM\OneToMany(mappedBy: 'plat', targetEntity: DemandePlat::class)]
+    private $demandePlats;
+
+    public function __construct()
+    {
+        $this->demandePlats = new \Doctrine\Common\Collections\ArrayCollection(); // Initialisation de la collection
+    }
+
+    // Méthodes pour gérer la relation OneToMany
+    /**
+     * @return \Doctrine\Common\Collections\Collection|DemandePlat[]
+     */
+    public function getDemandePlats(): \Doctrine\Common\Collections\Collection
+    {
+        return $this->demandePlats;
+    }
+
+    public function addDemandePlat(DemandePlat $demandePlat): self
+    {
+        if (!$this->demandePlats->contains($demandePlat)) {
+            $this->demandePlats[] = $demandePlat;
+            $demandePlat->setPlat($this); // Associe le plat à la demande de plat
+        }
+
+        return $this;
+    }
+
+    public function removeDemandePlat(DemandePlat $demandePlat): self
+    {
+        if ($this->demandePlats->removeElement($demandePlat)) {
+            // Définir la relation inverse à null si nécessaire
+            if ($demandePlat->getPlat() === $this) {
+                $demandePlat->setPlat(null);
+            }
+        }
+
+        return $this;
+    }
 
     public function getId(): ?int
     {

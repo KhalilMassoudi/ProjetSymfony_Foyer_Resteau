@@ -21,7 +21,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     #[ORM\Column(length: 180)]
     #[Assert\NotBlank] // Assurer que le nom d'utilisateur n'est pas vide
-    #[Assert\Length(min: 3, max: 180)] // Limiter la longueur entre 3 et 180 caractère
+    #[Assert\Length(min: 3, max: 180)] // Limiter la longueur entre 3 et 180 caractères
     private ?string $username = null;
 
     /**
@@ -52,29 +52,61 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private ?string $address ;
 
     #[ORM\Column(length: 255)]
-    #[Assert\NotBlank] // Assurer que l'email
+    #[Assert\NotBlank] // Assurer que l'email n'est pas vide
     #[Assert\Email(message: "L'email '{{ value }}' n'est pas valide.")]
     private ?string $email = null;
+
     #[ORM\OneToOne(mappedBy: 'user', cascade: ['remove'])]
     private ?Reservation $reservation = null;
+
     /**
-     * @ORM\OneToMany(targetEntity=DemandeService::class, mappedBy="user")
+     * @ORM\OneToMany(targetEntity=DemandePlat::class, mappedBy="user")
      */
-    private  $demandeServices;
+    private $demandePlats;
 
     public function __construct()
     {
-        $this->demandeServices = new ArrayCollection(); // Correct initialization
+        $this->demandePlats = new ArrayCollection(); // Initialisation de la collection
+        $this->demandeServices = new ArrayCollection(); // Initialisation de la collection
+    }
+
+    /**
+     * @return Collection|DemandePlat[] 
+     */
+    public function getDemandePlats(): Collection
+    {
+        return $this->demandePlats ?? new ArrayCollection();
+    }
+
+    public function addDemandePlat(DemandePlat $demandePlat): self
+    {
+        if (!$this->demandePlats->contains($demandePlat)) {
+            $this->demandePlats[] = $demandePlat;
+            $demandePlat->setUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removeDemandePlat(DemandePlat $demandePlat): self
+    {
+        if ($this->demandePlats->removeElement($demandePlat)) {
+            // Set the owning side to null (unless already changed)
+            if ($demandePlat->getUser() === $this) {
+                $demandePlat->setUser(null);
+            }
+        }
+
+        return $this;
     }
 
     /**
      * @return Collection|DemandeService[]
      */
     public function getDemandeServices(): Collection
-{
-    // Ensure it always returns a collection, even if empty
-    return $this->demandeServices ?? new ArrayCollection();
-}
+    {
+        return $this->demandeServices ?? new ArrayCollection();
+    }
 
     public function addDemande(DemandeService $demande): self
     {
@@ -89,7 +121,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function removeDemande(DemandeService $demande): self
     {
         if ($this->demandeServices->removeElement($demande)) {
-            // Set the owning side to null (unless already changed)
             if ($demande->getUser() === $this) {
                 $demande->setUser(null);
             }
@@ -121,8 +152,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
-
-
     /**
      * @see UserInterface
      * @return list<string>
@@ -130,7 +159,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function getRoles(): array
     {
         $roles = $this->roles;
-        // guarantee every user at least has ROLE_USER
+        // Garantir que chaque utilisateur ait au moins le rôle 'ROLE_USER'
         $roles[] = 'ROLE_USER';
 
         return array_unique($roles);
@@ -166,8 +195,8 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      */
     public function eraseCredentials(): void
     {
-        // If you store any temporary, sensitive data on the user, clear it here
-        // $this->plainPassword = null;
+        // Si vous stockez des données sensibles, vous pouvez les effacer ici
+        // Par exemple, si vous avez une variable de mot de passe en clair, vous pouvez la définir sur null
     }
 
     public function getAddress(): ?string
@@ -175,7 +204,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this->address;
     }
 
-    public function setAddress(string $address): static
+    public function setAddress(?string $address): static
     {
         $this->address = $address;
 
@@ -193,10 +222,12 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
         return $this;
     }
+
     public function getReservation(): ?Reservation
     {
         return $this->reservation;
     }
+
     public function setReservation(?Reservation $reservation): self
     {
         $this->reservation = $reservation;
