@@ -24,6 +24,7 @@ class PlatType extends AbstractType
                 'attr' => [
                     'class' => 'form-control',
                     'placeholder' => 'Saisissez le nom du plat',
+                    
                 ],
             ])
             ->add('descPlat', TextType::class, [
@@ -39,6 +40,7 @@ class PlatType extends AbstractType
                 'currency' => 'TND',
                 'attr' => [
                     'class' => 'form-control',
+                    'placeholder' => 'Saisissez le prix du plat',
                 ],
             ])
             ->add('typeCuisine', TextType::class, [
@@ -65,6 +67,7 @@ class PlatType extends AbstractType
                     'data-live-search' => 'true',
                 ],
             ])
+            
             ->add('image', FileType::class, [
                 'label' => 'Image du plat',
                 'required' => false,

@@ -4,21 +4,118 @@
 
 {% block body %}
 <div class="container mt-4" style="margin-left: 20%; margin-top: 80px; padding-top: 80px;">
+    {# Affichage des messages flash de succès #}
     {% for message in app.flashes('success') %}
-        <div class="alert alert-success" id="flashMessage">
-            {{ message }}
-        </div>
+        <div class="alert alert-success"><strong>Succès!</strong> {{ message }}</div>
+    {% endfor %}
+
+    {# Affichage des messages flash d'erreur #}
+    {% for message in app.flashes('error') %}
+        <div class="alert alert-danger"><strong>{{ message }}</strong> </div>
     {% endfor %}
 
     <button id="showFormButtonPlat" class="btn btn-primary mb-3">
         Ajouter un plat
         <span class="btn-icon-right"><i class="fa fa-plus"></i></span>
     </button>
+    <a href="{{ path('app_plat_search') }}" class="btn btn-secondary mb-3">
+    Rechercher un plat
+    <span class="btn-icon-right"><i class="fa fa-search"></i></span>
+</a>
+
 
     <div id="addFormPlat" style="display: none;">
         <h2>Ajouter un nouveau plat</h2>
-        {{ form_start(form) }}
-        {{ form_widget(form) }}
+        {{ form_start(form, {'attr': {'class': 'form-horizontal', 'novalidate': 'novalidate'}}) }}
+        <div class="mb-3">
+            <label for="{{ form.nomPlat.vars.id }}" class="form-label">{{ form.nomPlat.vars.label }}</label>
+            {{ form_widget(form.nomPlat, {'attr': {'class': 'form-control'}}) }}
+            {% if form.nomPlat.vars.errors|length > 0 %}
+                <div class="alert alert-danger">
+                    <strong>
+                    {% for error in form.nomPlat.vars.errors %}
+                        <p>{{ error.message }}</p>
+                    {% endfor %}
+                    </strong>
+
+                </div>
+            {% endif %}
+        </div>
+
+        <div class="mb-3">
+            <label for="{{ form.descPlat.vars.id }}" class="form-label">{{ form.descPlat.vars.label }}</label>
+            {{ form_widget(form.descPlat, {'attr': {'class': 'form-control'}}) }}
+            {% if form.descPlat.vars.errors|length > 0 %}
+                <div class="alert alert-danger">
+                    <strong>
+                    {% for error in form.nomPlat.vars.errors %}
+                        <p>{{ error.message }}</p>
+                    {% endfor %}
+                    </strong>
+
+                </div>
+            {% endif %}
+        </div>
+
+        <div class="mb-3">
+            <label for="{{ form.prixPlat.vars.id }}" class="form-label">{{ form.prixPlat.vars.label }}</label>
+            {{ form_widget(form.prixPlat, {'attr': {'class': 'form-control'}}) }}
+            {% if form.prixPlat.vars.errors|length > 0 %}
+                <div class="alert alert-danger">
+                    <strong>
+                    {% for error in form.nomPlat.vars.errors %}
+                        <p>{{ error.message }}</p>
+                    {% endfor %}
+                    </strong>
+    
+                </div>
+            {% endif %}
+        </div>
+
+        <div class="mb-3">
+            <label for="{{ form.typeCuisine.vars.id }}" class="form-label">{{ form.typeCuisine.vars.label }}</label>
+            {{ form_widget(form.typeCuisine, {'attr': {'class': 'form-control'}}) }}
+            {% if form.typeCuisine.vars.errors|length > 0 %}
+                <div class="alert alert-danger">
+                    <strong>
+                    {% for error in form.nomPlat.vars.errors %}
+                        <p>{{ error.message }}</p>
+                    {% endfor %}
+                    </strong>
+
+                </div>
+            {% endif %}
+        </div>
+
+        <div class="mb-3">
+            <label for="{{ form.categoriePlat.vars.id }}" class="form-label">{{ form.categoriePlat.vars.label }}</label>
+            {{ form_widget(form.categoriePlat, {'attr': {'class': 'form-control'}}) }}
+            {% if form.categoriePlat.vars.errors|length > 0 %}
+                <div class="alert alert-danger">
+                    <strong>
+                    {% for error in form.nomPlat.vars.errors %}
+                        <p>{{ error.message }}</p>
+                    {% endfor %}
+                    </strong>
+
+                </div>
+            {% endif %}
+        </div>
+
+        <div class="mb-3">
+            <label for="{{ form.image.vars.id }}" class="form-label">{{ form.image.vars.label }}</label>
+            {{ form_widget(form.image, {'attr': {'class': 'form-control'}}) }}
+            {% if form.image.vars.errors|length > 0 %}
+                <div class="alert alert-danger">
+                    <strong>
+                    {% for error in form.nomPlat.vars.errors %}
+                        <p>{{ error.message }}</p>
+                    {% endfor %}
+                    </strong>
+
+                </div>
+            {% endif %}
+        </div>
 
         <div class="mt-3">
             <button type="submit" class="btn btn-primary">
@@ -77,6 +174,7 @@
         </tbody>
     </table>
 </div>
+
 <script>
     const showFormButtonPlat = document.getElementById('showFormButtonPlat');
     const addFormPlat = document.getElementById('addFormPlat');
@@ -91,4 +189,6 @@
         }
     }, 2000);
 </script>
+{% endblock %}
+{% block footer %}
 {% endblock %}
