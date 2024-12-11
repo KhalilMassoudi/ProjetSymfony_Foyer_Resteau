@@ -15,7 +15,8 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\String\Slugger\SluggerInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
-
+use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\Form\FormFactoryInterface;
 class ChambreController extends AbstractController
 {
     #[Route("/chambre", name: "app_chamber")]
@@ -260,5 +261,69 @@ class ChambreController extends AbstractController
 
         return new JsonResponse($data);
     }
+    #[Route('/back/notifications/accepter/{id}', name: 'app_accepter_reservation', methods: ['POST'])]
+    public function accepterReservation(
+        int $id,
+        ReservationRepository $reservationRepository,
+        EntityManagerInterface $entityManager
+    ): JsonResponse {
+        // Récupération de la réservation spécifique via son ID
+        $reservation = $reservationRepository->find($id);
 
+        // Vérifier si la réservation existe
+        if (!$reservation) {
+            return new JsonResponse([
+                'success' => false,
+                'message' => 'Réservation non trouvée.'
+            ], Response::HTTP_NOT_FOUND);
+        }
+
+        // Mise à jour : statut de la chambre associé à "Occupée"
+        $chambre = $reservation->getChambre();
+        if (!$chambre) {
+            return new JsonResponse([
+                'success' => false,
+                'message' => 'Chambre associée à la réservation introuvable.'
+            ], Response::HTTP_NOT_FOUND);
+        }
+
+        $chambre->setStatutChB(ChambreStatut::OCCUPEE);
+        // Enregistrer les modifications
+        $entityManager->flush();
+
+        // Retourner une réponse JSON au succès
+        return new JsonResponse([
+            'success' => true,
+            'message' => 'Réservation acceptée avec succès.',
+            'id' => $id // Utile pour identifier la réservation à supprimer côté client
+        ], Response::HTTP_OK);
+    }
+    #[Route('/back/notifications/rejeter/{id}', name: 'app_rejeter_reservation', methods: ['POST'])]
+    public function rejeterReservation(
+        int $id,
+        ReservationRepository $reservationRepository,
+        EntityManagerInterface $entityManager
+    ): JsonResponse {
+        // Récupérer la réservation par ID
+        $reservation = $reservationRepository->find($id);
+
+        // Vérifier si la réservation existe
+        if (!$reservation) {
+            return new JsonResponse([
+                'success' => false,
+                'message' => 'La réservation spécifiée est introuvable.'
+            ], Response::HTTP_NOT_FOUND);
+        }
+
+        // Supprimer la réservation
+        $entityManager->remove($reservation);
+        $entityManager->flush();
+
+        // Retourner une réponse JSON indiquant le succès
+        return new JsonResponse([
+            'success' => true,
+            'message' => 'Réservation rejetée et supprimée avec succès.',
+            'id' => $id // Utile pour identifier la réservation supprimée côté client
+        ], Response::HTTP_OK);
+    }
 }

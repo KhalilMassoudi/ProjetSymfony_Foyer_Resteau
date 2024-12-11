@@ -25,12 +25,23 @@
                     <ul class="list-group list-group-flush">
                         {% for reservation in reservations %}
                             <li class="list-group-item">
-                                <strong>Client :</strong> {{ reservation.nomEtudiant }}<br>
+                                <strong>Etudiant :</strong> {{ reservation.nomEtudiant }}<br>
                                 <strong>Chambre :</strong> {{ reservation.chambre.numeroChB }}<br>
+                                <strong>État de la chambre :</strong> {{ reservation.chambre.statutChB.value }}<br> <!-- Affichage du statut de la chambre -->
+
+                                <!-- Ajouter les boutons pour accepter ou rejeter la réservation -->
+                                <form class="acceptForm" data-reservation-id="{{ reservation.id }}" style="display:inline;">
+                                    <button type="button" class="btn btn-success accept">Accepter</button>
+                                </form>
+
+                                <form class="rejectForm" data-reservation-id="{{ reservation.id }}" style="display:inline;">
+                                    <button type="button" class="btn btn-danger reject">Rejeter</button>
+                                </form>
                             </li>
                         {% else %}
                             <li class="list-group-item text-center">Aucune réservation</li>
                         {% endfor %}
+
                     </ul>
                 </div>
             </div>
@@ -150,6 +161,50 @@
                     ajouterChambreDiv.classList.toggle('d-none');
                 });
             }
+        });
+        document.addEventListener('DOMContentLoaded', () => {
+            // Fonction pour gérer les clics sur "Accepter" et "Rejeter"
+            function handleAction(buttonClass, actionUrl, successMessage) {
+                document.querySelectorAll(buttonClass).forEach(button => {
+                    button.addEventListener('click', (e) => {
+                        e.preventDefault();
+
+                        const form = button.closest('form');
+                        const reservationId = form.dataset.reservationId;
+
+                        // Envoi de la requête AJAX
+                        fetch(actionUrl.replace('{id}', reservationId), {
+                            method: 'POST',
+                            headers: {
+                                'X-Requested-With': 'XMLHttpRequest',
+                                'Content-Type': 'application/json'
+                            }
+                        })
+                            .then(response => response.json())
+                            .then(data => {
+                                if (data.success) {
+                                    // Supprimer la ligne de réservation si l'action réussit
+                                    const listItem = button.closest('li');
+                                    listItem.remove();
+
+                                    // Afficher un message de succès
+                                    alert(successMessage);
+                                } else {
+                                    // Afficher un message d'erreur
+                                    alert(data.message || 'Une erreur est survenue.');
+                                }
+                            })
+                            .catch(error => {
+                                console.error('Erreur:', error);
+                                alert('Une erreur est survenue lors de la requête.');
+                            });
+                    });
+                });
+            }
+
+            // Associer les boutons avec leurs actions respectives
+            handleAction('.accept', '/back/notifications/accepter/{id}', 'Réservation acceptée avec succès!');
+            handleAction('.reject', '/back/notifications/rejeter/{id}', 'Réservation rejetée avec succès!');
         });
     </script>
 
