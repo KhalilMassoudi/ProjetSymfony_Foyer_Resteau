@@ -20,12 +20,19 @@
     </div>
 </nav>
 
+<!-- Affichage des messages flash -->
+{% for message in app.flashes('success') %}
+    <div class="alert alert-success">
+        {{ message }}
+    </div>
+{% endfor %}
 
-                        {% for message in app.flashes('success') %}
-                        <div class="alert alert-success">
-                            {{ message }}
-                        </div>
-                        {% endfor %}
+{% for message in app.flashes('error') %}
+    <div class="alert alert-danger">
+        {{ message }}
+    </div>
+{% endfor %}
+
 <div class="container mt-5">
     <h2 class="text-center mb-5">Découvrez Nos Plats</h2>
     <div class="row g-4">
@@ -34,13 +41,11 @@
                 <div class="card h-100 shadow-sm">
                     <div class="image-holder zoom-effect">
                         <a href="#">
-                            <!-- Dynamically loaded image for plats -->
                             {% if plat.image %}
                                 <img src="{{ asset('uploads/images/' ~ plat.image) }}"
                                      alt="Image de {{ plat.nomPlat }}" class="card-img-top"
                                      style="width: 100%; height: 400px; object-fit: cover;">
                             {% else %}
-                                <!-- Fallback image if no image is set -->
                                 <img src="{{ asset('assets/front/images/default-plat.jpg') }}"
                                      alt="Image par défaut" class="card-img-top"
                                      style="width: 100%; height: 400px; object-fit: cover;">
@@ -51,7 +56,7 @@
                         <h5 class="card-title">{{ plat.nomPlat }}</h5>
                         <p class="card-text">{{ plat.descPlat ?: "Aucune description disponible" }}</p>
                         <p><strong>Prix:</strong> {{ plat.prixPlat }} €</p>
-                        <p><strong>Disponible:</strong> 
+                        <p><strong>Disponible:</strong>
                             {{ plat.dispoPlat ? "Oui" : "Non" }}
                         </p>
                         {% if plat.categoriePlat %}
@@ -59,7 +64,16 @@
                         {% else %}
                             <p><strong>Catégorie:</strong> Aucune</p>
                         {% endif %}
-                        <a href="{{ path('app_demande_plat_ajout', {id: plat.id}) }}" class="btn btn-outline-primary mt-3">Voir plus</a>
+                        
+                        <!-- Condition pour afficher le bouton de demande -->
+                        {% if plat.quantite > 0 %}
+                            <a href="{{ path('app_demande_plat_ajout', {id: plat.id}) }}" class="btn btn-outline-primary mt-3">Faire une demande</a>
+                        {% else %}
+                            <button class="btn btn-danger" disabled>Rupture de stock</button>
+                            <div class="alert alert-danger mt-3">
+                                Ce plat est actuellement en rupture de stock.
+                            </div>
+                        {% endif %}
                     </div>
                 </div>
             </div>

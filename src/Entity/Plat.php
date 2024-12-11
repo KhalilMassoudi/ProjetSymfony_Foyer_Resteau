@@ -176,4 +176,27 @@ class Plat
         $this->image = $image;
         return $this;
     }
+    #[ORM\Column(type: 'integer', nullable: false)]
+#[Assert\NotBlank(message: 'La quantité est obligatoire.')]
+#[Assert\PositiveOrZero(message: 'La quantité doit être un nombre positif ou zéro.')]
+private ?int $quantite = 0;
+
+public function getQuantite(): ?int
+{
+    return $this->quantite;
+}
+
+public function setQuantite(?int $quantite): self
+{
+    $this->quantite = $quantite;
+    return $this;
+}
+public function decrementQuantite(): self
+{
+    if ($this->quantite > 0) {
+        $this->quantite--;
+    }
+    return $this;
+}
+
 }
