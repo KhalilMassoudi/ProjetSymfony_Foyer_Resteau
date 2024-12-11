@@ -16,54 +16,70 @@ use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\String\Slugger\SluggerInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
-use Symfony\Component\Form\FormFactoryInterface;
+
 class ChambreController extends AbstractController
 {
-    #[Route("/chambre", name: "app_chamber")]
+    #[Route("/app_chamber", name: "app_chamber")]
+    #[Route("/chambre", name: "legacy_chamber")]
     public function index(
         Request $request,
         EntityManagerInterface $entityManager,
         ChambreRepository $chambreRepository,
-        ReservationRepository $reservationRepository, // Ajout du repository des réservations
+        ReservationRepository $reservationRepository,
         SluggerInterface $slugger
     ): Response {
+        // Création d'une nouvelle instance de Chambre
         $chambre = new Chambre();
+
+        // Création et gestion du formulaire
         $form = $this->createForm(ChambreType::class, $chambre);
         $form->handleRequest($request);
 
+        // Soumission et validation du formulaire
         if ($form->isSubmitted() && $form->isValid()) {
-            // Gestion de l'image
+            // Gestion du téléchargement de l'image
             $imageFile = $form->get('image')->getData();
-            if ($imageFile) {
-                $newFilename = $chambreRepository->handleImageUpload(
-                    $imageFile,
-                    $slugger,
-                    $this->getParameter('images_directory')
-                );
 
-                if ($newFilename === null) {
-                    $this->addFlash('error', 'Erreur lors de l\'upload de l\'image.');
+            if ($imageFile) {
+                try {
+                    $originalFilename = pathinfo($imageFile->getClientOriginalName(), PATHINFO_FILENAME);
+                    $safeFilename = $slugger->slug($originalFilename);
+                    $newFilename = $safeFilename . '-' . uniqid() . '.' . $imageFile->guessExtension();
+
+                    // Déplacement de l'image téléversée
+                    $imageFile->move(
+                        $this->getParameter('images_directory'),
+                        $newFilename
+                    );
+
+                    // Définir le nom de l'image dans l'entité
+                    $chambre->setImage($newFilename);
+                } catch (\Exception $e) {
+                    // Gestion des erreurs (image)
+                    $this->addFlash('error', 'Une erreur est survenue lors du téléchargement de l\'image.');
                     return $this->redirectToRoute('app_chamber');
                 }
-
-                $chambre->setImage($newFilename);
             }
 
+            // Persister la nouvelle chambre
             $entityManager->persist($chambre);
             $entityManager->flush();
 
-            $this->addFlash('success', 'Chambre ajoutée avec succès !');
+            $this->addFlash('success', 'La chambre a été ajoutée avec succès.');
+
+            // Redirection pour éviter un double envoi du formulaire
             return $this->redirectToRoute('app_chamber');
         }
 
+        // Récupération des chambres et des réservations pour l'affichage
         $chambres = $chambreRepository->findAll();
-        // Récupérer les dernières réservations
-        $reservations = $reservationRepository->findBy([], ['dateReservation' => 'DESC'], 5);
+        $reservations = $reservationRepository->findAll();
 
+        // Rendu de la vue
         return $this->render('backtemplates/app_chambre.html.twig', [
             'form' => $form->createView(),
             'chambres' => $chambres,
-            'reservations' => $reservations, // Passer les réservations à la vue
+            'reservations' => $reservations,
         ]);
     }
     #[Route("/chambre/search", name: "app_chambre_search")]
