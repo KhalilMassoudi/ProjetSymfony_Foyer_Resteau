@@ -47,7 +47,6 @@ class Chambre
     private string $statutChB;
 
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
-    #[Assert\NotBlank(message: "L'image de la chambre est obligatoire.")]
     private ?string $image = null;
 
     #[ORM\Column(type: 'float')]
@@ -60,8 +59,6 @@ class Chambre
 
     #[ORM\OneToMany(targetEntity: Equipement::class, mappedBy: 'chambre', cascade: ['remove'])]
     private Collection $equipements;
-
-    private $term;
 
     public function __construct()
     {
@@ -140,43 +137,6 @@ class Chambre
         return $this;
     }
 
-    public function getEquipements(): Collection
-    {
-        return $this->equipements;
-    }
-
-    public function addEquipement(Equipement $equipement): static
-    {
-        if (!$this->equipements->contains($equipement)) {
-            $this->equipements->add($equipement);
-            $equipement->setChambre($this);
-        }
-
-        return $this;
-    }
-
-    public function removeEquipement(Equipement $equipement): static
-    {
-        if ($this->equipements->removeElement($equipement)) {
-            if ($equipement->getChambre() === $this) {
-                $equipement->setChambre(null);
-            }
-        }
-
-        return $this;
-    }
-
-    public function getTerm(): ?string
-    {
-        return $this->term;
-    }
-
-    public function setTerm(?string $term): self
-    {
-        $this->term = $term;
-        return $this;
-    }
-
     public function getReservations(): Collection
     {
         return $this->reservations;
@@ -194,6 +154,32 @@ class Chambre
     public function removeReservation(Reservation $reservation): self
     {
         $this->reservations->removeElement($reservation);
+        return $this;
+    }
+
+    public function getEquipements(): Collection
+    {
+        return $this->equipements;
+    }
+
+    public function addEquipement(Equipement $equipement): self
+    {
+        if (!$this->equipements->contains($equipement)) {
+            $this->equipements->add($equipement);
+            $equipement->setChambre($this);
+        }
+
+        return $this;
+    }
+
+    public function removeEquipement(Equipement $equipement): self
+    {
+        if ($this->equipements->removeElement($equipement)) {
+            if ($equipement->getChambre() === $this) {
+                $equipement->setChambre(null);
+            }
+        }
+
         return $this;
     }
 }
