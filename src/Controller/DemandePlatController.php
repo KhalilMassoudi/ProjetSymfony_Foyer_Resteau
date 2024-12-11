@@ -61,7 +61,7 @@ class DemandePlatController extends AbstractController
             $this->addFlash('success', 'Votre demande de plat a été envoyée avec succès.');
 
             // Rediriger vers la page des plats ou une autre page
-            return $this->redirectToRoute('app_frontend_plats');
+            return $this->redirectToRoute('app_plats_list');
         }
 
         return $this->render('fronttemplates/DemandePlat_front.html.twig', [

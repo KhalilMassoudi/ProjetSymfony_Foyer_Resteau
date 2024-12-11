@@ -11,6 +11,7 @@
             </ul>
             <!-- Boutons pour les catégories -->
             <div class="d-flex">
+                <a class="btn btn-outline-primary me-2" href="{{ path('app_plats_list') }}">Plats</a>
                 <a class="btn btn-outline-primary me-2" href="{{ path('app_front_chambre') }}">Chambres</a>
                 <a class="btn btn-outline-secondary me-2" href="{{ path('app_front_equipement') }}">Equipements</a>
                 <a class="btn btn-outline-success" href="{{ path('app_frontend_services') }}">Services</a>
@@ -20,7 +21,11 @@
 </nav>
 
 
-
+                        {% for message in app.flashes('success') %}
+                        <div class="alert alert-success">
+                            {{ message }}
+                        </div>
+                        {% endfor %}
 <div class="container mt-5">
     <h2 class="text-center mb-5">Découvrez Nos Plats</h2>
     <div class="row g-4">
