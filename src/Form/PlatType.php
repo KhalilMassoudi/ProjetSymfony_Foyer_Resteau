@@ -9,6 +9,7 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\FileType;
 use Symfony\Component\Form\Extension\Core\Type\MoneyType;
+use Symfony\Component\Form\Extension\Core\Type\NumberType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -39,6 +40,7 @@ class PlatType extends AbstractType
                 'currency' => 'TND',
                 'attr' => [
                     'class' => 'form-control',
+                    'placeholder' => 'Saisissez le prix du plat',
                 ],
             ])
             ->add('typeCuisine', TextType::class, [
@@ -63,6 +65,18 @@ class PlatType extends AbstractType
                 'attr' => [
                     'class' => 'form-control',
                     'data-live-search' => 'true',
+                ],
+            ])
+            ->add('quantite', NumberType::class, [
+                'label' => 'Quantité',
+                'attr' => [
+                    'class' => 'form-control',
+                    'placeholder' => 'Saisissez la quantité',
+                ],
+                'required' => true,
+                'constraints' => [
+                    new Assert\NotBlank(['message' => 'La quantité est obligatoire.']),
+                    new Assert\PositiveOrZero(['message' => 'La quantité doit être un nombre positif ou zéro.']),
                 ],
             ])
             ->add('image', FileType::class, [

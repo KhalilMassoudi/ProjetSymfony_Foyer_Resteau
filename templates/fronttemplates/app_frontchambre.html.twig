@@ -1,6 +1,15 @@
-{% extends 'basefront.html.twig' %}
+{% extends 'fronttemplates/basefront.html.twig' %}
 
-{% block amodifier %}
+{% block body %}
+       <!-- Afficher les messages flash -->
+       {% for label, messages in app.flashes %}
+           <div class="alert alert-{{ label == 'success' ? 'success' : 'warning' }} alert-dismissible fade show" role="alert">
+               {% for message in messages %}
+                   {{ message }}
+               {% endfor %}
+               <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+           </div>
+       {% endfor %}
     <div class="container mt-5">
         <div class="d-flex justify-content-end mb-4">
             <div class="row g-3">
@@ -144,12 +153,14 @@
                                     </p>
                                 </div>
 
-                                <!-- Bouton Voir les détails -->
-                                <div class="text-center mt-3">
-                                    <a href="{{ path('app_front_chambre', {'id': chambre.id}) }}" class="btn btn-primary">
-                                        Voir les détails
-                                    </a>
-                                </div>
+                                <!-- Bouton Réserver avec condition sur le statut -->
+                                {% if chambre.statutChB == constant('App\\Enum\\ChambreStatut::DISPONIBLE') %}
+                                    <div class="text-center mt-3">
+                                        <a href="{{ path('app_reserver_chambre', {'id': chambre.id}) }}" class="btn btn-primary">
+                                            Réserver
+                                        </a>
+                                    </div>
+                                {% endif %}
                             </div>
                         </div>
                     </div>
@@ -179,24 +190,19 @@
             advancedFilters.style.display = 'none';
         });
     </script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            // Récupérer tous les messages d'alerte
+            const alerts = document.querySelectorAll('.alert');
 
-    <style>
-        #toggle-filters-btn {
-            position: relative;
-            top: 0; /* Réinitialisation de la position fixe */
-            padding: 15px;
-            font-size: 16px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-            background-color: #6c757d;
-            border: none;
-            color: white;
-        }
-
-        #toggle-filters-btn svg {
-            font-size: 20px; /* Ajustement de la taille de l'icône */
-        }
-    </style>
+            // Faire disparaître chaque alerte après 5 secondes
+            alerts.forEach(alert => {
+                setTimeout(() => {
+                    alert.classList.add('fade');
+                    alert.classList.remove('show');
+                    setTimeout(() => alert.remove(), 500); // Supprimer complètement après l'animation
+                }, 5000); // 5 secondes
+            });
+        });
+    </script>
 {% endblock %}

@@ -1,0 +1,48 @@
+{% extends 'fronttemplates/basefront.html.twig' %}
+
+{% block body %}
+    <div class="container mt-5">
+        <h2 class="mt-4">Réserver une Chambre</h2>
+
+        <form method="post">
+            <table class="table table-striped">
+                <thead>
+                <tr>
+                    <th>Champs</th>
+                    <th>Valeur</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr>
+                    <td><label for="dateArrivee" class="form-label">Date d'arrivée</label></td>
+                    <td>{{ form_widget(form.dateArrivee, { 'attr': { 'class': 'form-control' } }) }}</td>
+                </tr>
+                <tr>
+                    <td><label for="dateDepart" class="form-label">Date de départ</label></td>
+                    <td>{{ form_widget(form.dateDepart, { 'attr': { 'class': 'form-control' } }) }}</td>
+                </tr>
+                <tr>
+                    <td><label for="nomEtudiant" class="form-label">Nom de l'Etudiant</label></td>
+                    <td>{{ form_widget(form.nomEtudiant, { 'attr': { 'class': 'form-control' } }) }}</td>
+                </tr>
+                <tr>
+                    <td><label for="emailEtudiant" class="form-label">Email de l'Etudiant</label></td>
+                    <td>{{ form_widget(form.emailEtudiant, { 'attr': { 'class': 'form-control' } }) }}</td>
+                </tr>
+                <tr>
+                    <td><label for="telephoneEtudiant" class="form-label">Téléphone de l'Etudiant</label></td>
+                    <td>{{ form_widget(form.telephoneEtudiant, { 'attr': { 'class': 'form-control' } }) }}</td>
+                </tr>
+                </tbody>
+            </table>
+
+            <div class="text-center mt-4">
+                <button type="submit" class="btn btn-primary">Réserver</button>
+                <!-- Button Annuler -->
+                <a href="{{ path('app_front_chambre') }}" class="btn btn-secondary ms-3">Annuler</a>
+            </div>
+
+            {{ form_end(form) }}
+        </form>
+    </div>
+{% endblock %}

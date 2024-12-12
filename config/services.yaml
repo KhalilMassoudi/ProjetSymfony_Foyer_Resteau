@@ -12,8 +12,8 @@ services:
             - '../src/Entity/'
             - '../src/Kernel.php'
 
-    # Déclaration explicite de ChambreStatutTransformer en tant que service
-    App\Form\DataTransformer\ChambreStatutTransformer: ~
+    # Déclaration explicite de `EnumToStringTransformer` en tant que service
+    App\Form\DataTransformer\EnumToStringTransformer: ~
 
 parameters:
 

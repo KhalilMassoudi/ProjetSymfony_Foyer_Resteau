@@ -1,57 +1,182 @@
 {% extends 'basefront.html.twig' %}
+
 {% block amodifier %}
-<div class="row">
-    <h2 class="section-title">Liste des plats </h2>
-    {% for plat in plats %}
-    <div class="col-md-4 mb-4">
-        <article class="post-item card border-0 shadow-sm p-3">
-            <div class="image-holder zoom-effect">
-                <a href="#">
-                    <!-- Dynamically loaded image for plats -->
-                    {% if plat.image %}
-                        <img src="{{ asset('uploads/images/' ~ plat.image) }}"
-                             alt="Image de {{ plat.nomPlat }}" class="card-img-top"
-                             style="width: 100%; height: 400px; object-fit: cover;">
-                    {% else %}
-                        <!-- Fallback image if no image is set -->
-                        <img src="{{ asset('assets/front/images/default-plat.jpg') }}"
-                             alt="Image par défaut" class="card-img-top"
-                             style="width: 100%; height: 400px; object-fit: cover;">
-                    {% endif %}
-                </a>
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <div class="container-fluid">
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav me-auto">
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ path('app_front') }}">Accueil</a>
+                </li>
+            </ul>
+            <!-- Boutons pour les catégories -->
+            <div class="d-flex">
+                <a class="btn btn-outline-primary me-2" href="{{ path('app_plats_list') }}">Plats</a>
+                <a class="btn btn-outline-primary me-2" href="{{ path('app_front_chambre') }}">Chambres</a>
+                <a class="btn btn-outline-secondary me-2" href="{{ path('app_front_equipement') }}">Equipements</a>
+                <a class="btn btn-outline-success" href="{{ path('app_frontend_services') }}">Services</a>
             </div>
-            <div class="card-body">
-                <div class="post-meta d-flex text-uppercase gap-3 my-2 align-items-center">
-                    <div class="meta-date">
-                        <svg width="16" height="16"><use xmlns:xlink:href="#calendar"></use></svg>
-                        <!-- Example placeholder date -->
-                        {{ "now"|date("d M Y") }}
-                    </div>
-                    <div class="meta-categories">
-                        <svg width="16" height="16"><use xmlns:xlink:href="#category"></use></svg>
-                        {{ plat.typeCuisine }}
-                    </div>
-                </div>
-                <div class="post-header">
-                    <h3 class="post-title">
-                        <a href="#" class="text-decoration-none">
-                            {{ plat.nomPlat }}
-                        </a>
-                    </h3>
-                    <p>{{ plat.descPlat ?: "Aucune description disponible" }}</p>
-                    <p><strong>Prix:</strong> {{ plat.prixPlat }} €</p>
-                    <p><strong>Disponible:</strong> 
-                        {{ plat.dispoPlat ? "Oui" : "Non" }}
-                    </p>
-                    {% if plat.categoriePlat %}
-                    <p><strong>Catégorie:</strong> {{ plat.categoriePlat.nomCategorie }}</p>
-                    {% else %}
-                    <p><strong>Catégorie:</strong> Aucune</p>
-                    {% endif %}
-                </div>
-            </div>
-        </article>
+        </div>
     </div>
-    {% endfor %}
+</nav>
+
+<!-- Affichage des messages flash -->
+{% for message in app.flashes('success') %}
+    <div class="alert alert-success">
+        {{ message }}
+    </div>
+{% endfor %}
+
+{% for message in app.flashes('error') %}
+    <div class="alert alert-danger">
+        {{ message }}
+    </div>
+{% endfor %}
+<section class="py-3" style="background-image: url('images/background-pattern.jpg');background-repeat: no-repeat;background-size: cover;">
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-12">
+
+            <div class="banner-blocks">
+
+                <!-- Block 1: Swiper with Dynamic Plats -->
+                <div class="banner-ad large bg-info block-1">
+                    <div class="swiper main-swiper">
+                        <div class="swiper-wrapper">
+                            {% for plat in plats %}
+                                <div class="swiper-slide">
+                                    <div class="row banner-content p-5">
+                                        <div class="content-wrapper col-md-7">
+                                            <div class="categories my-3">
+                                                {{ plat.categoriePlat ? plat.categoriePlat.nomCategorie : 'Aucune catégorie' }}
+                                            </div>
+                                            <h3 class="display-4">{{ plat.nomPlat }}</h3>
+                                            <p>{{ plat.descPlat ?: "Aucune description disponible." }}</p>
+                                            
+                                            {% if plat.quantite > 0 %}
+                                                <a href="{{ path('app_demande_plat_ajout', {id: plat.id}) }}" 
+                                                   class="btn btn-outline-dark btn-lg text-uppercase fs-6 rounded-1 px-4 py-3 mt-3">
+                                                    Faire une demande
+                                                </a>
+                                            {% else %}
+                                                <button class="btn btn-danger mt-3" disabled>Rupture de stock</button>
+                                                <div class="alert alert-danger mt-3">
+                                                    Ce plat est actuellement en rupture de stock.
+                                                </div>
+                                            {% endif %}
+                                        </div>
+                                        <div class="img-wrapper col-md-5">
+                                            {% if plat.image %}
+                                                <img src="{{ asset('uploads/images/' ~ plat.image) }}" 
+                                                     alt="Image de {{ plat.nomPlat }}" 
+                                                     class="img-fluid" 
+                                                     style="width: 100%; height: auto;">
+                                            {% else %}
+                                                <img src="{{ asset('assets/front/images/default-plat.jpg') }}" 
+                                                     alt="Image par défaut" 
+                                                     class="img-fluid" 
+                                                     style="width: 100%; height: auto;">
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                </div>
+                            {% else %}
+                                <div class="swiper-slide">
+                                    <div class="row banner-content p-5">
+                                        <div class="content-wrapper col-md-12 text-center">
+                                            <p class="text-muted">Aucun plat disponible pour le moment.</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        </div>
+
+                        <!-- Swiper Pagination -->
+                        <div class="swiper-pagination"></div>
+                    </div>
+                </div>
+
+                <!-- Block 2: Static Content -->
+                <div class="banner-ad bg-success-subtle block-2" style="background: url('images/ad-image-1.png') no-repeat right bottom;">
+                    <div class="row banner-content p-5">
+                        <div class="content-wrapper col-md-7">
+                            <div class="categories sale mb-3 pb-3">20% off</div>
+                            <h3 class="banner-title">Fruits &amp; Vegetables</h3>
+                            <a href="#" class="d-flex align-items-center nav-link">Shop Collection <svg width="24" height="24"><use xmlns:xlink:href="#arrow-right"></use></svg></a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Block 3: Static Content -->
+                <div class="banner-ad bg-danger block-3" style="background:url('images/ad-image-2.png') no-repeat;background-position: right bottom">
+                    <div class="row banner-content p-5">
+                        <div class="content-wrapper col-md-7">
+                            <div class="categories sale mb-3 pb-3">15% off</div>
+                            <h3 class="item-title">Baked Products</h3>
+                            <a href="#" class="d-flex align-items-center nav-link">Shop Collection <svg width="24" height="24"><use xmlns:xlink:href="#arrow-right"></use></svg></a>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+            <!-- / Banner Blocks -->
+
+        </div>
+    </div>
 </div>
+
+   
+    </section>
+<div class="container mt-5">
+    <h2 class="text-center mb-5">Découvrez Nos Plats</h2>
+    <div class="row g-4">
+        {% for plat in plats %}
+            <div class="col-lg-4 col-md-6">
+                <div class="card h-100 shadow-sm">
+                    <div class="image-holder zoom-effect">
+                        <a href="#">
+                            {% if plat.image %}
+                                <img src="{{ asset('uploads/images/' ~ plat.image) }}"
+                                     alt="Image de {{ plat.nomPlat }}" class="card-img-top"
+                                     style="width: 100%; height: 400px; object-fit: cover;">
+                            {% else %}
+                                <img src="{{ asset('assets/front/images/default-plat.jpg') }}"
+                                     alt="Image par défaut" class="card-img-top"
+                                     style="width: 100%; height: 400px; object-fit: cover;">
+                            {% endif %}
+                        </a>
+                    </div>
+                    <div class="card-body d-flex flex-column">
+                        <h5 class="card-title">{{ plat.nomPlat }}</h5>
+                        <p class="card-text">{{ plat.descPlat ?: "Aucune description disponible" }}</p>
+                        <p><strong>Prix:</strong> {{ plat.prixPlat }} €</p>
+                        <p><strong>Disponible:</strong>
+                            {{ plat.dispoPlat ? "Oui" : "Non" }}
+                        </p>
+                        {% if plat.categoriePlat %}
+                            <p><strong>Catégorie:</strong> {{ plat.categoriePlat.nomCategorie }}</p>
+                        {% else %}
+                            <p><strong>Catégorie:</strong> Aucune</p>
+                        {% endif %}
+                        
+                        <!-- Condition pour afficher le bouton de demande -->
+                        {% if plat.quantite > 0 %}
+                            <a href="{{ path('app_demande_plat_ajout', {id: plat.id}) }}" class="btn btn-outline-primary mt-3">Faire une demande</a>
+                        {% else %}
+                            <button class="btn btn-danger" disabled>Rupture de stock</button>
+                            <div class="alert alert-danger mt-3">
+                                Ce plat est actuellement en rupture de stock.
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        {% else %}
+            <div class="col-12">
+                <p class="text-center text-muted">Aucun plat disponible pour le moment.</p>
+            </div>
+        {% endfor %}
+    </div>
+</div>
+
 {% endblock %}
