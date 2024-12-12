@@ -123,7 +123,13 @@
                         {{ form_widget(form.date_fin, {'attr': {'class': 'form-control', 'placeholder': 'Date de fin'}}) }}
                     </div>
                 </div>
-
+                {#Prix#}
+                <div class="row mb-3">
+                    <label for="{{ form.prix.vars.id }}" class="col-md-3 col-form-label text-primary">Prix du Service</label>
+                    <div class="col-md-6">
+                        {{ form_widget(form.prix, {'attr': {'class': 'form-control', 'placeholder': 'Prix'}}) }}
+                    </div>
+                </div>
                 {# Type Service Field #}
                 <div class="row mb-3">
                     <label for="{{ form.TypeService.vars.id }}" class="col-md-3 col-form-label text-primary">Type de service</label>

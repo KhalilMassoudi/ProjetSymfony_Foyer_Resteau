@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>List of Demandes</title>
+    <style>
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        th, td {
+            border: 1px solid black;
+            padding: 8px;
+            text-align: left;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+    </style>
+</head>
+<body>
+    <h1>List of Demandes</h1>
+    <table>
+        <thead>
+            <tr>
+                <th>Nom</th>
+                <th>Prénom</th>
+                <th>Description</th>
+                <th>Date</th>
+                <th>Téléphone</th>
+                <th>Email</th>
+                <th>Service</th>
+                <th>Prix</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for s in demandes %}
+            <tr>
+                <td>{{ s.nom }}</td>
+                <td>{{ s.prenom }}</td>
+                <td>{{ s.description }}</td>
+                <td>{{ s.DateDemande ? s.DateDemande|date('Y-m-d') : 'No date available' }}</td>
+                <td>{{ s.telephone }}</td>
+                <td>{{ s.email }}</td>
+                <td>{{ s.service.nom }}</td>
+                <td>{{ s.service.prix }}</td>
+            </tr>
+            {% else %}
+            <tr>
+                <td colspan="8">Aucun demande trouvé.</td>
+            </tr>
+            {% endfor %}
+            <tr>
+                <td colspan="7" style="text-align: right; font-weight: bold;">Total</td>
+                <td style="font-weight: bold;">{{ totalPrix }}</td>
+            </tr>
+        </tbody>
+    </table>
+</body>
+</html>

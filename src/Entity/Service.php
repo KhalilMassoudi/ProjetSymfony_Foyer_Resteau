@@ -45,6 +45,9 @@ class Service
     #[ORM\OneToMany(targetEntity: DemandeService::class, mappedBy: 'service', orphanRemoval: true)]
     private Collection $demandes;
 
+    #[ORM\Column(nullable: true)]
+    private ?float $prix = null;
+
     public function __construct()
     {
         $this->demandes = new ArrayCollection();
@@ -142,6 +145,18 @@ class Service
                 $demande->setService(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getPrix(): ?float
+    {
+        return $this->prix;
+    }
+
+    public function setPrix(?float $prix): static
+    {
+        $this->prix = $prix;
 
         return $this;
     }

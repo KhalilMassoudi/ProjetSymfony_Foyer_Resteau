@@ -2,11 +2,11 @@
 
 namespace App\Entity;
 
-use App\Repository\DemandeServiceRepository;
+use App\Repository\DeamndeServiceRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
-#[ORM\Entity(repositoryClass: DemandeServiceRepository::class)]
+#[ORM\Entity(repositoryClass: DeamndeServiceRepository::class)]
 class DemandeService
 {
     #[ORM\Id]

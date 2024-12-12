@@ -6,7 +6,7 @@ use App\Entity\User;
 use App\Form\UserType;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\SecurityBundle\Security;
-use App\Repository\DemandeServiceRepository;
+use App\Repository\DeamndeServiceRepository;
 use Doctrine\ORM\Mapping\Id;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -231,12 +231,10 @@ public function login(AuthenticationUtils $authenticationUtils): Response
     }
 
     #[Route('/profile', name: 'app_user_profile')]
-    public function profileUser(DemandeServiceRepository $demandeServiceRepository): Response
+    public function profileUser(DeamndeServiceRepository $demandeServiceRepository): Response
     {
-        // Get the logged-in user
         $user = $this->getUser();
 
-        // Retrieve all demandes for this user
         $demandes = $demandeServiceRepository->findByUser($user);
 
         // Pass the demandes to the template

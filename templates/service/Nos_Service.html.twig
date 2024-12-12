@@ -45,6 +45,7 @@
                         {% if service.TypeService %}
                             <p class="text-muted small mt-auto">Type du Service : {{ service.TypeService }}</p>
                         {% endif %}
+                        <p class="text-muted small mt-auto">Prix :{{ service.prix }} DT </p>
                         <a href="{{ path('app_demande_ajout', {id: service.id}) }}" class="btn btn-outline-primary mt-3">Voir plus</a>
                     </div>
                 </div>
