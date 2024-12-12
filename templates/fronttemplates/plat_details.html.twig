@@ -32,7 +32,101 @@
         {{ message }}
     </div>
 {% endfor %}
+<section class="py-3" style="background-image: url('images/background-pattern.jpg');background-repeat: no-repeat;background-size: cover;">
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-12">
 
+            <div class="banner-blocks">
+
+                <!-- Block 1: Swiper with Dynamic Plats -->
+                <div class="banner-ad large bg-info block-1">
+                    <div class="swiper main-swiper">
+                        <div class="swiper-wrapper">
+                            {% for plat in plats %}
+                                <div class="swiper-slide">
+                                    <div class="row banner-content p-5">
+                                        <div class="content-wrapper col-md-7">
+                                            <div class="categories my-3">
+                                                {{ plat.categoriePlat ? plat.categoriePlat.nomCategorie : 'Aucune catégorie' }}
+                                            </div>
+                                            <h3 class="display-4">{{ plat.nomPlat }}</h3>
+                                            <p>{{ plat.descPlat ?: "Aucune description disponible." }}</p>
+                                            
+                                            {% if plat.quantite > 0 %}
+                                                <a href="{{ path('app_demande_plat_ajout', {id: plat.id}) }}" 
+                                                   class="btn btn-outline-dark btn-lg text-uppercase fs-6 rounded-1 px-4 py-3 mt-3">
+                                                    Faire une demande
+                                                </a>
+                                            {% else %}
+                                                <button class="btn btn-danger mt-3" disabled>Rupture de stock</button>
+                                                <div class="alert alert-danger mt-3">
+                                                    Ce plat est actuellement en rupture de stock.
+                                                </div>
+                                            {% endif %}
+                                        </div>
+                                        <div class="img-wrapper col-md-5">
+                                            {% if plat.image %}
+                                                <img src="{{ asset('uploads/images/' ~ plat.image) }}" 
+                                                     alt="Image de {{ plat.nomPlat }}" 
+                                                     class="img-fluid" 
+                                                     style="width: 100%; height: auto;">
+                                            {% else %}
+                                                <img src="{{ asset('assets/front/images/default-plat.jpg') }}" 
+                                                     alt="Image par défaut" 
+                                                     class="img-fluid" 
+                                                     style="width: 100%; height: auto;">
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                </div>
+                            {% else %}
+                                <div class="swiper-slide">
+                                    <div class="row banner-content p-5">
+                                        <div class="content-wrapper col-md-12 text-center">
+                                            <p class="text-muted">Aucun plat disponible pour le moment.</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        </div>
+
+                        <!-- Swiper Pagination -->
+                        <div class="swiper-pagination"></div>
+                    </div>
+                </div>
+
+                <!-- Block 2: Static Content -->
+                <div class="banner-ad bg-success-subtle block-2" style="background: url('images/ad-image-1.png') no-repeat right bottom;">
+                    <div class="row banner-content p-5">
+                        <div class="content-wrapper col-md-7">
+                            <div class="categories sale mb-3 pb-3">20% off</div>
+                            <h3 class="banner-title">Fruits &amp; Vegetables</h3>
+                            <a href="#" class="d-flex align-items-center nav-link">Shop Collection <svg width="24" height="24"><use xmlns:xlink:href="#arrow-right"></use></svg></a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Block 3: Static Content -->
+                <div class="banner-ad bg-danger block-3" style="background:url('images/ad-image-2.png') no-repeat;background-position: right bottom">
+                    <div class="row banner-content p-5">
+                        <div class="content-wrapper col-md-7">
+                            <div class="categories sale mb-3 pb-3">15% off</div>
+                            <h3 class="item-title">Baked Products</h3>
+                            <a href="#" class="d-flex align-items-center nav-link">Shop Collection <svg width="24" height="24"><use xmlns:xlink:href="#arrow-right"></use></svg></a>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+            <!-- / Banner Blocks -->
+
+        </div>
+    </div>
+</div>
+
+   
+    </section>
 <div class="container mt-5">
     <h2 class="text-center mb-5">Découvrez Nos Plats</h2>
     <div class="row g-4">
@@ -84,4 +178,5 @@
         {% endfor %}
     </div>
 </div>
+
 {% endblock %}
