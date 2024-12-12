@@ -15,7 +15,7 @@ class TypeServiceRepository extends ServiceEntityRepository
     {
         parent::__construct($registry, TypeService::class);
     }
-
+    
     //    /**
     //     * @return TypeService[] Returns an array of TypeService objects
     //     */

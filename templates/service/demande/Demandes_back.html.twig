@@ -1,5 +1,62 @@
 {% extends 'baseback2.html.twig' %}
+{% block style %}
+<style>
+    #toggle-filters-btn {
+        position: relative;
+        top: 0; /* Reset fixed positioning */
+        padding: 15px;
+        font-size: 16px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        background-color: #6c757d;
+        border: none;
+        color: white;
+        border-radius: 5px; /* Slight rounding for aesthetics */
+        cursor: pointer;
+    }
 
+    #toggle-filters-btn svg {
+        font-size: 20px; /* Adjust icon size */
+    }
+
+    #advanced-filters {
+        margin: 10px 0;
+        padding: 10px;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        background-color: #f9f9f9;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    #advanced-filters label {
+        display: block;
+        margin-bottom: 5px;
+        font-weight: bold;
+    }
+
+    #advanced-filters select, #advanced-filters input, #advanced-filters button {
+        margin-bottom: 10px;
+        padding: 8px;
+        width: 100%;
+        box-sizing: border-box;
+    }
+
+    #advanced-filters button {
+        background-color: #007bff;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+    }
+
+    #advanced-filters button:hover {
+        background-color: #0056b3;
+    }
+</style>
+
+{% endblock %}
 {% block body %}
 <div class="content-body">
     {# navbar Gestion service #}
@@ -22,13 +79,25 @@
         </div>
     </nav>
 
+
     <div class="card mt-4">
+
         <div class="card-header">
             <h4 class="card-title">List of Demandes</h4>
             <h4 class="card-title d-flex justify-content-between">
+            <a href="{{ path('app_demande_pdf') }}" class="btn btn-primary">Download PDF</a>
             </h4>
-        </div>
-                <div class="card-body">
+            <!-- Toggle Button for Filters -->
+            <button id="toggle-filters-btn" class="btn btn-secondary">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-sliders" viewBox="0 0 16 16">
+                <path fill-rule="evenodd" d="M11.5 2a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3M9.05 3a2.5 2.5 0 0 1 4.9 0H16v1h-2.05a2.5 2.5 0 0 1-4.9 0H0V3zM4.5 7a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3M2.05 8a2.5 2.5 0 0 1 4.9 0H16v1H6.95a2.5 2.5 0 0 1-4.9 0H0V8zm9.45 4a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3m-2.45 1a2.5 2.5 0 0 1-4.9 0H16v1h-2.05a2.5 2.5 0 0 1-4.9 0H0v-1z"/>
+                </svg>
+                Filtrer
+            </button>
+        </div> 
+
+        
+            <div class="card-body">
             <div class="table-responsive">
                 <table class="table student-data-table m-t-20">
                     <thead>
@@ -40,6 +109,11 @@
                             <th>Telephone</th>
                             <th>Email</th>
                             <th>Service</th>
+                            <th>Prix</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+
+
                         </tr>
                     </thead>
                     <tbody>
@@ -57,14 +131,22 @@
                             <td>{{ s.telephone }}</td>
                             <td>{{ s.email }}</td>
                             <td>{{ s.service.nom }}</td>
+                            <td>{{ s.service.prix }}</td>
+                            <td>{{ s.status }}</td>
+
                             <td>
-                                <a href="{{ path('app_demande_accept', { id: s.id }) }}" class="btn btn-success btn-sm">
+                                {% if s.status == 'Under review' %}
+                                    <a href="{{ path('app_demande_accept', { id: s.id }) }}" class="btn btn-success btn-sm">
                                     Accept
-                                </a>
-                                <a href="{{ path('app_demande_reject', { id: s.id }) }}" class="btn btn-danger btn-sm">
+                                    </a>
+                                    <a href="{{ path('app_demande_reject', { id: s.id }) }}" class="btn btn-danger btn-sm">
                                     Reject
-                                </a>
+                                    </a>
+                                {% else %}
+                                    <!-- No actions available -->
+                                {% endif %}
                             </td>
+
                         </tr>
                         {% else %}
                         <tr>
@@ -76,6 +158,37 @@
             </div>
         </div>
 </div>
+<!-- Filters Section -->
+<div id="advanced-filters" style="display: none; margin-top: 10px;">
+    <form method="get" action="{{ path('app_demande') }}">
+        <label for="status">Status:</label>
+        <select name="status" id="status">
+            <option value="">-- All --</option>
+            <option value="Under review">Under review</option>
+            <option value="Accepted">Accepted</option>
+            <option value="Rejected">Rejected</option>
+        </select>
+
+        <label for="service">Service:</label>
+        <select name="service" id="service">
+            <option value="">-- All --</option>
+            {% for service in services %}
+                <option value="{{ service.id }}">{{ service.nom }}</option>
+            {% endfor %}
+        </select>
+
+        <label for="date_min">From Date:</label>
+        <input type="date" name="date_min" id="date_min">
+
+        <label for="date_max">To Date:</label>
+        <input type="date" name="date_max" id="date_max">
+
+        <label for="user">User:</label>
+        <input type="text" name="user" id="user" placeholder="User ID">
+
+        <button type="submit">Filter</button>
+    </form>
+</div>
 {% endblock %}
 
 {% block js %}
@@ -86,4 +199,15 @@
 <script src="{{ asset('assets/back/vendor/moment/moment.min.js') }}"></script>
 <script src="{{ asset('assets/back/vendor/pg-calendar/js/pignose.calendar.min.js') }}"></script>
 <script src="{{ asset('assets/back/js/dashboard/dashboard-2.js') }}"></script>
+<script>
+    document.getElementById('toggle-filters-btn').addEventListener('click', function () {
+        const advancedFilters = document.getElementById('advanced-filters');
+        if (advancedFilters.style.display === 'none') {
+            advancedFilters.style.display = 'block';
+        } else {
+            advancedFilters.style.display = 'none';
+        }
+    });
+</script>
+
 {% endblock %}

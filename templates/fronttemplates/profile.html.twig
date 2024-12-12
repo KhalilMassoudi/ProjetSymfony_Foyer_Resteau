@@ -2,49 +2,57 @@
 
 {% block title %}Profile{% endblock %}
 
-{% block body %}
+{% block amodifier %}
 <div class="container mt-5">
     <h2>Welcome, {{ user.username }}</h2>
     <p>Email: {{ user.email }}</p>
-    <p>ID: {{ user.id }}</p>
-    <h3>Your Demandes</h3>
-    <table class="table table-striped">
-        <thead>
-            <tr>
-                <th>ID</th>
-                <th>Status</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% if user.demandeServices is not empty %}
-    {% for demande in user.demandeServices %}
-        <p>{{ demande.id }} - {{ demande.status }}</p>
-    {% endfor %}
-    {% else %}
-        <p>No demandes available.</p>
-    {% endif %}
-            <h3>Your Demandes</h3>
-<table>
-    <thead>
-        <tr>
-            <th>ID</th>
-            <th>Status</th>
-        </tr>
-    </thead>
-    <tbody>
-        {% for demande in demandes %}
-            <tr>
-                <td>{{ demande.id }}</td>
-                <td>{{ demande.status }}</td>
-            </tr>
-        {% else %}
-            <tr>
-                <td colspan="2">No demandes found.</td>
-            </tr>
-        {% endfor %}
-    </tbody>
-</table>
-        </tbody>
-    </table>
+
+    <nav class="navbar navbar-expand-lg navbar-light bg-light mb-3">
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#demandeList" aria-controls="demandeList" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span> Afficher Demandes
+        </button>
+    </nav>
+
+        <h3>Demandes</h3>
+        <table class="table table-dark table-striped-columns border border-primary">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for demande in demandes %}
+                    <tr>
+                        <td>{{ demande.id }}</td>
+                        <td>
+                            {% if demande.status == 'Rejected' %}
+                                <span style="color: red;">{{ demande.status }}</span>
+                            {% elseif demande.status == 'Accepted' %}
+                                <span style="color: green;">{{ demande.status }}</span>
+                            {% elseif demande.status == 'Under review' %}
+                                <span style="color: yellow;">{{ demande.status }}</span>
+                            {% else %}
+                                {{ demande.status }}
+                            {% endif %}
+                        </td>
+                    </tr>
+                {% else %}
+                    <tr>
+                        <td colspan="2">No demandes found.</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
 </div>
+{% endblock %}
+
+{% block js %}
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="{{ asset('assets/front/js/jquery-1.11.0.min.js') }}"></script>
+    <script src="https://cdn.jsdelivr.net/npm/swiper@9/swiper-bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ENjdO4Dr2bkBIFxQpeoTz1HIcje39Wm4jDKdf19U8gI4ddQ3GYNS7NTKfAdVQSZe" crossorigin="anonymous"></script>
+    <script src="{{ asset('assets/front/js/plugins.js') }}"></script>
+    <script src="{{ asset('assets/front/js/script.js') }}"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet"></script>
 {% endblock %}
