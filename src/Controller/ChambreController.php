@@ -16,7 +16,8 @@ use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\String\Slugger\SluggerInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
-
+use Symfony\Component\Mailer\MailerInterface;
+use Symfony\Component\Mime\Email;
 class ChambreController extends AbstractController
 {
     #[Route("/app_chamber", name: "app_chamber")]
@@ -210,8 +211,9 @@ class ChambreController extends AbstractController
         Request $request,
         EntityManagerInterface $entityManager,
         ChambreRepository $chambreRepository,
-        ReservationRepository $reservationRepository, // Ajout du repository des réservations
-        UserInterface $user // Injection de l'utilisateur connecté
+        ReservationRepository $reservationRepository, // Le repository des réservations
+        MailerInterface $mailer, // Service MailerInterface pour envoyer les emails
+        UserInterface $user // L'utilisateur connecté
     ): Response {
 
         if (!$user) {
@@ -222,9 +224,8 @@ class ChambreController extends AbstractController
         $existingReservation = $reservationRepository->findOneBy(['user' => $user]);
 
         if ($existingReservation) {
-            // Si l'utilisateur a déjà une réservation, afficher un message d'alerte et rediriger
             $this->addFlash('warning', 'Vous pouvez réserver une chambre qu\'une seule fois.');
-            return $this->redirectToRoute('app_front_chambre'); // Redirige vers la page des chambres
+            return $this->redirectToRoute('app_front_chambre');
         }
 
         // Récupérer la chambre demandée
@@ -237,23 +238,34 @@ class ChambreController extends AbstractController
         // Créer une nouvelle réservation
         $reservation = new Reservation();
         $reservation->setChambre($chambre);
-        $reservation->setUser($user); // Associer la réservation à l'utilisateur connecté
+        $reservation->setUser($user);
 
         // Créer un formulaire de réservation
         $form = $this->createForm(ReservationType::class, $reservation);
         $form->handleRequest($request);
 
-        // Si le formulaire est soumis et valide, enregistrer la réservation
         if ($form->isSubmitted() && $form->isValid()) {
             $reservation->setDateReservation(new \DateTime()); // Ajouter une date de réservation
             $entityManager->persist($reservation);
             $entityManager->flush();
 
-            $this->addFlash('success', 'Réservation effectuée avec succès!');
+            // Envoyer un email de confirmation
+            $email = (new Email())
+                ->from('mbechir643@gmail.com') // Adresse de l'expéditeur
+                ->to($user->getEmail()) // Envoyer l'email à l'utilisateur
+                ->subject('Confirmation de votre réservation')
+                ->html($this->renderView('emails/reservation_confirmation.html.twig', [
+                    'user' => $user,
+                    'reservation' => $reservation,
+                    'chambre' => $chambre,
+                ]));
+
+            $mailer->send($email);
+
+            $this->addFlash('success', 'Réservation effectuée avec succès ! Un email de confirmation vous a été envoyé.');
             return $this->redirectToRoute('app_front_chambre');
         }
 
-        // Passer l'entité Reservation à la vue
         return $this->render('fronttemplates/reservation_form.html.twig', [
             'form' => $form->createView(),
             'reservation' => $reservation,
