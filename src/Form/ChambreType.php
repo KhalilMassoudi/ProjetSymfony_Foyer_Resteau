@@ -51,6 +51,8 @@ class ChambreType extends AbstractType
             ->add('image', FileType::class, [
                 'label' => 'Image',
                 'required' => false,
+                'mapped' => true, // Lie ce champ à l'entité
+                'data_class' => null,
             ]);
 
         $builder->get('statutChB')->addModelTransformer($this->enumToStringTransformer);

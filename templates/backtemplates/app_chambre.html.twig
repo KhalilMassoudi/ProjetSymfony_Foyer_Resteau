@@ -228,46 +228,53 @@
                 });
             }
 
-            // Gérer les actions AJAX
-            function handleAction(buttonClass, actionUrlTemplate, redirectUrl) {
-                document.querySelectorAll(buttonClass).forEach((button) => {
-                    button.addEventListener("click", (e) => {
-                        e.preventDefault();
+            // Gérer les clics sur les boutons "Accepter"
+            document.querySelectorAll('.acceptForm .accept').forEach(button => {
+                button.addEventListener('click', function () {
+                    const reservationId = this.closest('form').dataset.reservationId;
 
-                        const form = button.closest("form");
-                        const reservationId = form.dataset.reservationId;
-                        const actionUrl = actionUrlTemplate.replace("{id}", reservationId);
-
-                        fetch(actionUrl, {
-                            method: "POST",
-                            headers: {
-                                "X-Requested-With": "XMLHttpRequest",
-                                "Content-Type": "application/json"
+                    fetch(`/back/notifications/accepter/${reservationId}`, {
+                        method: 'POST',
+                        headers: { 'X-Requested-With': 'XMLHttpRequest' }
+                    })
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.success) {
+                                console.log('Réservation acceptée.');
+                                updateNotifications(); // Appeler ici pour recharger la liste
+                            } else {
+                                alert(data.message);
                             }
                         })
-                            .then((response) => response.json())
-                            .then((data) => {
-                                if (data.success) {
-                                    // Supprimer l'élément côté client
-                                    const listItem = button.closest("li");
-                                    if (listItem) listItem.remove();
-                                    alert(data.message);
-
-                                    // Redirection après action
-                                    setTimeout(() => {
-                                        window.location.href = redirectUrl;
-                                    }, 500);
-                                } else {
-                                    alert(data.message || "Une erreur est survenue.");
-                                }
-                            })
-                            .catch((err) => console.error("Erreur:", err));
-                    });
+                        .catch(err => {
+                            console.error("Erreur lors de l'acceptation:", err);
+                        });
                 });
-            }
+            });
 
-            handleAction(".accept", "/back/notifications/accepter/{id}", "/chambre");
-            handleAction(".reject", "/back/notifications/rejeter/{id}", "/chambre");
-        });
+            // Gérer les clics sur les boutons "Rejeter"
+            document.querySelectorAll('.rejectForm .reject').forEach(button => {
+                button.addEventListener('click', function () {
+                    const reservationId = this.closest('form').dataset.reservationId;
+
+                    fetch(`/back/notifications/rejeter/${reservationId}`, {
+                        method: 'POST',
+                        headers: { 'X-Requested-With': 'XMLHttpRequest' }
+                    })
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.success) {
+                                console.log('Réservation rejetée.');
+                                updateNotifications(); // Appeler ici pour recharger la liste
+                            } else {
+                                alert(data.message);
+                            }
+                        })
+                        .catch(err => {
+                            console.error("Erreur lors du rejet :", err);
+                        });
+                });
+            });
+        }); // Fin de DOMContentLoaded
     </script>
 {% endblock %}
