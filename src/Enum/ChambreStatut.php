@@ -12,4 +12,18 @@ enum ChambreStatut: string
     {
         return $this->value;
     }
+    public static function disponible(): string
+    {
+        return ChambreStatut::DISPONIBLE->getValue();
+    }
+
+    public static function occupee(): string
+    {
+        return ChambreStatut::OCCUPEE->value;
+    }
+
+    public static function enMaintenance(): string
+    {
+        return ChambreStatut::EN_MAINTENANCE->value;
+    }
 }

@@ -18,20 +18,23 @@ class StatisticsController extends AbstractController
         // Récupération des statistiques pour les chambres
         $roomStats = $chambreRepository->countByStatut();
 
-        // Formater les statistiques des chambres pour le graphique
-        $formattedData = array_map(static function ($stat) {
+        // Gestion des données formatées et par défaut si vide
+        $defaultFormattedData = [
+            ['statut' => 'Pas de données', 'value' => 0],
+        ];
+        $formattedData = !empty($roomStats) ? array_map(static function ($stat) {
             return [
                 'statut' => $stat['statut'], // Exemple : "Disponible" ou "Occupé"
                 'value' => $stat['total'],  // Exemple : 5 ou 10
             ];
-        }, $roomStats);
+        }, $roomStats) : $defaultFormattedData;
 
         // Récupération des statistiques des réservations
-        $totalReservations = $reservationRepository->countReservations();
-        $acceptedReservations = $reservationRepository->countAcceptedReservations();
-        $rejectedReservations = $reservationRepository->countRejectedReservations();
-        $pendingReservations = $reservationRepository->countPendingReservations();
-        $reservationsByChambre = $reservationRepository->countReservationsByChambre();
+        $totalReservations = $reservationRepository->countReservations() ?? 0;
+        $acceptedReservations = $reservationRepository->countAcceptedReservations() ?? 0;
+        $rejectedReservations = $reservationRepository->countRejectedReservations() ?? 0;
+        $pendingReservations = $reservationRepository->countPendingReservations() ?? 0;
+        $reservationsByChambre = $reservationRepository->countReservationsByChambre() ?? [];
 
         // Rendu de la vue avec les données nécessaires
         return $this->render('backtemplates/chrv.html.twig', [
