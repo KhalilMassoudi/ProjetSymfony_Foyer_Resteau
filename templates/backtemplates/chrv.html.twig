@@ -74,7 +74,20 @@
                 </div>
             </div>
         </div>
-
+        <!-- Moyenne des Notes des Équipements -->
+        <div class="card mt-5">
+            <div class="card-header">
+                <h4 class="card-title">Note Moyenne des Équipements</h4>
+            </div>
+            <div class="card-body text-center">
+                {% if averageRating is not null %}
+                    <h2 class="text-primary">{{ averageRating|number_format(2, ',', ' ') }} / 5</h2>
+                    <p class="text-muted">Basé sur les votes des utilisateurs</p>
+                {% else %}
+                    <p class="text-danger">Aucune note enregistrée pour les équipements.</p>
+                {% endif %}
+            </div>
+        </div>
         <!-- Tableau des réservations par chambre -->
         <div class="card mt-5">
             <div class="card-header">

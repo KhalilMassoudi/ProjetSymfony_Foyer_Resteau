@@ -46,6 +46,8 @@ class Equipement
 
     #[ORM\ManyToOne(inversedBy: 'equipements')]
     private ?Chambre $chambre = null;
+    #[ORM\Column(type: 'integer', nullable: true)]
+    private ?float $rating = null;
 
     private ?string $term; // Variable utilisée pour la recherche
 
@@ -129,6 +131,16 @@ class Equipement
     public function setTerm(?string $term): self
     {
         $this->term = $term;
+        return $this;
+    }
+    public function getRating(): ?float
+    {
+        return $this->rating;
+    }
+
+    public function setRating(?float $rating): self
+    {
+        $this->rating = $rating;
         return $this;
     }
 }
