@@ -7,18 +7,22 @@ use Symfony\Component\HttpFoundation\Response;
 use App\Repository\ReservationRepository;
 use App\Repository\ChambreRepository;
 use Symfony\Component\Routing\Annotation\Route;
-
+use App\Repository\EquipementRepository;
 class StatisticsController extends AbstractController
 {
-    #[Route('/back/statistiques', name: 'app_statistics')]
+    #[Route('/back/statistiques', name: 'app_statistics', methods: ['GET'])]
     public function statistiques(
         ChambreRepository $chambreRepository,
-        ReservationRepository $reservationRepository
+        ReservationRepository $reservationRepository,
+        EquipementRepository $equipementRepository
     ): Response {
+        // Récupération de la moyenne des notes des équipements
+        $averageRating = $equipementRepository->getAverageRating();
+
         // Récupération des statistiques pour les chambres
         $roomStats = $chambreRepository->countByStatut();
 
-        // Gestion des données formatées et par défaut si vide
+        // Gestion des données formatées et défaut si vide
         $defaultFormattedData = [
             ['statut' => 'Pas de données', 'value' => 0],
         ];
@@ -44,6 +48,7 @@ class StatisticsController extends AbstractController
             'rejectedReservations' => $rejectedReservations,
             'pendingReservations' => $pendingReservations,
             'reservationsByChambre' => $reservationsByChambre,
+            'averageRating' => $averageRating, // Ajout de la moyenne des notes des équipements
         ]);
     }
 }

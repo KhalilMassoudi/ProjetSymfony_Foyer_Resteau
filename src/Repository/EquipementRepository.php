@@ -49,6 +49,24 @@ class EquipementRepository extends ServiceEntityRepository
         // Exécution de la requête et retour des résultats
         return $queryBuilder->getQuery()->getResult();
     }
+    public function save(Equipement $equipement, bool $flush = false): void
+    {
+        $this->getEntityManager()->persist($equipement);
 
+        if ($flush) {
+            $this->getEntityManager()->flush();
+        }
+    }
+    public function getAverageRating(): ?float
+    {
+        $qb = $this->createQueryBuilder('e');
+
+        $qb->select('AVG(e.rating) as avgRating')
+            ->where('e.rating IS NOT NULL'); // Ignorer les enregistrements avec NULL
+
+        $result = $qb->getQuery()->getSingleScalarResult();
+
+        return $result ? (float) $result : null; // Retourner null si aucun rating
+    }
 
 }

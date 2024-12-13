@@ -9,7 +9,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
-
+use Symfony\Component\HttpFoundation\JsonResponse;
 class EquipementController extends AbstractController
 {
     #[Route("/equipement", name: "app_equipement")]
@@ -113,4 +113,44 @@ class EquipementController extends AbstractController
         ]);
     }
 
+
+    #[Route('/rate-equipement/{id}', name: 'rate_equipement', methods: ['POST'])]
+    public function rateEquipement($id, Request $request, EquipementRepository $equipementRepo): JsonResponse
+    {
+        $content = $request->getContent();
+        // Débogage pour voir les données JSON transmises
+        file_put_contents('php://stderr', "Requête JSON reçue : $content\n");
+
+        $data = json_decode($content, true);
+
+        if (!$data) {
+            return new JsonResponse(['error' => 'Invalid JSON structure'], 400);
+        }
+
+        $rating = $data['rating'] ?? null;
+
+        if ($rating === null || $rating < 1 || $rating > 5) {
+            return new JsonResponse(['error' => 'Invalid rating value'], 400);
+        }
+
+        $equipement = $equipementRepo->find($id);
+
+        if (!$equipement) {
+            return new JsonResponse(['error' => 'Equipment not found'], 404);
+        }
+
+        // Débogage pour voir si l'équipement est chargé
+        file_put_contents(
+            'php://stderr',
+            "Équipement trouvé : ID = {$id}, Ancienne Note = {$equipement->getRating()}\n"
+        );
+
+        // Mettre à jour la note
+        $equipement->setRating($rating);
+
+        // Sauvegarder l'objet dans la base de données
+        $equipementRepo->save($equipement, true);
+
+        return new JsonResponse(['success' => true, 'rating' => $rating, 'equipement_id' => $id], 200);
+    }
 }
