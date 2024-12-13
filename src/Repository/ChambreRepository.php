@@ -81,13 +81,12 @@ class ChambreRepository extends ServiceEntityRepository
                 ':statuts'
             ))
             ->setParameter('statuts', [
-                ChambreStatut::DISPONIBLE->getValue(),
-                ChambreStatut::OCCUPEE->getValue(),
+                ChambreStatut::disponible(), // Utilise la méthode statique
+                ChambreStatut::occupee(),    // Utilise la méthode statique
             ])
             ->groupBy('c.statutChB');
 
         return $qb->getQuery()->getResult();
     }
-
 
 }
