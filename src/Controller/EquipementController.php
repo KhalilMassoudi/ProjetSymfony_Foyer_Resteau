@@ -18,18 +18,42 @@ class EquipementController extends AbstractController
         EntityManagerInterface $entityManager,
         EquipementRepository $equipementRepository
     ): Response {
+        // Créer une instance de l'équipement et le formulaire
         $equipement = new Equipement();
         $form = $this->createForm(EquipementType::class, $equipement);
         $form->handleRequest($request);
 
+        // Gérer le formulaire soumis et valide
         if ($form->isSubmitted() && $form->isValid()) {
+            // Gérer le fichier d'image
+            $imageFile = $form->get('image')->getData();
+
+            if ($imageFile) {
+                // Nettoyage et sécurisation du nom du fichier
+                $originalFilename = pathinfo($imageFile->getClientOriginalName(), PATHINFO_FILENAME);
+                $safeFilename = preg_replace('/[^a-zA-Z0-9_-]/', '', $originalFilename);
+                $newFilename = $safeFilename . '-' . uniqid() . '.' . $imageFile->guessExtension();
+
+                // Déplacer le fichier dans le répertoire spécifié
+                $imageFile->move(
+                    $this->getParameter('equipements_directory'),
+                    $newFilename
+                );
+
+                // Mettre à jour l'entité avec le chemin de l'image
+                $equipement->setImage($newFilename);
+            }
+
+            // Enregistrer l'entité en base de données
             $entityManager->persist($equipement);
             $entityManager->flush();
 
-            $this->addFlash('success', 'Équipement ajouté avec succès !');
+            // Ajouter un message flash pour indiquer le succès
+            $this->addFlash('success', 'Équipement ajouté avec succès avec une image !');
             return $this->redirectToRoute('app_equipement');
         }
 
+        // Récupérer tous les équipements pour l'affichage
         $equipements = $equipementRepository->findAll();
 
         return $this->render('backtemplates/app_equipement.html.twig', [
@@ -37,7 +61,6 @@ class EquipementController extends AbstractController
             'equipements' => $equipements,
         ]);
     }
-
     #[Route("/equipement/search", name: "app_equipement_search")]
     public function search(Request $request, EquipementRepository $equipementRepository): Response
     {
@@ -60,16 +83,54 @@ class EquipementController extends AbstractController
     ): Response {
         $equipement = $equipementRepository->find($id);
 
+        // Vérifiez si l'équipement existe
         if (!$equipement) {
             throw $this->createNotFoundException('L\'équipement n\'existe pas.');
         }
 
+        // Stockez le nom de l'image existante au cas où aucun fichier n'est rechargé
+        $originalImage = $equipement->getImage();
+
+        // Créez et gérez le formulaire
         $form = $this->createForm(EquipementType::class, $equipement);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+            // Gérer le fichier d'image
+            $imageFile = $form->get('image')->getData(); // Champs de type 'file' dans le formulaire
+
+            if ($imageFile) {
+                // Nettoyez et sécurisez le nouveau nom de fichier
+                $originalFilename = pathinfo($imageFile->getClientOriginalName(), PATHINFO_FILENAME);
+                $safeFilename = preg_replace('/[^a-zA-Z0-9_-]/', '', $originalFilename);
+                $newFilename = $safeFilename . '-' . uniqid() . '.' . $imageFile->guessExtension();
+
+                // Déplacez le nouveau fichier dans le répertoire configuré
+                $imageFile->move(
+                    $this->getParameter('equipements_directory'),
+                    $newFilename
+                );
+
+                // Mettre à jour l'entité avec le nouveau chemin de fichier
+                $equipement->setImage($newFilename);
+
+                // Supprimer le précédent fichier d'image du serveur (optionnel mais recommandé)
+                if ($originalImage) {
+                    $oldImagePath = $this->getParameter('equipements_directory') . '/' . $originalImage;
+
+                    if (file_exists($oldImagePath)) {
+                        unlink($oldImagePath);
+                    }
+                }
+            } else {
+                // Si aucune nouvelle image n'est téléchargée, conserver l'ancienne image
+                $equipement->setImage($originalImage);
+            }
+
+            // Sauvegarder les modifications en base de données
             $entityManager->flush();
 
+            // Ajouter un message flash pour confirmer la modification
             $this->addFlash('success', 'Équipement modifié avec succès !');
             return $this->redirectToRoute('app_equipement');
         }
