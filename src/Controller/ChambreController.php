@@ -259,19 +259,19 @@ class ChambreController extends AbstractController
             'reservation' => $reservation,
         ]);
     }
-    #[Route('/back/notifications', name: 'app_notifications')]
+    #[Route('/back/notifications', name: 'app_notifications', methods: ['GET'])]
     public function notifications(ReservationRepository $reservationRepository): JsonResponse
     {
-        // Récupérer les réservations récentes (par exemple, les 5 dernières)
-        $reservations = $reservationRepository->findBy([], ['dateReservation' => 'DESC'], 5);
+        // Récupérer uniquement les réservations en attente grâce à la méthode du repository
+        $reservations = $reservationRepository->findPendingReservations();
 
         // Transformer les données en JSON pour l'envoyer à la vue
         $data = [];
         foreach ($reservations as $reservation) {
             $data[] = [
                 'id' => $reservation->getId(),
-                'nomEtudiant' => $reservation->getNomEtudiant(),
-                'dateReservation' => $reservation->getDateReservation()->format('d-m-Y H:i'),
+                'nomEtudiant' => $reservation->getEtudiant()->getNom(), // Accès à l'entité étudiant pour récupérer le nom
+                'dateReservation' => $reservation->getDateReservation()->format('d-m-Y H:i'), // Format date/heure
             ];
         }
 
@@ -283,7 +283,7 @@ class ChambreController extends AbstractController
         ReservationRepository $reservationRepository,
         EntityManagerInterface $entityManager
     ): JsonResponse {
-        // Récupération de la réservation spécifique via son ID
+        // Récupérer la réservation via l'ID
         $reservation = $reservationRepository->find($id);
 
         // Vérifier si la réservation existe
@@ -294,7 +294,7 @@ class ChambreController extends AbstractController
             ], Response::HTTP_NOT_FOUND);
         }
 
-        // Mise à jour : statut de la chambre associé à "Occupée"
+        // Récupérer la chambre associée à la réservation
         $chambre = $reservation->getChambre();
         if (!$chambre) {
             return new JsonResponse([
@@ -303,15 +303,20 @@ class ChambreController extends AbstractController
             ], Response::HTTP_NOT_FOUND);
         }
 
-        $chambre->setStatutChB(ChambreStatut::OCCUPEE);
-        // Enregistrer les modifications
+        // Modifier le statut de la chambre via ENUM
+        $chambre->setStatutChB(ChambreStatut::OCCUPEE); // Remplacez par le bon statut ENUM
+
+        // Modifier le statut de la réservation
+        $reservation->setStatut('Accepté'); // Assurez-vous que le statut "Accepté" est conforme.
+
+        // Sauvegarder en base
         $entityManager->flush();
 
-        // Retourner une réponse JSON au succès
+        // Réponse JSON en cas de succès
         return new JsonResponse([
             'success' => true,
             'message' => 'Réservation acceptée avec succès.',
-            'id' => $id // Utile pour identifier la réservation à supprimer côté client
+            'id' => $id
         ], Response::HTTP_OK);
     }
     #[Route('/back/notifications/rejeter/{id}', name: 'app_rejeter_reservation', methods: ['POST'])]
@@ -327,19 +332,21 @@ class ChambreController extends AbstractController
         if (!$reservation) {
             return new JsonResponse([
                 'success' => false,
-                'message' => 'La réservation spécifiée est introuvable.'
+                'message' => "Réservation non trouvée."
             ], Response::HTTP_NOT_FOUND);
         }
 
-        // Supprimer la réservation
-        $entityManager->remove($reservation);
+        // Laisser la chambre inchangée, modifier uniquement le statut de la réservation
+        $reservation->setStatut('Rejeté'); // Statut "Rejeté" pour la réservation
+
+        // Enregistrer les modifications à la base de données
         $entityManager->flush();
 
-        // Retourner une réponse JSON indiquant le succès
+        // Retourner une réponse JSON avec succès
         return new JsonResponse([
             'success' => true,
-            'message' => 'Réservation rejetée et supprimée avec succès.',
-            'id' => $id // Utile pour identifier la réservation supprimée côté client
+            'message' => "Réservation rejetée avec succès.",
+            'id' => $id // Identifiant pour retirer cette notification côté client
         ], Response::HTTP_OK);
     }
 }

@@ -1,0 +1,156 @@
+{% extends 'backtemplates/baseback2.html.twig' %}
+
+{% block body %}
+    <div class="container mt-4" style="margin-left: 20%; margin-top: 100px; padding-top: 80px;">
+        <!-- Statistiques totales -->
+        <div class="stat-widget-two card-body">
+            <div class="stat-content">
+                <div class="stat-text">Total des Réservations</div>
+                <div class="stat-digit">
+                    <i class="fa fa-calendar-check-o"></i> {{ totalReservations }}
+                </div>
+            </div>
+            <div class="progress">
+                <div class="progress-bar progress-bar-success w-85" role="progressbar" aria-valuenow="85" aria-valuemin="0" aria-valuemax="100"></div>
+            </div>
+        </div>
+
+        <!-- Cartes des statistiques par statut -->
+        <div class="row">
+            <!-- Réservations Acceptées -->
+            <div class="col-xl-4 col-lg-4 col-md-4">
+                <div class="card">
+                    <div class="card-body text-center">
+                        <div class="m-t-10">
+                            <h4 class="card-title">Réservations Acceptées</h4>
+                            <h2 class="mt-3">{{ acceptedReservations }}</h2>
+                        </div>
+                        <div class="widget-card-circle mt-5 mb-5" id="info-circle-card">
+                            <canvas width="125" height="125" style="height: 100px; width: 100px;"></canvas>
+                            <i class="fa fa-check-circle text-success fa-3x"></i>
+                        </div>
+                        <ul class="widget-line-list m-b-15">
+                            <li>Statut : <span class="text-success">Accepté</span></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Réservations Rejetées -->
+            <div class="col-xl-4 col-lg-4 col-md-4">
+                <div class="card">
+                    <div class="card-body text-center">
+                        <div class="m-t-10">
+                            <h4 class="card-title">Réservations Rejetées</h4>
+                            <h2 class="mt-3">{{ rejectedReservations }}</h2>
+                        </div>
+                        <div class="widget-card-circle mt-5 mb-5" id="info-circle-card">
+                            <canvas width="125" height="125" style="height: 100px; width: 100px;"></canvas>
+                            <i class="fa fa-times-circle text-danger fa-3x"></i>
+                        </div>
+                        <ul class="widget-line-list m-b-15">
+                            <li>Statut : <span class="text-danger">Rejeté</span></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Réservations En Attente -->
+            <div class="col-xl-4 col-lg-4 col-md-4">
+                <div class="card">
+                    <div class="card-body text-center">
+                        <div class="m-t-10">
+                            <h4 class="card-title">Réservations En Attente</h4>
+                            <h2 class="mt-3">{{ pendingReservations }}</h2>
+                        </div>
+                        <div class="widget-card-circle mt-5 mb-5" id="info-circle-card">
+                            <canvas width="125" height="125" style="height: 100px; width: 100px;"></canvas>
+                            <i class="fa fa-hourglass-half text-warning fa-3x"></i>
+                        </div>
+                        <ul class="widget-line-list m-b-15">
+                            <li>Statut : <span class="text-warning">En Attente</span></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tableau des réservations par chambre -->
+        <div class="card mt-5">
+            <div class="card-header">
+                <h4 class="card-title">Réservations par Chambre</h4>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table mb-0">
+                        <thead>
+                        <tr>
+                            <th>Image</th>
+                            <th>Chambre</th>
+                            <th>Nombre de Réservations</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {% for chambre in reservationsByChambre %}
+                            <tr>
+                                <td>
+                                    <div class="round-img">
+                                        {% if chambre.image %}
+                                            <a href="#"><img width="50" src="{{ asset('uploads/images/' ~ chambre.image) }}" alt="Chambre"></a>
+                                        {% else %}
+                                            <img width="50" src="{{ asset('uploads/images/default.png') }}" alt="Image par défaut">
+                                        {% endif %}
+                                    </div>
+                                </td>
+                                <td>{{ chambre.chambre }}</td>
+                                <td><span>{{ chambre.total }}</span></td>
+                            </tr>
+                        {% else %}
+                            <tr>
+                                <td colspan="3" class="text-center">Aucune réservation disponible</td>
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    <div class="row">
+        <div class="col-xl-12 col-lg-8">
+            <div class="card">
+                <div class="card-body">
+                    <h2>Statistiques des Chambres</h2>
+
+                    {% if data is defined and data|length > 0 %}
+                        <div id="morris-bar-chart" style="position: relative; height: 300px;"></div>
+                    {% else %}
+                        <p>Aucune donnée disponible pour le moment.</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // Préparer les données transmises depuis le contrôleur
+            const data = {{ data|json_encode|raw }};
+
+            // Vérifier si les données existent avant d'initialiser Morris.js
+            if (data.length > 0) {
+                new Morris.Bar({
+                    element: 'morris-bar-chart', // ID de la div du graphique
+                    data: data,                  // Données JSON
+                    xkey: 'statut',              // Propriété pour l'axe X
+                    ykeys: ['value'],            // Propriété pour l'axe Y
+                    labels: ['Nombre de Chambres'], // Label visible pour les utilisateurs
+                    barColors: ['#3498db'],      // Couleur des barres
+                    hideHover: 'auto',          // Cacher le "hover" automatiquement
+                    resize: true                // Ajuster automatiquement selon l'écran
+                });
+            } else {
+                console.warn("Aucune donnée disponible pour afficher le graphique.");
+            }
+        });
+    </script>
+{% endblock %}

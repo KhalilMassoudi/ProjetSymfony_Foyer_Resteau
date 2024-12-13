@@ -12,9 +12,9 @@
             #[ORM\Column(type: 'integer')]
             private int $id;
 
-            #[ORM\ManyToOne(targetEntity: Chambre::class, inversedBy: 'reservations', cascade: ['remove'])]
+            #[ORM\ManyToOne(targetEntity: Chambre::class)]
             #[ORM\JoinColumn(nullable: false)]
-            private Chambre $chambre;
+            private ?Chambre $chambre = null;
 
             #[ORM\Column(type: 'datetime')]
             private $dateReservation;
