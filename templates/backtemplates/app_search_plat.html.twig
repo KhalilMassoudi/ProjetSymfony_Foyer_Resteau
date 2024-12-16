@@ -1,0 +1,86 @@
+{% extends 'backtemplates/baseback2.html.twig' %}
+
+{% block title %}Recherche avancée de plats{% endblock %}
+
+{% block body %}
+<div class="container mt-4" style="margin-left: 20%; margin-top: 80px; padding-top: 80px;">
+    {# Affichage des messages flash de succès #}
+    {% for message in app.flashes('success') %}
+        <div class="alert alert-success"><strong>Succès!</strong> {{ message }}</div>
+    {% endfor %}
+
+    {# Affichage des messages flash d'erreur #}
+    {% for message in app.flashes('error') %}
+        <div class="alert alert-danger"><strong>{{ message }}</strong> </div>
+    {% endfor %}
+
+    <h2>Recherche avancée de plats</h2>
+    <form method="get" action="{{ path('app_plat_search') }}" class="mb-4">
+        <div class="row">
+            <div class="col-md-6">
+                <input type="text" name="nomPlat" class="form-control" placeholder="Nom du plat" value="{{ searchTerms.nomPlat }}">
+            </div>
+            <div class="col-md-3">
+                <input type="number" name="prix_min" class="form-control" placeholder="Prix min" value="{{ searchTerms.prix_min }}">
+            </div>
+            <div class="col-md-3">
+                <input type="number" name="prix_max" class="form-control" placeholder="Prix max" value="{{ searchTerms.prix_max }}">
+            </div>
+        </div>
+        <div class="row mt-3">
+            <div class="col-md-6">
+                <select name="categoriePlat" class="form-control">
+                    <option value="">Sélectionner une catégorie</option>
+                    {% for categorie in categories %}
+                        <option value="{{ categorie.id }}" {% if categorie.id == searchTerms.categoriePlat %}selected{% endif %}>
+                            {{ categorie.nomCategorie }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="col-md-6 text-end">
+                <button type="submit" class="btn btn-primary">Rechercher</button>
+                <a href="{{ path('app_plat_search') }}" class="btn btn-secondary">Réinitialiser</a>
+            </div>
+        </div>
+    </form>
+
+    <!-- Affichage des résultats -->
+    <h3>Résultats de la recherche</h3>
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Nom</th>
+                <th>Prix</th>
+                <th>Catégorie</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for plat in plats %}
+                <tr>
+                    <td>{{ plat.id }}</td>
+                    <td>{{ plat.nomPlat }}</td>
+                    <td>{{ plat.prixPlat }} TND</td>
+                    <td>{{ plat.categoriePlat.nomCategorie }}</td>
+                    <td>
+                        <a href="{{ path('app_plat_edit', {'id': plat.id}) }}" class="btn btn-primary btn-sm">
+                            <i class="fa fa-edit"></i> Modifier
+                        </a>
+                        <a href="{{ path('app_plat_delete', {'id': plat.id}) }}" class="btn btn-danger btn-sm" onclick="return confirm('Êtes-vous sûr de vouloir supprimer ce plat ?');">
+                            <i class="fa fa-trash"></i> Supprimer
+                        </a>
+                    </td>
+                </tr>
+            {% else %}
+                <tr>
+                    <td colspan="5" class="text-center">Aucun plat trouvé</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}
+{% block footer %}
+{% endblock %}

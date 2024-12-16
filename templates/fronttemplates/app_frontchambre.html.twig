@@ -1,6 +1,15 @@
 {% extends 'fronttemplates/basefront.html.twig' %}
 
 {% block body %}
+       <!-- Afficher les messages flash -->
+       {% for label, messages in app.flashes %}
+           <div class="alert alert-{{ label == 'success' ? 'success' : 'warning' }} alert-dismissible fade show" role="alert">
+               {% for message in messages %}
+                   {{ message }}
+               {% endfor %}
+               <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+           </div>
+       {% endfor %}
     <div class="container mt-5">
         <div class="d-flex justify-content-end mb-4">
             <div class="row g-3">
@@ -106,6 +115,108 @@
                 </div>
             </form>
         </div>
+        <section class="py-3" style="background-image: url('images/background-pattern.jpg');background-repeat: no-repeat;background-size: cover;">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="banner-blocks">
+                            <!-- Swiper des chambres -->
+                            <div class="banner-ad large bg-info block-1">
+                                <div class="swiper main-swiper">
+                                    <div class="swiper-wrapper">
+                                        {% if chambres is not empty %}
+                                            {% for chambre in chambres %}
+                                                <div class="swiper-slide">
+                                                    <div class="row banner-content p-5">
+                                                        <!-- Contenu de la chambre -->
+                                                        <div class="content-wrapper col-md-7">
+                                                            <h3 class="display-4">Chambre {{ chambre.numeroChB }}</h3>
+                                                            <p><strong>Étage :</strong> {{ chambre.etageChB }}</p>
+                                                            <p><strong>Prix :</strong> {{ chambre.prixChB }} €</p>
+
+                                                            <!-- Statut -->
+                                                            <div class="my-3">
+                                                                {% if chambre.statutChB == constant('App\\Enum\\ChambreStatut::DISPONIBLE') %}
+                                                                    <span class="badge bg-success">Disponible</span>
+                                                                {% elseif chambre.statutChB == constant('App\\Enum\\ChambreStatut::OCCUPEE') %}
+                                                                    <span class="badge bg-danger">Occupée</span>
+                                                                {% elseif chambre.statutChB == constant('App\\Enum\\ChambreStatut::EN_MAINTENANCE') %}
+                                                                    <span class="badge bg-secondary">En maintenance</span>
+                                                                {% else %}
+                                                                    <span class="badge bg-warning">Statut inconnu</span>
+                                                                {% endif %}
+                                                            </div>
+
+                                                            <!-- Bouton Réserver -->
+                                                            {% if chambre.statutChB == constant('App\\Enum\\ChambreStatut::DISPONIBLE') %}
+                                                                <a href="{{ path('app_reserver_chambre', {'id': chambre.id}) }}"
+                                                                   class="btn btn-outline-dark btn-lg text-uppercase fs-6 rounded-1 px-4 py-3 mt-3">
+                                                                    Réserver
+                                                                </a>
+                                                            {% endif %}
+                                                        </div>
+
+                                                        <!-- Image de la chambre -->
+                                                        <div class="img-wrapper col-md-5">
+                                                            {% if chambre.image %}
+                                                                <img src="{{ asset('uploads/images/' ~ chambre.image) }}"
+                                                                     alt="Image de la chambre {{ chambre.numeroChB }}"
+                                                                     class="img-fluid"
+                                                                     style="width: 100%; height: auto;">
+                                                            {% else %}
+                                                                <img src="{{ asset('images/default-room.jpg') }}"
+                                                                     alt="Image par défaut"
+                                                                     class="img-fluid"
+                                                                     style="width: 100%; height: auto;">
+                                                            {% endif %}
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            {% endfor %}
+                                        {% else %}
+                                            <div class="swiper-slide">
+                                                <div class="row banner-content p-5">
+                                                    <div class="content-wrapper col-md-12 text-center">
+                                                        <p class="text-muted">Aucune chambre n'est disponible pour le moment.</p>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        {% endif %}
+                                    </div>
+
+                                    <!-- Pagination Swiper -->
+                                    <div class="swiper-pagination"></div>
+                                </div>
+                            </div>
+                            <!-- Fin du Swiper -->
+
+                            <!-- Block 2: Static Content -->
+                            <div class="banner-ad bg-success-subtle block-2" style="background: url('images/ad-image-1.png') no-repeat right bottom;">
+                                <div class="row banner-content p-5">
+                                    <div class="content-wrapper col-md-7">
+                                        <div class="categories sale mb-3 pb-3">20% off</div>
+                                        <h3 class="banner-title">Chambres à 2 &amp; 3</h3>
+                                        <a href="#" class="d-flex align-items-center nav-link">Shop Collection <svg width="24" height="24"><use xmlns:xlink:href="#arrow-right"></use></svg></a>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Block 3: Static Content -->
+                            <div class="banner-ad bg-danger block-3" style="background:url('images/ad-image-2.png') no-repeat;background-position: right bottom">
+                                <div class="row banner-content p-5">
+                                    <div class="content-wrapper col-md-7">
+                                        <div class="categories sale mb-3 pb-3">15% off</div>
+                                        <h3 class="item-title">les chambres individuelles</h3>
+                                        <a href="#" class="d-flex align-items-center nav-link">Shop Collection <svg width="24" height="24"><use xmlns:xlink:href="#arrow-right"></use></svg></a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <section>
 
         <h2 class="section-title text-center mb-4">Liste des Chambres</h2>
 
@@ -162,8 +273,8 @@
                 <p class="text-muted">Aucune chambre n'est disponible pour le moment.</p>
             </div>
         {% endif %}
+    </section>
     </div>
-
     <script>
         // Script pour basculer l'affichage des critères avancés
         document.getElementById('toggle-filters-btn').addEventListener('click', function () {
@@ -179,6 +290,21 @@
         document.getElementById('close-filters-btn').addEventListener('click', function () {
             const advancedFilters = document.getElementById('advanced-filters');
             advancedFilters.style.display = 'none';
+        });
+    </script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            // Récupérer tous les messages d'alerte
+            const alerts = document.querySelectorAll('.alert');
+
+            // Faire disparaître chaque alerte après 5 secondes
+            alerts.forEach(alert => {
+                setTimeout(() => {
+                    alert.classList.add('fade');
+                    alert.classList.remove('show');
+                    setTimeout(() => alert.remove(), 500); // Supprimer complètement après l'animation
+                }, 5000); // 5 secondes
+            });
         });
     </script>
 {% endblock %}

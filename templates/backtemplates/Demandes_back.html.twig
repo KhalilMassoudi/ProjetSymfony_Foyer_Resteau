@@ -1,0 +1,95 @@
+{% extends 'baseback2.html.twig' %}
+
+{% block body %}
+<div class="content-body">
+    {# Navbar for managing plate requests #}
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+    </nav>
+
+    {# Flash messages for success #}
+    {% for message in app.flashes('success') %}
+        <div class="alert alert-success">
+            <strong>Succès!</strong> {{ message }}
+        </div>
+    {% endfor %}
+
+    {# Flash messages for error #}
+    {% for message in app.flashes('error') %}
+        <div class="alert alert-danger">
+            <strong>{{ message }}</strong>
+        </div>
+    {% endfor %}
+
+    <div class="card mt-4">
+        <div class="card-header">
+            <h4 class="card-title">Liste des Demandes de Plats</h4>
+        </div>
+
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table student-data-table m-t-20">
+                    <thead>
+                        <tr>
+                            <th>Nom</th>
+                            <th>Prénom</th>
+                            <th>Description</th>
+                            <th>Date</th>
+                            <th>Téléphone</th>
+                            <th>Email</th>
+                            <th>Plat</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for demande in demandes %}
+                        <tr>
+                            <td>{{ demande.nom }}</td>
+                            <td>{{ demande.prenom }}</td>
+                            <td>{{ demande.description ?: 'Aucune description disponible' }}</td>
+                            <td>{{ demande.dateDemande ? demande.dateDemande|date('Y-m-d') : 'Aucune date disponible' }}</td>
+                            <td>{{ demande.telephone ?: 'Aucun numéro disponible' }}</td>
+                            <td>{{ demande.email ?: 'Aucun email disponible' }}</td>
+                            <td>{{ demande.plat.nomPlat ?: 'Plat non disponible' }}</td>
+                            <td>
+                                <a href="{{ path('app_demande_plat_accept', { id: demande.id }) }}" class="btn btn-success btn-sm">
+                                    Accepter
+                                </a>
+                                <a href="{{ path('app_demande_plat_reject', { id: demande.id }) }}" class="btn btn-danger btn-sm">
+                                    Rejeter
+                                </a>
+                            </td>
+                        </tr>
+                        {% else %}
+                        <tr>
+                            <td colspan="8" class="text-center">Aucune demande de plat trouvée.</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block js %}
+<script src="{{ asset('assets/back/vendor/global/global.min.js') }}"></script>
+<script src="{{ asset('assets/back/js/quixnav-init.js') }}"></script>
+<script src="{{ asset('assets/back/js/custom.min.js') }}"></script>
+<script src="{{ asset('assets/back/vendor/chartist/js/chartist.min.js') }}"></script>
+<script src="{{ asset('assets/back/vendor/moment/moment.min.js') }}"></script>
+<script src="{{ asset('assets/back/vendor/pg-calendar/js/pignose.calendar.min.js') }}"></script>
+<script src="{{ asset('assets/back/js/dashboard/dashboard-2.js') }}"></script>
+<script>
+    // Flash message fade out functionality
+    setTimeout(function() {
+        const flashMessage = document.getElementById('flashMessage');
+        if (flashMessage) {
+            flashMessage.style.display = 'none';
+        }
+    }, 3000);  // Flash message will disappear after 5 seconds
+</script>
+{% endblock %}

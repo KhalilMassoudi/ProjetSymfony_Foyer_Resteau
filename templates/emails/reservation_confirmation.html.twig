@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Confirmation de réservation</title>
+</head>
+<body>
+<h1>Bonjour {{ user.username }}</h1>
+
+<p>Nous vous confirmons la réservation de la chambre <strong>{{ chambre.numeroChB }}</strong>.</p>
+<p>Votre réservation a été effectuée le <strong>{{ reservation.dateReservation|date('d/m/Y H:i') }}</strong>.</p>
+
+<p>Merci pour votre confiance !</p>
+
+<p>Cordialement,</p>
+<p>L'équipe de votre hôtel</p>
+</body>
+</html>

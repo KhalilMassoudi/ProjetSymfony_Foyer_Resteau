@@ -16,15 +16,19 @@ class CategoriePlatType extends AbstractType
         $builder
             ->add('nomCategorie', TextType::class, [
                 'label' => 'Nom de la catégorie',
-                'required' => true,
+                'attr' => [
+                    'class' => 'form-control', // Ajout de la classe CSS
+                    'placeholder' => 'Nom de la catégorie',
+                ],
             ])
             ->add('descrCategorie', TextareaType::class, [
                 'label' => 'Description de la catégorie',
                 'required' => false,
                 'attr' => [
+                    'class' => 'form-control',
                     'rows' => 5,
                     'placeholder' => 'Ajouter une description...',
-                ]
+                ],
             ]);
     }
 

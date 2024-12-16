@@ -6,6 +6,7 @@ use App\Repository\CategoriePlatRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: CategoriePlatRepository::class)]
 class CategoriePlat
@@ -16,9 +17,22 @@ class CategoriePlat
     private ?int $id = null;
 
     #[ORM\Column(length: 100)]
+    #[Assert\NotBlank(message: 'Le nom de la catégorie est obligatoire.')]
+    #[Assert\Length(
+        max: 100,
+        maxMessage: 'Le nom de la catégorie ne peut pas dépasser {{ limit }} caractères.'
+    )]
     private ?string $nomCategorie = null;
 
     #[ORM\Column(length: 255, nullable: true)]
+    #[Assert\Length(
+        max: 255,
+        maxMessage: 'La description ne peut pas dépasser {{ limit }} caractères.'
+    )]
+    #[Assert\Regex(
+        pattern: "/^[a-zA-Z0-9\s]+$/", 
+        message: "La description ne peut contenir que des lettres, des chiffres et des espaces."
+    )]
     private ?string $descrCategorie = null;
 
     /**
@@ -89,5 +103,13 @@ class CategoriePlat
         }
 
         return $this;
+    }
+
+    /**
+     * Méthode __toString() pour afficher le nom de la catégorie dans les formulaires Symfony.
+     */
+    public function __toString(): string
+    {
+        return $this->nomCategorie ?? 'Catégorie';
     }
 }

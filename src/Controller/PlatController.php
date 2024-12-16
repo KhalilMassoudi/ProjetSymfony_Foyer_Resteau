@@ -4,7 +4,9 @@ namespace App\Controller;
 
 use App\Entity\Plat;
 use App\Form\PlatType;
+use App\Form\AdvancedSearchType;
 use App\Repository\PlatRepository;
+use App\Repository\CategoriePlatRepository; // Corriger l'importation ici
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -132,6 +134,40 @@ class PlatController extends AbstractController
 
         return $this->render('fronttemplates/plat_details.html.twig', [
             'plats' => $plats,
+        ]);
+    }
+
+    #[Route("/plat/search", name: "app_plat_search")]
+    public function search(
+        Request $request,
+        PlatRepository $platRepository,
+        CategoriePlatRepository $categoriePlatRepository // Correct repository import
+    ): Response {
+        // Récupérer les valeurs de la requête pour chaque critère
+        $nomPlat = $request->query->get('nomPlat', '');  // Nom du plat
+        $prixMin = $request->query->get('prix_min', ''); // Prix minimum
+        $prixMax = $request->query->get('prix_max', ''); // Prix maximum
+        $categoriePlat = $request->query->get('categoriePlat', ''); // Catégorie du plat
+
+        // Créer un tableau avec les critères
+        $searchTerms = [
+            'nomPlat' => $nomPlat,
+            'prix_min' => $prixMin,
+            'prix_max' => $prixMax,
+            'categoriePlat' => $categoriePlat,
+        ];
+
+        // Effectuer la recherche et le filtrage via le repository
+        $plats = $platRepository->searchAndFilter($searchTerms);
+
+        // Récupérer toutes les catégories pour la liste déroulante
+        $categories = $categoriePlatRepository->findAll();
+
+        // Retourner les résultats avec les critères utilisés pour afficher les options du formulaire
+        return $this->render('backtemplates/app_search_plat.html.twig', [
+            'plats' => $plats,
+            'searchTerms' => $searchTerms,
+            'categories' => $categories,  // Passer les catégories pour la sélection
         ]);
     }
 }

@@ -3,6 +3,7 @@
 namespace App\Repository;
 
 use App\Entity\Chambre;
+use App\Enum\ChambreStatut;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
@@ -67,6 +68,23 @@ class ChambreRepository extends ServiceEntityRepository
                 ->setParameter('prix_min', $criteria['prix_min'])
                 ->setParameter('prix_max', $criteria['prix_max']);
         }
+
+        return $qb->getQuery()->getResult();
+    }
+    public function countByStatut(): array
+    {
+        $qb = $this->createQueryBuilder('c');
+
+        $qb->select('c.statutChB as statut, COUNT(c.id) as total')
+            ->where($qb->expr()->in(
+                'c.statutChB',
+                ':statuts'
+            ))
+            ->setParameter('statuts', [
+                ChambreStatut::disponible(), // Utilise la méthode statique
+                ChambreStatut::occupee(),    // Utilise la méthode statique
+            ])
+            ->groupBy('c.statutChB');
 
         return $qb->getQuery()->getResult();
     }

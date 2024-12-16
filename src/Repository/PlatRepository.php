@@ -15,7 +15,38 @@ class PlatRepository extends ServiceEntityRepository
     {
         parent::__construct($registry, Plat::class);
     }
+    public function searchAndFilter(array $searchTerms): array
+    {
+        $qb = $this->createQueryBuilder('p')
+                   ->leftJoin('p.categoriePlat', 'c'); // Jointure avec CategoriePlat
 
+        // Filtrage par nomPlat
+        if (!empty($searchTerms['nomPlat'])) {
+            $qb->andWhere('p.nomPlat LIKE :nomPlat')
+               ->setParameter('nomPlat', '%' . $searchTerms['nomPlat'] . '%');
+        }
+
+        // Filtrage par prixMin
+        if (!empty($searchTerms['prix_min'])) {
+            $qb->andWhere('p.prixPlat >= :prixMin')
+               ->setParameter('prixMin', $searchTerms['prix_min']);
+        }
+
+        // Filtrage par prixMax
+        if (!empty($searchTerms['prix_max'])) {
+            $qb->andWhere('p.prixPlat <= :prixMax')
+               ->setParameter('prixMax', $searchTerms['prix_max']);
+        }
+
+        // Filtrage par catégoriePlat
+        if (!empty($searchTerms['categoriePlat'])) {
+            $qb->andWhere('c.id = :categoriePlat')
+               ->setParameter('categoriePlat', $searchTerms['categoriePlat']);
+        }
+
+        return $qb->getQuery()->getResult();
+    }
+    
 //    /**
 //     * @return Plat[] Returns an array of Plat objects
 //     */

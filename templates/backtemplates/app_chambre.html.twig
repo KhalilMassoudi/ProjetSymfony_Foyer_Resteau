@@ -1,44 +1,173 @@
 {% extends 'backtemplates/baseback2.html.twig' %}
 
 {% block body %}
-    <div class="container mt-4" style="margin-left: 20%; margin-top: 400px;padding-top: 80px;">
+    <div class="container mt-4" style="margin-left: 20%; margin-top: 400px; padding-top: 80px;">
         <h1>Gestion des chambres</h1>
 
-        {# Affichage des messages flash pour les erreurs #}
+        <!-- Conteneur pour les boutons et l'icône de notification -->
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <div>
+                <!-- Bouton pour ajouter une chambre -->
+                <button id="toggleFormBtn" class="btn btn-primary mb-4">
+                    Ajouter une chambre <span class="btn-icon-right"><i class="fa fa-plus"></i></span>
+                </button>
+                <!-- Lien vers la recherche de chambres -->
+                <a href="{{ path('app_chambre_search') }}" class="btn btn-secondary mb-4 ml-2">
+                    Rechercher une chambre <span class="btn-icon-right"><i class="fa fa-search"></i></span>
+                </a>
+            </div>
+
+            <!-- Icône de notification -->
+            <div style="position: relative;">
+                <i class="mdi mdi-bell" style="font-size: 24px; cursor: pointer;" id="notificationIcon"></i>
+                <div class="pulse-css"></div>
+                <div id="notificationDropdown" class="d-none" style="position: absolute; top: 30px; right: 0; background: white; border: 1px solid #ccc; border-radius: 5px; width: 300px; max-height: 300px; overflow-y: auto; z-index: 1000;">
+                    <h5 class="p-2">Réservations</h5>
+                    <ul class="list-group list-group-flush">
+                        {% for reservation in reservations %}
+                            <li class="list-group-item">
+                                <strong>Étudiant :</strong> {{ reservation.nomEtudiant }}<br>
+                                <strong>Chambre :</strong> {{ reservation.chambre.numeroChB }}<br>
+                                <strong>État :</strong> {{ reservation.chambre.statutChB.value }}<br>
+                                <form class="acceptForm" data-reservation-id="{{ reservation.id }}" style="display:inline;">
+                                    <button type="button" class="btn btn-success accept">Accepter</button>
+                                </form>
+                                <form class="rejectForm" data-reservation-id="{{ reservation.id }}" style="display:inline;">
+                                    <button type="button" class="btn btn-danger reject">Rejeter</button>
+                                </form>
+                            </li>
+                        {% else %}
+                            <li class="list-group-item text-center">Aucune réservation</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Messages flash -->
         {% for message in app.flashes('error') %}
             <div class="alert alert-danger solid alert-rounded">
-                <strong>Erreur!</strong> {{ message }}
+                Erreur : {{ message }}
             </div>
         {% endfor %}
-
-        {# Affichage des messages flash pour les succès #}
         {% for message in app.flashes('success') %}
             <div class="alert alert-success solid alert-rounded">
-                <strong>Succès!</strong> {{ message }}
+                Succès : {{ message }}
             </div>
         {% endfor %}
 
-        {# Bouton pour afficher/masquer le formulaire d'ajout de chambre #}
-        <button id="toggleFormBtn" class="btn btn-primary mb-4">
-            Ajouter une chambre <span class="btn-icon-right"><i class="fa fa-plus"></i></span>
-        </button>
-
-        {# Nouveau bouton pour la recherche des chambres #}
-        <a href="{{ path('app_chambre_search') }}" class="btn btn-secondary mb-4 ml-2">
-            Rechercher une chambre <span class="btn-icon-right"><i class="fa fa-search"></i></span>
-        </a>
-
-        {# Formulaire pour ajouter une nouvelle chambre #}
+        <!-- Formulaire pour ajouter une chambre -->
         <div id="ajouterChambreDiv" class="d-none">
             <h2>Ajouter une chambre</h2>
-            {{ form_start(form, {'attr': {'class': 'form-horizontal'}}) }}
-            <!-- Formulaire de chambre ici -->
+
+            <!-- Alerte globale si le formulaire a échoué -->
+            {% if form.vars.errors|length > 0 %}
+                <div class="alert alert-danger">
+                    <ul>
+                        {% for error in form.vars.errors %}
+                            <li>{{ error.message }}</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            {% endif %}
+
+            {{ form_start(form, {
+                'action': path('app_chamber'),
+                'method': 'POST'
+            }) }}
+
+            <!-- Gestion des erreurs de saisie par champ -->
+            <div class="form-group">
+                {{ form_row(form.numeroChB, {
+                    'attr': {'class': 'form-control', 'placeholder': 'Numéro de chambre'},
+                    'label': 'Numéro de chambre'
+                }) }}
+                {% if form.numeroChB.vars.errors|length > 0 %}
+                    <div class="alert alert-danger mt-2">
+                        {% for error in form.numeroChB.vars.errors %}
+                            <span>{{ error.message }}</span>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            </div>
+
+            <div class="form-group">
+                {{ form_row(form.etageChB, {
+                    'attr': {'class': 'form-control', 'placeholder': 'Étage'},
+                    'label': 'Étage'
+                }) }}
+                {% if form.etageChB.vars.errors|length > 0 %}
+                    <div class="alert alert-danger mt-2">
+                        {% for error in form.etageChB.vars.errors %}
+                            <span>{{ error.message }}</span>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            </div>
+
+            <div class="form-group">
+                {{ form_row(form.capaciteChB, {
+                    'attr': {'class': 'form-control', 'placeholder': 'Capacité'},
+                    'label': 'Capacité'
+                }) }}
+                {% if form.capaciteChB.vars.errors|length > 0 %}
+                    <div class="alert alert-danger mt-2">
+                        {% for error in form.capaciteChB.vars.errors %}
+                            <span>{{ error.message }}</span>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            </div>
+
+            <div class="form-group">
+                {{ form_row(form.prixChB, {
+                    'attr': {'class': 'form-control', 'placeholder': 'Prix'},
+                    'label': 'Prix'
+                }) }}
+                {% if form.prixChB.vars.errors|length > 0 %}
+                    <div class="alert alert-danger mt-2">
+                        {% for error in form.prixChB.vars.errors %}
+                            <span>{{ error.message }}</span>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            </div>
+
+            <div class="form-group">
+                {{ form_row(form.statutChB, {
+                    'attr': {'class': 'form-control'},
+                    'label': 'Statut'
+                }) }}
+                {% if form.statutChB.vars.errors|length > 0 %}
+                    <div class="alert alert-danger mt-2">
+                        {% for error in form.statutChB.vars.errors %}
+                            <span>{{ error.message }}</span>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            </div>
+
+            <div class="form-group">
+                {{ form_row(form.image, {
+                    'attr': {'class': 'form-control', 'placeholder': 'Image'},
+                    'label': 'Image'
+                }) }}
+                {% if form.image.vars.errors|length > 0 %}
+                    <div class="alert alert-danger mt-2">
+                        {% for error in form.image.vars.errors %}
+                            <span>{{ error.message }}</span>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            </div>
+
+            <button type="submit" class="btn btn-primary">Ajouter</button>
             {{ form_end(form) }}
         </div>
 
-        {# Liste des chambres #}
-        <h2 class="mt-4">Liste des chambres</h2>
-        <table class="table table-striped">
+        <!-- Tableau des chambres -->
+        <h2>Liste des chambres</h2>
+        <table class="table table-striped mt-3">
             <thead>
             <tr>
                 <th>ID</th>
@@ -61,45 +190,91 @@
                     <td>{{ chambre.statutChB.getValue() }}</td>
                     <td>{{ chambre.prixChB }} €</td>
                     <td>
-                        {% if chambre.image is not null %}
-                            <img src="{{ asset('uploads/images/' ~ chambre.image) }}" alt="Image de la chambre" width="50" height="50">
+                        {% if chambre.image %}
+                            <img src="{{ asset('uploads/images/' ~ chambre.image) }}" alt="Image chambre" width="50" height="50">
                         {% else %}
-                            <span>Aucune image</span>
+                            N/A
                         {% endif %}
                     </td>
                     <td>
-                        <a href="{{ path('app_chambre_edit', {'id': chambre.id}) }}" class="btn btn-primary btn-sm mr-3">
-                            <i class="fa fa-edit"></i> Modifier
-                        </a>
-                        <a href="{{ path('app_chambre_delete', {'id': chambre.id}) }}" class="btn btn-danger btn-sm" onclick="return confirm('Êtes-vous sûr de vouloir supprimer cette chambre ?');">
-                            <i class="fa fa-trash"></i> Supprimer
-                        </a>
+                        <a href="{{ path('app_chambre_edit', { 'id': chambre.id }) }}" class="btn btn-primary btn-sm">Modifier</a>
+                        <a href="{{ path('app_chambre_delete', { 'id': chambre.id }) }}" class="btn btn-danger btn-sm" onclick="return confirm('Supprimer ?');">Supprimer</a>
                     </td>
                 </tr>
             {% endfor %}
             </tbody>
         </table>
     </div>
-{% endblock %}
-
-{% block js %}
-    <script src="{{ asset('assets/back/vendor/global/global.min.js') }}"></script>
-    <script src="{{ asset('assets/back/js/quixnav-init.js') }}"></script>
-    <script src="{{ asset('assets/back/js/custom.min.js') }}"></script>
-    <script src="{{ asset('assets/back/vendor/chartist/js/chartist.min.js') }}"></script>
-    <script src="{{ asset('assets/back/vendor/moment/moment.min.js') }}"></script>
-    <script src="{{ asset('assets/back/vendor/pg-calendar/js/pignose.calendar.min.js') }}"></script>
-    <script src="{{ asset('assets/back/js/dashboard/dashboard-2.js') }}"></script>
+    <!-- Scripts -->
     <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            const toggleFormBtn = document.getElementById('toggleFormBtn');
-            const ajouterChambreDiv = document.getElementById('ajouterChambreDiv');
+        document.addEventListener("DOMContentLoaded", () => {
+            const notificationIcon = document.getElementById('notificationIcon');
+            const notificationDropdown = document.getElementById('notificationDropdown');
 
-            if (toggleFormBtn && ajouterChambreDiv) {
-                toggleFormBtn.addEventListener('click', () => {
-                    ajouterChambreDiv.classList.toggle('d-none');
+            // Gérer le clic sur l'icône de notification
+            if (notificationIcon) {
+                notificationIcon.addEventListener("click", () => {
+                    if (notificationDropdown) notificationDropdown.classList.toggle("d-none");
                 });
             }
-        });
+
+            const toggleFormBtn = document.getElementById("toggleFormBtn");
+            const ajouterChambreDiv = document.getElementById("ajouterChambreDiv");
+
+            // Gérer l'ouverture/fermeture du formulaire
+            if (toggleFormBtn && ajouterChambreDiv) {
+                toggleFormBtn.addEventListener("click", () => {
+                    ajouterChambreDiv.classList.toggle("d-none");
+                });
+            }
+
+            // Gérer les clics sur les boutons "Accepter"
+            document.querySelectorAll('.acceptForm .accept').forEach(button => {
+                button.addEventListener('click', function () {
+                    const reservationId = this.closest('form').dataset.reservationId;
+
+                    fetch(`/back/notifications/accepter/${reservationId}`, {
+                        method: 'POST',
+                        headers: { 'X-Requested-With': 'XMLHttpRequest' }
+                    })
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.success) {
+                                console.log('Réservation acceptée.');
+                                updateNotifications(); // Appeler ici pour recharger la liste
+                            } else {
+                                alert(data.message);
+                            }
+                        })
+                        .catch(err => {
+                            console.error("Erreur lors de l'acceptation:", err);
+                        });
+                });
+            });
+
+            // Gérer les clics sur les boutons "Rejeter"
+            document.querySelectorAll('.rejectForm .reject').forEach(button => {
+                button.addEventListener('click', function () {
+                    const reservationId = this.closest('form').dataset.reservationId;
+
+                    fetch(`/back/notifications/rejeter/${reservationId}`, {
+                        method: 'POST',
+                        headers: { 'X-Requested-With': 'XMLHttpRequest' }
+                    })
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.success) {
+                                console.log('Réservation rejetée.');
+                                updateNotifications(); // Appeler ici pour recharger la liste
+                            } else {
+                                alert(data.message);
+                            }
+                        })
+                        .catch(err => {
+                            console.error("Erreur lors du rejet :", err);
+                        });
+                });
+            });
+        }); // Fin de DOMContentLoaded
     </script>
 {% endblock %}
