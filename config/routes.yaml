@@ -15,3 +15,7 @@ app_index:
 app_front:
     path: /
     controller: App\Controller\UserController::front
+update_rating:
+    path: /update-rating
+    controller: App\Controller\ReclamationController::updateRating
+    methods: [POST]

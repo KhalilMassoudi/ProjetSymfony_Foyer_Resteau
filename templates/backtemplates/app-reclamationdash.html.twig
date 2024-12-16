@@ -1,0 +1,516 @@
+
+{% block head %}
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    {% block title %}
+        Focus - Bootstrap Admin Dashboard
+    {% endblock %}
+    {% block css %}
+        <!-- Favicon icon -->
+        <link href="{{ asset('fontawesome/css/all.min.css') }}" rel="stylesheet">
+        <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
+        <link rel="icon" type="image/png" sizes="16x16" href="{{ asset('assets/back/images/favicon.png') }}">
+        <link rel="stylesheet" href="{{ asset('assets/back/vendor/owl-carousel/css/owl.carousel.min.css') }}">
+        <link rel="stylesheet" href="{{ asset('assets/back/vendor/owl-carousel/css/owl.theme.default.min.css') }}">
+        <link href="{{ asset('assets/back/vendor/jqvmap/css/jqvmap.min.css') }}" rel="stylesheet">
+        <link href="{{ asset('assets/back/css/style.css') }}" rel="stylesheet">
+
+
+
+    {% endblock %}
+
+{% endblock %}
+
+
+
+<!--*******************
+    Preloader start
+********************-->
+{% block prealoader %}
+    <div id="preloader">
+        <div class="sk-three-bounce">
+            <div class="sk-child sk-bounce1"></div>
+            <div class="sk-child sk-bounce2"></div>
+            <div class="sk-child sk-bounce3"></div>
+        </div>
+    </div>
+{% endblock %}
+<!--*******************
+    Preloader end
+********************-->
+
+
+<!--**********************************
+    Main wrapper start
+***********************************-->
+
+<div id="main-wrapper">
+
+    <!--**********************************
+        Nav header start
+    ***********************************-->
+    {% block nav %}
+        <div class="nav-header">
+            <a  href="{{ path('app_index') }}" class="brand-logo">
+                <img class="brand-title" src="{{ asset('assets/back/images/dotcom.png') }}" alt="">
+                <svg width="99" height="14" viewBox="0 0 99 14" fill="none" xmlns="http://www.w3.org/2000/svg">
+                </svg>
+            </a>
+
+            <div class="nav-control">
+                <div class="hamburger">
+                    <span class="line"></span><span class="line"></span><span class="line"></span>
+                </div>
+            </div>
+        </div>
+
+        <!--**********************************
+            Nav header end
+        ***********************************-->
+
+        <!--**********************************
+            Header start
+        ***********************************-->
+        <div class="header">
+            <div class="header-content">
+                <nav class="navbar navbar-expand">
+                    <div class="collapse navbar-collapse justify-content-between">
+                        <div class="header-left">
+                            <div class="search_bar dropdown">
+                                <span class="search_icon p-3 c-pointer" data-toggle="dropdown">
+                                    <i class="mdi mdi-magnify"></i>
+                                </span>
+                                <div class="dropdown-menu p-0 m-0">
+                                    <form>
+                                        <input class="form-control" type="search" placeholder="Search" aria-label="Search">
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+
+                        <ul class="navbar-nav header-right">
+                            <li class="nav-item dropdown notification_dropdown">
+                                <a class="nav-link" href="#" role="button" data-toggle="dropdown">
+                                    <i class="mdi mdi-bell"></i>
+                                    <div class="pulse-css"></div>
+                                </a>
+                                <div class="dropdown-menu dropdown-menu-right">
+                                    <ul class="list-unstyled">
+                                        <li class="media dropdown-item">
+                                            <span class="success"><i class="ti-user"></i></span>
+                                            <div class="media-body">
+                                                <a href="#">
+                                                    <p><strong>Martin</strong> has added a <strong>customer</strong> Successfully
+                                                    </p>
+                                                </a>
+                                            </div>
+                                            <span class="notify-time">3:20 am</span>
+                                        </li>
+                                        <li class="media dropdown-item">
+                                            <span class="primary"><i class="ti-shopping-cart"></i></span>
+                                            <div class="media-body">
+                                                <a href="#">
+                                                    <p><strong>Jennifer</strong> purchased Light Dashboard 2.0.</p>
+                                                </a>
+                                            </div>
+                                            <span class="notify-time">3:20 am</span>
+                                        </li>
+                                        <li class="media dropdown-item">
+                                            <span class="danger"><i class="ti-bookmark"></i></span>
+                                            <div class="media-body">
+                                                <a href="#">
+                                                    <p><strong>Robin</strong> marked a <strong>ticket</strong> as unsolved.
+                                                    </p>
+                                                </a>
+                                            </div>
+                                            <span class="notify-time">3:20 am</span>
+                                        </li>
+                                        <li class="media dropdown-item">
+                                            <span class="primary"><i class="ti-heart"></i></span>
+                                            <div class="media-body">
+                                                <a href="#">
+                                                    <p><strong>David</strong> purchased Light Dashboard 1.0.</p>
+                                                </a>
+                                            </div>
+                                            <span class="notify-time">3:20 am</span>
+                                        </li>
+                                        <li class="media dropdown-item">
+                                            <span class="success"><i class="ti-image"></i></span>
+                                            <div class="media-body">
+                                                <a href="#">
+                                                    <p><strong> James.</strong> has added a<strong>customer</strong> Successfully
+                                                    </p>
+                                                </a>
+                                            </div>
+                                            <span class="notify-time">3:20 am</span>
+                                        </li>
+                                    </ul>
+                                    <a class="all-notification" href="#">See all notifications <i
+                                                class="ti-arrow-right"></i></a>
+                                </div>
+                            </li>
+                            <li class="nav-item dropdown header-profile">
+                                <a class="nav-link" href="#" role="button" data-toggle="dropdown">
+                                    <i class="mdi mdi-account"></i>
+                                </a>
+                                <div class="dropdown-menu dropdown-menu-right">
+                                    <a href="{{ path('app_profile') }}" class="dropdown-item">
+                                        <i class="icon-user"></i>
+                                        <span class="ml-2">Profile </span>
+                                    </a>
+                                    <a href="./email-inbox.html" class="dropdown-item">
+                                        <i class="icon-envelope-open"></i>
+                                        <span class="ml-2">Inbox </span>
+                                    </a>
+                                    <a href="./page-login.html" class="dropdown-item">
+                                        <i class="icon-key"></i>
+                                        <span class="ml-2">Logout </span>
+                                    </a>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                </nav>
+            </div>
+        </div>
+    {% endblock %}
+
+    <!--**********************************
+        Header end ti-comment-alt
+    ***********************************-->
+
+    <!--**********************************
+        Sidebar start
+    ***********************************-->
+    {% block side %}
+        <div class="quixnav">
+            <div class="quixnav-scroll">
+                <ul class="metismenu" id="menu">
+                    <li class="nav-label first">Main Menu</li>
+                    <li><a class="has-arrow" href="javascript:void()" aria-expanded="false"><i
+                                    class="icon icon-single-04"></i><span class="nav-text">Dashboard</span></a>
+                        <ul aria-expanded="false">
+                            <li><a href="{{ path('app_index') }}">Dashboard 1</a></li>
+                            <li><a href="{{ path('app_index2') }}">Dashboard 2</a></li>
+                        </ul>
+                    </li>
+                    <li class="nav-label">Apps</li>
+                    <li><a class="has-arrow" href="javascript:void()" aria-expanded="false"><i
+                                    class="icon icon-app-store"></i><span class="nav-text">Apps</span></a>
+                        <ul aria-expanded="false">
+                            <li><a href="{{ path('app_profile') }}">Profile</a></li>
+                            <li><a class="has-arrow" href="javascript:void()" aria-expanded="false">Email</a>
+                                <ul aria-expanded="false">
+                                    <li><a href="./email-compose.html">Compose</a></li>
+                                    <li><a href="./email-inbox.html">Inbox</a></li>
+                                    <li><a href="./email-read.html">Read</a></li>
+                                </ul>
+                            </li>
+                            <li><a href="{{path('app_calander')}}">Calendar</a></li>
+                        </ul>
+                    </li>
+
+                    <li><a class="has-arrow" href="javascript:void()" aria-expanded="false"><i
+                                    class="icon icon-chart-bar-33"></i><span class="nav-text">Gestion de Restaurant Universitaire </span></a>
+                        <ul aria-expanded="false">
+                            <li><a href="{{ path ('app_categorieplat') }}">Catégorie Plat</a></li>
+                            <li><a href="{{ path('app_plat') }}">Plats</a></li>
+                        </ul>
+
+                    </li>
+                    <li><a class="has-arrow" href="javascript:void()" aria-expanded="false"><i
+                                    class="icon icon-chart-bar-33"></i><span class="nav-text">Gestion des chambres et des equipements </span></a>
+                        <ul aria-expanded="false">
+                            <li><a href="{{ path ('app_chamber') }}">Chambre</a></li>
+                            <li><a href="{{ path('app_equipement') }}">Equipements</a></li>
+                        </ul>
+                    </li>
+                    <li><a  href="{{ path ('app_service') }}"><i class="icon icon-chart-bar-33"></i>Gestion des Services</a>
+                    </li>
+                    <li><a  href="{{ path ('app_reclamation') }}"><i class="icon icon-chart-bar-33"></i>Gestion des Réclamations</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    {% endblock %}
+    <!--**********************************
+        Sidebar end
+    ***********************************-->
+
+    <!--**********************************
+        Content body start
+    ***********************************-->
+    {% block body %}
+        <div class="content-body">
+            <!-- row -->
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-lg-3 col-sm-6 ">
+                        <div class="card" onclick="window.location.href='{{ path('app_adminafficherReclamations') }}'">
+                            <div class="stat-widget-two card-body">
+                                <div class="stat-content">
+                                    <div class="stat-text">total réclamations </div>
+                                    <div class="stat-digit">  <i class="fa fa-bell"></i>{{ total_reclamations }}</div>
+                                </div>
+                                <div class="progress">
+                                    <div class="progress-bar progress-bar-success w-85" role="progressbar" aria-valuenow="" aria-valuemin="0" aria-valuemax="100"></div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                    <div class="col-lg-3 col-sm-6">
+                        <div class="card" onclick="window.location.href='{{ path('app_afficherReclamationsrpondues') }}'">
+                            <div class="stat-widget-two card-body">
+                                <div class="stat-content">
+                                    <div class="stat-text">total réclamations répondues</div>
+                                    <div class="stat-digit"> {{total_reclamations_repondues}}</div>
+                                </div>
+                                <div class="progress">
+                                    <div class="progress-bar progress-bar-success" role="progressbar"
+                                         style="width: {{ percentage_repondues }}%"
+                                         aria-valuenow="{{ percentage_repondues }}"
+                                         aria-valuemin="0"
+                                         aria-valuemax="100">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+
+
+
+                    <div class="col-lg-3 col-sm-6">
+                        <div class="card">
+                            <div class="stat-widget-two card-body">
+                                <div class="stat-content">
+                                    <div class="stat-text">total feedback </div>
+                                    <div class="stat-digit"> {{total_feedbacks}}</div>
+                                </div>
+                                <div class="progress">
+                                    <div class="progress-bar progress-bar-success" role="progressbar"
+                                         style="width: {{percentageFeedback}}%"
+                                         aria-valuenow="{{percentageFeedback}}"
+                                         aria-valuemin="0"
+                                         aria-valuemax="100">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                    <div class="col-lg-3 col-sm-6">
+                        <div class="card" onclick="window.location.href='{{ path('app_adminafficherReclamationssuspendues') }}'">
+                            <div class="stat-widget-two card-body">
+                                <div class="stat-content">
+                                    <div class="stat-text">Total réclamations suspendues</div>
+                                    <div class="stat-digit">
+                                        <i class="fa fa-exclamation-circle"></i> {{ total_reclamations - total_reclamations_repondues }}
+                                    </div>
+                                </div>
+                                <div class="progress">
+                                    <div class="progress-bar progress-bar-danger" role="progressbar"
+                                         style="width: {{ percentageNonRepondues }}%"
+                                         aria-valuenow="{{ percentageNonRepondues }}"
+                                         aria-valuemin="0"
+                                         aria-valuemax="100">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+
+
+                </div>
+
+            <div class="row">
+                <div class="col-xl-8 col-lg-8 col-md-8">
+                    <div class="card">
+                        <div class="card-header">
+                            <h4 class="card-title"></h4> <!-- Laisser vide si aucun titre n'est nécessaire -->
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-xl-12 col-lg-8">
+                                    <div>
+                                        <div class="container-fluid">
+                                            <div class="card">
+                                                <div class="card-header">
+                                                    <h4 class="card-title">
+                                                        <a href="{{ path('app_type_reclamation_add') }}">Vos types de réclamation</a>
+                                                    </h4>
+                                                </div>
+                                                <div class="card-body">
+                                                    <div class="current-progress">
+                                                        {% for type, pourcentage in pourcentages %}
+                                                            <div class="progress-content py-2">
+                                                                <div class="row align-items-center">
+                                                                    <div class="col-4">
+                                                                        <div class="progress-text">{{ type }}</div>
+                                                                    </div>
+                                                                    <div class="col-8">
+                                                                        <div class="current-progressbar">
+                                                                            <div class="progress">
+                                                                                <div class="progress-bar progress-bar-primary"
+                                                                                     role="progressbar"
+                                                                                     style="width: {{ pourcentage }}%;"
+                                                                                     aria-valuenow="{{ pourcentage }}"
+                                                                                     aria-valuemin="0"
+                                                                                     aria-valuemax="100">
+                                                                                    {{ pourcentage }}%
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        {% else %}
+                                                            <p>Aucun type de réclamation disponible.</p>
+                                                        {% endfor %}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-xl-4 col-lg-4 col-md-4">
+                    <div class="card">
+                        <div class="card-body text-center">
+                            <div class="m-t-10">
+                                <h4 class="card-title">Customer Feedback</h4>
+                                <h2 class="mt-3">{{total_feedbacks}}</h2>
+                            </div>
+
+                            <ul class="widget-line-list m-b-15">
+                                <li class="border-right">
+                                    {{ percentage_positive_ratings | number_format(1) }}% <br>
+                                    <span class="text-success">
+                            <i class="ti-hand-point-up"></i> Positive
+                        </span>
+                                </li>
+                                <li>
+                                    {{ percentage_negative_ratings | number_format(1) }}% <br>
+                                    <span class="text-danger">
+                            <i class="ti-hand-point-down"></i> Negative
+                        </span>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+                <div class="row">
+                    <div class="container-fluid">
+                        <div class="card">
+                            <div class="card-header">
+                                <h4 class="card-title">Timeline</h4>
+                            </div>
+                            <div class="card-body">
+                                <div class="widget-timeline">
+                                    <ul class="timeline">
+                                        {% for item in reclamations %}
+                                            <li>
+                                                <div class="timeline-badge {% if loop.index is odd %}primary{% else %}warning{% endif %}"></div>
+                                                <a class="timeline-panel text-muted" href="#">
+                                                    <span>{{ item.timeAgo }}</span>
+                                                    <h6 class="m-t-5">{{ item.reclamation.titre }}</h6>
+                                                </a>
+                                            </li>
+                                        {% endfor %}
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    </div>
+
+
+
+            </div>
+        </div>
+        <!--**********************************
+            Content body end
+        ***********************************-->
+    {% endblock %}
+
+    <!--**********************************
+        Footer start
+    ***********************************-->
+    {% block footer %}
+        <div class="footer">
+            <div class="copyright">
+                <p>Copyright © Designed &amp; Developed by <a href="#" target="_blank">Quixkit</a> 2019</p>
+                <p>Distributed by <a href="https://themewagon.com/" target="_blank">Themewagon</a></p>
+            </div>
+        </div>
+    {% endblock %}
+    <!--**********************************
+        Footer end
+    ***********************************-->
+
+    <!--**********************************
+       Support ticket button start
+    ***********************************-->
+
+    <!--**********************************
+       Support ticket button end
+    ***********************************-->
+
+
+
+
+    <!--**********************************
+        Main wrapper end
+    ***********************************-->
+
+    <!--**********************************
+        Scripts
+    ***********************************-->
+
+    {% block js %}
+        <!-- Required vendors -->
+        <script src="{{ asset('assets/back/vendor/global/global.min.js') }}"></script>
+        <script src="{{ asset('assets/back/js/quixnav-init.js') }}"></script>
+        <script src="{{ asset('assets/back/js/custom.min.js') }}"></script>
+
+        <!-- Vectormap -->
+        <script src="{{ asset('assets/back/vendor/raphael/raphael.min.js') }}"></script>
+        <script src="{{ asset('assets/back/vendor/morris/morris.min.js') }}"></script>
+
+        <script src="{{ asset('assets/back/vendor/circle-progress/circle-progress.min.js') }}"></script>
+        <script src="{{ asset('assets/back/vendor/chart.js/Chart.bundle.min.js') }}"></script>
+
+        <script src="{{ asset('assets/back/vendor/gaugeJS/dist/gauge.min.js') }}"></script>
+
+        <!-- flot-chart js -->
+        <script src="{{ asset('assets/back/vendor/flot/jquery.flot.js') }}"></script>
+        <script src="{{ asset('assets/back/vendor/flot/jquery.flot.resize.js') }}"></script>
+
+        <!-- Owl Carousel -->
+        <script src="{{ asset('assets/back/vendor/owl-carousel/js/owl.carousel.min.js') }}"></script>
+
+        <!-- Counter Up -->
+        <script src="{{ asset('assets/back/vendor/jqvmap/js/jquery.vmap.min.js') }}"></script>
+        <script src="{{ asset('assets/back/vendor/jqvmap/js/jquery.vmap.usa.js') }}"></script>
+        <script src="{{ asset('assets/back/vendor/jquery.counterup/jquery.counterup.min.js') }}"></script>
+
+        <script src="{{ asset('assets/back/js/dashboard/dashboard-1.js') }}"></script>
+        <script src="https://kit.fontawesome.com/a076d05399.js"></script>
+
+
+    {% endblock %}
+
+
+
+</div>

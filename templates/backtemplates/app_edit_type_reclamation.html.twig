@@ -1,0 +1,42 @@
+{% extends 'backtemplates/baseback2.html.twig' %}
+
+{% block body %}
+    <div class="container mt-4" style="margin-left: 20%; margin-top: 400px; padding-top: 80px;">
+        {# Affichage du message flash si une modification est effectuée avec succès #}
+        {% for message in app.flashes('success') %}
+            <div class="alert alert-success">
+                {{ message }}
+            </div>
+        {% endfor %}
+
+        {# Formulaire pour modifier un type de réclamation #}
+        <h2>Modifier le Type de Réclamation</h2>
+        {{ form_start(form, {'attr': {'class': 'form-horizontal'}}) }}
+        <div class="row mb-3">
+            <label for="{{ form.nom_typeReclamation.vars.id }}" class="col-sm-2 col-form-label">{{ form.nom_typeReclamation.vars.label }}</label>
+            <div class="col-sm-10">
+                {{ form_widget(form.nom_typeReclamation, {'attr': {'class': 'form-control'}}) }}
+            </div>
+        </div>
+        <button type="submit" class="btn btn-primary">
+            Enregistrer les Modifications <span class="btn-icon-right"><i class="fa fa-save"></i></span>
+        </button>
+        <a href="{{ path('app_type_reclamation') }}" class="btn btn-secondary">
+            Annuler <span class="btn-icon-right"><i class="fa fa-times"></i></span>
+        </a>
+        {{ form_end(form) }}
+
+        {# Affichage des détails du type de réclamation #}
+        <h2 class="mt-4">Détails du Type de Réclamation</h2>
+        <table class="table table-bordered">
+            <tr>
+                <th>ID</th>
+                <td>{{ typeReclamation.id }}</td>
+            </tr>
+            <tr>
+                <th>Nom du Type</th>
+                <td>{{ typeReclamation.getNomTypeReclamation() }}</td>
+            </tr>
+        </table>
+    </div>
+{% endblock %}

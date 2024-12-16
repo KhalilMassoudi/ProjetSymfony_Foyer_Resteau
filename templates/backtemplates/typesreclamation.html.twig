@@ -1,0 +1,99 @@
+{% extends 'backtemplates/baseback2.html.twig' %}
+
+{% block title %}
+    Gestion des Types de Réclamation
+{% endblock %}
+
+{% block body %}
+    <div class="container mt-4" style="margin-left: 20%; margin-top: 400px; padding-top: 80px;">
+        <h1>Gestion des Types de Réclamation</h1>
+
+        {% for message in app.session.flashbag.get('error') %}
+            <div class="alert alert-danger">
+                {{ message }}
+            </div>
+        {% endfor %}
+
+        {# Affichage des messages flash de succès #}
+        {% for message in app.session.flashbag.get('success') %}
+            <div class="alert alert-success">
+                {{ message }}
+            </div>
+        {% endfor %}
+
+
+
+        {# Bouton pour afficher/masquer le formulaire d'ajout de type de réclamation #}
+        <button id="toggleFormBtn" class="btn btn-primary mb-4">
+            Ajouter un Type de Réclamation <span class="btn-icon-right"><i class="fa fa-plus"></i></span>
+        </button>
+
+        {# Formulaire pour ajouter un nouveau type de réclamation #}
+        <div id="ajouterTypeDiv" class="d-none">
+            <h2>Ajouter un Type de Réclamation</h2>
+            {{ form_start(form, {'attr': {'class': 'form-horizontal'}}) }}
+            <div class="mb-3">
+                <label for="{{ form.nom_typeReclamation.vars.id }}" class="form-label">
+                    {{ form.nom_typeReclamation.vars.label }}
+                </label>
+                {{ form_widget(form.nom_typeReclamation, {'attr': {'class': 'form-control'}}) }}
+            </div>
+            <button type="submit" class="btn btn-success">
+                Ajouter <span class="btn-icon-right"><i class="fa fa-check"></i></span>
+            </button>
+            {{ form_end(form) }}
+        </div>
+
+        {# Liste des types de réclamation #}
+        <h2 class="mt-4">Liste des Types de Réclamation</h2>
+        <table class="table table-striped">
+            <thead>
+            <tr>
+                <th>ID</th>
+                <th>Nom</th>
+                <th>Actions</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for type in typesReclamations %}
+                <tr>
+                    <td>{{ type.id }}</td>
+                    <td>{{ type.getNomTypeReclamation()}}</td>
+                    <td>
+                        {# Boutons de modification et suppression #}
+                        <a href="{{ path('app_type_reclamation_edit', {'id': type.id}) }}"
+                           class="btn btn-primary btn-sm mr-3">
+                            <i class="fa fa-edit"></i> Modifier
+                        </a>
+                        <a href="{{ path('app_type_reclamation_delete', {'id': type.id}) }}"
+                           class="btn btn-danger btn-sm"
+                           onclick="return confirm('Êtes-vous sûr de vouloir supprimer ce type de réclamation ?');">
+                            <i class="fa fa-trash"></i> Supprimer
+                        </a>
+                    </td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+{% endblock %}
+
+{% block js %}
+    <script src="{{ asset('assets/back/vendor/global/global.min.js') }}"></script>
+    <script src="{{ asset('assets/back/js/quixnav-init.js') }}"></script>
+    <script src="{{ asset('assets/back/js/custom.min.js') }}"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const toggleFormBtn = document.getElementById('toggleFormBtn');
+            const ajouterTypeDiv = document.getElementById('ajouterTypeDiv');
+
+            // Vérifie si les éléments existent avant d'ajouter l'événement
+            if (toggleFormBtn && ajouterTypeDiv) {
+                toggleFormBtn.addEventListener('click', () => {
+                    // Ajoute ou retire la classe "d-none" pour afficher/masquer le formulaire
+                    ajouterTypeDiv.classList.toggle('d-none');
+                });
+            }
+        });
+    </script>
+{% endblock %}

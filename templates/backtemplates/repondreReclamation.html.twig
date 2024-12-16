@@ -1,0 +1,72 @@
+{% extends 'backtemplates/baseback2.html.twig' %}
+
+{% block body %}
+    <div class="container mt-4" style="margin-left: 20%; margin-top: 400px; padding-top: 80px;">
+        {# Affichage du message flash si une réponse est ajoutée avec succès #}
+        {% for message in app.flashes('success') %}
+            <div class="alert alert-success">
+                {{ message }}
+            </div>
+        {% endfor %}
+
+        {# Formulaire pour ajouter/modifier une réponse à la réclamation #}
+        <h2>Répondre à la Réclamation</h2>
+        {{ form_start(form, {'attr': {'class': 'form-horizontal'}}) }}
+        <div class="row mb-3">
+            <label for="{{ form.reponse.vars.id }}" class="col-sm-2 col-form-label">{{ form.reponse.vars.label }}</label>
+            <div class="col-sm-10">
+                {{ form_widget(form.reponse, {'attr': {'class': 'form-control'}}) }}
+            </div>
+        </div>
+        <button type="submit" class="btn btn-primary">
+            Envoyer la Réponse <span class="btn-icon-right"><i class="fa fa-edit"></i></span>
+        </button>
+        <a href="{{ path('app_adminafficherReclamations') }}" class="btn btn-secondary">
+            Annuler <span class="btn-icon-right"><i class="fa fa-times"></i></span>
+        </a>
+        {{ form_end(form) }}
+
+        {# Affichage des détails de la réclamation courante #}
+        <h2 class="mt-4">Détails de la Réclamation</h2>
+        <table class="table table-bordered">
+            <tr>
+                <th>ID</th>
+                <td>{{ reclamation.id }}</td>
+            </tr>
+            <tr>
+                <th>Date de Réclamation</th>
+                <td>{{ reclamation.dateReclamation|date('d-m-Y H:i') }}</td>
+            </tr>
+            <tr>
+                <th>Titre</th>
+                <td>{{ reclamation.titre }}</td>
+            </tr>
+            <tr>
+                <th>Description</th>
+                <td>{{ reclamation.description }}</td>
+            </tr>
+
+            <tr>
+                <th>Réponse</th>
+                <td>
+                    {% if reclamation.reponse %}
+                        {{ reclamation.reponse }}
+                    {% else %}
+                        <span class="text-muted">Pas encore de réponse.</span>
+
+                    {% endif %}
+                </td>
+            </tr>
+            {% if reclamation.image %}
+                <tr>
+                    <th>Image</th>
+                    <td>
+
+                        <img src="{{ asset('uploads/reclamations/' ~ reclamation.image) }}" alt="Image de la réclamation" class="img-fluid" style="max-width: 200px;">
+
+                    </td>
+                </tr>
+            {% endif %}
+        </table>
+    </div>
+{% endblock %}

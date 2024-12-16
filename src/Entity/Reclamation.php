@@ -5,6 +5,11 @@ namespace App\Entity;
 use App\Repository\ReclamationRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Knp\RatingBundle\Annotation as Rating;
+
+/**
+ * @Rating\Rateable
+ */
 
 #[ORM\Entity(repositoryClass: ReclamationRepository::class)]
 class Reclamation
@@ -17,6 +22,8 @@ class Reclamation
     #[ORM\Column(length: 255)]
     private ?string $titre = null; // Nouveau champ titre obligatoire
 
+    #[ORM\Column(type: 'string', length: 255, nullable: true)]
+    private ?string $image;
     #[ORM\Column(length: 255)]
     private ?string $description = null;
 
@@ -27,8 +34,43 @@ class Reclamation
     private ?string $etat = 'suspendue'; // Etat par défaut
 
     #[ORM\Column(length: 255)]
-    private ?string $reponse = ''; // Réponse par défaut est une chaîne vide
+    private ?string $reponse = '';
 
+    #[ORM\ManyToOne]
+    private ?TypeReclamation $typeReclamations = null; // Réponse par défaut est une chaîne vide
+
+    #[ORM\Column(type: "integer")]
+    private $rating = 0;
+    #[ORM\ManyToOne]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?User $user = null;
+
+    #[ORM\Column(type: 'boolean')]
+    private bool $favori = false;
+
+    public function isFavori(): bool
+    {
+        return $this->favori;
+    }
+
+    public function setFavori(bool $favori): self
+    {
+        $this->favori = $favori;
+        return $this;
+    }
+
+    // Getter et Setter pour rating
+    public function getRating(): ?int
+    {
+        return $this->rating;
+    }
+
+    public function setRating(?int $rating): self
+    {
+        $this->rating = $rating;
+
+        return $this;
+    }
     // Constructeur pour définir les valeurs par défaut (facultatif)
     public function __construct()
     {
@@ -94,6 +136,46 @@ class Reclamation
     public function setReponse(string $reponse): static
     {
         $this->reponse = $reponse;
+
+        // Si une réponse est définie, l'état devient "répondue"
+        if (!empty($reponse)) {
+            $this->etat = 'répondue';
+        }
+
         return $this;
     }
+
+    public function getTypeReclamations(): ?TypeReclamation
+    {
+        return $this->typeReclamations;
+    }
+
+    public function setTypeReclamations(?TypeReclamation $typeReclamations): static
+    {
+        $this->typeReclamations = $typeReclamations;
+        return $this;
+    }
+
+    public function getImage(): ?string
+    {
+        return $this->image;
+    }
+
+    public function setImage(?string $image): self
+    {
+        $this->image = $image;
+        return $this;
+    }
+    public function getUser(): ?User
+    {
+        return $this->user;
+    }
+
+    public function setUser(?User $user): static
+    {
+        $this->user = $user;
+
+        return $this;
+    }
+
 }

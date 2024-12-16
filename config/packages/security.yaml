@@ -27,3 +27,4 @@ security:
     access_control:
         - { path: ^/demande, roles: ROLE_USER }
         - { path: ^/admin, roles: ROLE_ADMIN }
+        - { path: ^/reclamations, roles: ROLE_USER }
