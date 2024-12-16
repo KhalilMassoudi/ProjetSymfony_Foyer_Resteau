@@ -22,3 +22,4 @@ parameters:
 
     images_directory: '%kernel.project_dir%/public/uploads/images'
     equipements_directory: '%kernel.project_dir%/public/uploads/equipements'
+    reclamations_directory: '%kernel.project_dir%/public/uploads/reclamations'
