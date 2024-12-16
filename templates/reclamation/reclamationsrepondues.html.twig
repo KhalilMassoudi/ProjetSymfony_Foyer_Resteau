@@ -161,10 +161,6 @@
                                 {% endif %}
                             </a>
                         </div>
-                        <br>
-                        <br>
-                        <br>
-
                         <div class="col-md-12">
                             <h2 class="text-black">Liste des Réclamations</h2>
 
@@ -175,7 +171,7 @@
                                 .email-container {
                                     display: flex;
                                     align-items: center; /
-                                    justify-content: flex-end;
+                                justify-content: flex-end;
                                     margin-top: 10px;
                                 }
 
@@ -477,7 +473,7 @@
                             <div class="text-end mb-3">
                                 <!-- Bouton pour ouvrir le modal d'ajout -->
                                 <button type="button" class="btn btn-success" >
-                                   <a href="{{ path('app_ajouterReclamation') }}" class="btn btn-success">
+                                    <a href="{{ path('app_ajouterReclamation') }}" class="btn btn-success">
                                         Ajouter une Réclamation
                                     </a>
                                 </button>
@@ -485,7 +481,7 @@
 
 
 
-                                    <!-- Section pour afficher les réclamations sous forme de cartes -->
+                            <!-- Section pour afficher les réclamations sous forme de cartes -->
                             <section>
                                 <h2 class="text-black">Voir plus en détail</h2>
 
@@ -569,12 +565,13 @@
                                             </div>
                                             <div id="email-icon-container-{{ reclamation.id }}" class="email-container d-none text-end mt-3">
 
+
+
                                             </div>
 
                                                 <div id="email-icon-container-{{ reclamation.id }}" class="email-container text-end mt-3">
 
                                                 </div>
-
 
                                         </div>
                                     {% endfor %}
@@ -585,34 +582,6 @@
 
 
                             <script>
-                                function sendEmail(reclamationId) {
-
-
-                                    // Création de la requête AJAX pour envoyer l'email
-                                    fetch("{{ path('send_mail') }}", {
-                                        method: "POST",
-                                        headers: {
-                                            "Content-Type": "application/json",
-                                        },
-                                        body: JSON.stringify({
-                                            reclamationID: reclamationId
-
-                                        })
-                                    })
-                                        .then(response => response.json())
-                                        .then(data => {
-                                            if (data.message) {
-                                                alert("Email envoyé avec succès !");
-                                            } else {
-                                                alert("Erreur lors de l'envoi de l'email !");
-                                            }
-                                        })
-                                        .catch(error => {
-                                            console.error('Error:', error);
-                                            alert("Erreur lors de l'envoi de l'email.");
-                                        });
-                                }
-
                                 function initializeRating(star, currentRating, reclamationId) {
                                     // Vérifiez si la réclamation a un rating de 0, sinon retournez sans rien faire
                                     if (currentRating !== 0) return;
@@ -672,19 +641,19 @@
                             </script>
 
 
-                                <!-- Style personnalisé -->
+                            <!-- Style personnalisé -->
 
-                                <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-                                <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+                            <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+                            <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
-                                <!-- Importation de Bootstrap Icons pour l'icône de priorité et étoiles -->
+                            <!-- Importation de Bootstrap Icons pour l'icône de priorité et étoiles -->
 
-                                <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+                            <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
 
                         </div>
+                    </div>
+                </div>
             </div>
-        </div>
-        </div>
         </div>
     </section>
 {% endblock %}

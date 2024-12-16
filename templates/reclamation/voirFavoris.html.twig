@@ -150,23 +150,11 @@
             <div class="bg-secondary py-5 my-5 rounded-5" >
                 <div class="container my-5">
                     <div class="row">
-                        <div class="col-md-6 mt-1 text-start">
-                            <a href="{{ path('app_voirfavoris') }}" class="btn position-relative py-2 px-4" style="border-radius: 50px; background-color: #ffa73b; color: white; border: none;">
-                                <i class="bi bi-star-fill me-2"></i>
-                                Voir Favoris
-                                {% if nombreFavoris > 0 %}
-                                    <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill" style="background-color: #ff6347; color: white; font-size: 1rem;">
-                {{ nombreFavoris }}
-            </span>
-                                {% endif %}
-                            </a>
-                        </div>
-                        <br>
-                        <br>
-                        <br>
+
+
 
                         <div class="col-md-12">
-                            <h2 class="text-black">Liste des Réclamations</h2>
+                            <h2 class="text-black">Vos priorités en réclamation</h2>
 
                             <!-- Ajout du CSS personnalisé directement dans le fichier Twig -->
                             <style>
@@ -175,7 +163,7 @@
                                 .email-container {
                                     display: flex;
                                     align-items: center; /
-                                    justify-content: flex-end;
+                                justify-content: flex-end;
                                     margin-top: 10px;
                                 }
 
@@ -477,7 +465,7 @@
                             <div class="text-end mb-3">
                                 <!-- Bouton pour ouvrir le modal d'ajout -->
                                 <button type="button" class="btn btn-success" >
-                                   <a href="{{ path('app_ajouterReclamation') }}" class="btn btn-success">
+                                    <a href="{{ path('app_ajouterReclamation') }}" class="btn btn-success">
                                         Ajouter une Réclamation
                                     </a>
                                 </button>
@@ -485,7 +473,7 @@
 
 
 
-                                    <!-- Section pour afficher les réclamations sous forme de cartes -->
+                            <!-- Section pour afficher les réclamations sous forme de cartes -->
                             <section>
                                 <h2 class="text-black">Voir plus en détail</h2>
 
@@ -512,7 +500,7 @@
                     <i class="bi bi-question-circle"></i> No type
                 {% endif %}
               </span>
-                                                        <a href="{{ path('app_ajouter_favori', { 'id': reclamation.id }) }}"
+                                                        <a href="{{ path('app_ajouter_favorii', { 'id': reclamation.id }) }}"
                                                            class="btn {% if reclamation.favori %}btn-success{% else %}btn-warning{% endif %}">
                                                             <i class="{% if reclamation.favori %}bi bi-star-fill{% else %}bi bi-star{% endif %}"></i>
                                                             {% if reclamation.favori %} Supprimer des favoris {% else %} Ajouter aux favoris {% endif %}
@@ -571,9 +559,9 @@
 
                                             </div>
 
-                                                <div id="email-icon-container-{{ reclamation.id }}" class="email-container text-end mt-3">
+                                            <div id="email-icon-container-{{ reclamation.id }}" class="email-container text-end mt-3">
 
-                                                </div>
+                                            </div>
 
 
                                         </div>
@@ -672,19 +660,19 @@
                             </script>
 
 
-                                <!-- Style personnalisé -->
+                            <!-- Style personnalisé -->
 
-                                <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-                                <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+                            <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+                            <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
-                                <!-- Importation de Bootstrap Icons pour l'icône de priorité et étoiles -->
+                            <!-- Importation de Bootstrap Icons pour l'icône de priorité et étoiles -->
 
-                                <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+                            <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
 
                         </div>
+                    </div>
+                </div>
             </div>
-        </div>
-        </div>
         </div>
     </section>
 {% endblock %}

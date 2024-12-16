@@ -59,6 +59,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     /**
      * @ORM\OneToMany(targetEntity=DemandeService::class, mappedBy="user")
      */
+
     private  $demandeServices;
 
     public function __construct()

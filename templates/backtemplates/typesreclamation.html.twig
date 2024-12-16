@@ -8,12 +8,20 @@
     <div class="container mt-4" style="margin-left: 20%; margin-top: 400px; padding-top: 80px;">
         <h1>Gestion des Types de Réclamation</h1>
 
-        {# Affichage des messages flash #}
-        {% for message in app.flashes('success') %}
+        {% for message in app.session.flashbag.get('error') %}
+            <div class="alert alert-danger">
+                {{ message }}
+            </div>
+        {% endfor %}
+
+        {# Affichage des messages flash de succès #}
+        {% for message in app.session.flashbag.get('success') %}
             <div class="alert alert-success">
                 {{ message }}
             </div>
         {% endfor %}
+
+
 
         {# Bouton pour afficher/masquer le formulaire d'ajout de type de réclamation #}
         <button id="toggleFormBtn" class="btn btn-primary mb-4">

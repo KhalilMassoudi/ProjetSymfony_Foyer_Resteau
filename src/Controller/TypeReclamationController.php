@@ -11,10 +11,12 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route; // Utilisation des annotations pour les routes
 use Doctrine\ORM\EntityManagerInterface;
-
+use Symfony\Component\Validator\Validator\ValidatorInterface;
+use Psr\Log\LoggerInterface;
 
 class TypeReclamationController extends AbstractController
 {
+
     #[Route('/type/reclamation', name: 'app_type_reclamation')]
     public function index(): Response
     {
@@ -24,7 +26,7 @@ class TypeReclamationController extends AbstractController
     }
 
     #[Route('/typereclamation/add', name: 'app_type_reclamation_add')]
-    public function addtypereclamation(Request $request, ManagerRegistry $doctrine): Response
+    public function addtypereclamation(Request $request, ManagerRegistry $doctrine, ValidatorInterface $validator): Response
     {
         // Créer une nouvelle instance de TypeReclamation
         $typeReclamation = new TypeReclamation();
@@ -32,20 +34,35 @@ class TypeReclamationController extends AbstractController
         // Créer le formulaire
         $form = $this->createForm(TypereclamationType::class, $typeReclamation);
 
-        // Gérer la requête
+        // Gérer la requête et manipuler le formulaire
         $form->handleRequest($request);
 
+        // Validation manuelle de l'entité
+        $entityErrors = $validator->validate($typeReclamation); // Valide l'entité
+
         // Si le formulaire est soumis et valide
-        if ($form->isSubmitted() && $form->isValid()) {
-            // Sauvegarder les données dans la base
-            $entityManager = $doctrine->getManager();
-            $entityManager->persist($typeReclamation);
-            $entityManager->flush();
+        if ($form->isSubmitted()) {
+            // Si des erreurs de validation sont présentes
+            if (count($entityErrors) > 0 || !$form->isValid()) {
+                // Ajouter des messages flash pour les erreurs du formulaire et de l'entité
+                foreach ($entityErrors as $error) {
+                    $this->addFlash('error', $error->getMessage());
+                }
 
-            // Redirection avec un message de succès
-            $this->addFlash('success', 'Type de réclamation ajouté avec succès !');
+                // Ajouter des erreurs du formulaire
+                foreach ($form->getErrors(true) as $error) {
+                    $this->addFlash('error', $error->getMessage());
+                }
+            } else {
+                // Sauvegarder les données dans la base
+                $entityManager = $doctrine->getManager();
+                $entityManager->persist($typeReclamation);
+                $entityManager->flush();
 
-            return $this->redirectToRoute('app_type_reclamation_add');
+                // Redirection avec un message de succès
+                $this->addFlash('success', 'Type de réclamation ajouté avec succès !');
+                return $this->redirectToRoute('app_type_reclamation_add');
+            }
         }
 
         // Récupérer tous les types de réclamation depuis la base
@@ -55,9 +72,13 @@ class TypeReclamationController extends AbstractController
         // Rendre la vue avec le formulaire et la liste des types de réclamation
         return $this->render('backtemplates/typesreclamation.html.twig', [
             'form' => $form->createView(),
-            'typesReclamations' => $typesReclamation, // Notez l'orthographe
+            'typesReclamations' => $typesReclamation,
         ]);
     }
+
+
+
+
     #[Route('/typereclamation/delete/{id}', name: 'app_type_reclamation_delete')]
     public function delete($id, ManagerRegistry $doctrine): Response
     {

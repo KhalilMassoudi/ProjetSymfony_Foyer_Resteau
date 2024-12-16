@@ -240,18 +240,23 @@
                                 </select>
 
                                 <ul class="navbar-nav justify-content-end menu-list list-unstyled d-flex gap-md-3 mb-0">
+                                    <li class="nav-item">
+                                        <a href="{{ path('app_ajouterReclamation') }}" class="nav-link">Ajouter une réclamation</a>
+                                    </li>
                                     <li class="nav-item active">
-                                        <a href="#women" class="nav-link">Mes Reclamations</a>
+                                        <a href="{{ path('app_afficherReclamations') }}" class="nav-link">Mes Réclamations</a>
                                     </li>
                                     <li class="nav-item dropdown">
-                                        <a href="#men" class="nav-link">Ajouter Reclamation</a>
+                                        <a href="{{ path('app_frontafficherReclamationsrepondues') }}" class="nav-link"> Réclamations répondues</a>
                                     </li>
                                     <li class="nav-item">
-                                        <a href="#kids" class="nav-link">--</a>
+                                        <a href="#sale" class="nav-link"></a>
                                     </li>
                                     <li class="nav-item">
-                                        <a href="#accessories" class="nav-link">----</a>
+                                        <a href="#blog" class="nav-link"></a>
                                     </li>
+                                </ul>
+
                                     <!-- <li class="nav-item dropdown">
                                         <a class="nav-link dropdown-toggle" role="button" id="pages" data-bs-toggle="dropdown" aria-expanded="false">Pages</a>
                                         <ul class="dropdown-menu" aria-labelledby="pages">
@@ -269,16 +274,8 @@
                                             <li><a href="{{ path('app_front') }}" class="dropdown-item">404 Error </a></li>
                                         </ul>
                                     </li> -->
-                                    <li class="nav-item">
-                                        <a href="#brand" class="nav-link">Réclamtion répondues</a>
-                                    </li>
-                                    <li class="nav-item">
-                                        <a href="#sale" class="nav-link"></a>
-                                    </li>
-                                    <li class="nav-item">
-                                        <a href="#blog" class="nav-link"></a>
-                                    </li>
-                                </ul>
+
+
 
                             </div>
 

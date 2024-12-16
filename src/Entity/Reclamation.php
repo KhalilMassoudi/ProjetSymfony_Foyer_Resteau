@@ -26,8 +26,7 @@ class Reclamation
     private ?string $image;
     #[ORM\Column(length: 255)]
     private ?string $description = null;
-    #[ORM\Column(type: "integer")]
-    private ?int $user_id = null;
+
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
     private ?\DateTimeInterface $date_Reclamation = null;
 
@@ -42,6 +41,23 @@ class Reclamation
 
     #[ORM\Column(type: "integer")]
     private $rating = 0;
+    #[ORM\ManyToOne]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?User $user = null;
+
+    #[ORM\Column(type: 'boolean')]
+    private bool $favori = false;
+
+    public function isFavori(): bool
+    {
+        return $this->favori;
+    }
+
+    public function setFavori(bool $favori): self
+    {
+        $this->favori = $favori;
+        return $this;
+    }
 
     // Getter et Setter pour rating
     public function getRating(): ?int
@@ -139,16 +155,7 @@ class Reclamation
         $this->typeReclamations = $typeReclamations;
         return $this;
     }
-    public function getUserId(): ?int
-    {
-        return $this->user_id;
-    }
 
-    public function setUserId(int $user_id): static
-    {
-        $this->user_id = $user_id;
-        return $this;
-    }
     public function getImage(): ?string
     {
         return $this->image;
@@ -157,6 +164,17 @@ class Reclamation
     public function setImage(?string $image): self
     {
         $this->image = $image;
+        return $this;
+    }
+    public function getUser(): ?User
+    {
+        return $this->user;
+    }
+
+    public function setUser(?User $user): static
+    {
+        $this->user = $user;
+
         return $this;
     }
 

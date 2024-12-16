@@ -10,7 +10,7 @@ use Doctrine\Migrations\AbstractMigration;
 /**
  * Auto-generated Migration: Please modify to your needs!
  */
-final class Version20241206223402 extends AbstractMigration
+final class Version20241210192758 extends AbstractMigration
 {
     public function getDescription(): string
     {
@@ -20,12 +20,12 @@ final class Version20241206223402 extends AbstractMigration
     public function up(Schema $schema): void
     {
         // this up() migration is auto-generated, please modify it to your needs
-        $this->addSql('ALTER TABLE reclamation ADD rating INT NOT NULL');
+        $this->addSql('ALTER TABLE reclamation DROP created_at');
     }
 
     public function down(Schema $schema): void
     {
         // this down() migration is auto-generated, please modify it to your needs
-        $this->addSql('ALTER TABLE reclamation DROP rating');
+        $this->addSql('ALTER TABLE reclamation ADD created_at DATETIME NOT NULL COMMENT \'(DC2Type:datetime_immutable)\'');
     }
 }

@@ -51,17 +51,12 @@ class ReclamationType extends AbstractType
             ])
             // Champ Image (avec validation correcte)
             ->add('image', FileType::class, [
-                'label' => 'Image de la chambre',
-                'required' => false, // Permet d'envoyer le formulaire sans fichier
-                'mapped' => false, // Ne lie pas directement ce champ à l'entité (vous gérez le fichier séparément)
-                'constraints' => [
-                    new File([
-                        'maxSize' => '2M', // Taille maximale du fichier
-                        'mimeTypes' => ['image/jpeg', 'image/png', 'image/gif'],
-                        'mimeTypesMessage' => 'Veuillez télécharger une image valide.',
-                    ]),
+                'label' => 'Image de réclamation',
+                'required' => false, // Champ facultatif
+                'mapped' => false, // Non mappé directement à l'entité
+                'attr' => [
+                    'class' => 'form-control',
                 ],
-                'attr' => ['class' => 'form-control'],
             ])
             // Bouton de soumission
             ->add('submit', SubmitType::class, [
