@@ -12,6 +12,9 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Mailer\MailerInterface;
+use Symfony\Component\Mime\Email;
+
 
 class DemandePlatController extends AbstractController
 {
@@ -31,6 +34,7 @@ public function ajouterDemande(
     int $id,
     PlatRepository $platRepository,
     Request $request,
+    MailerInterface $mailer,
     EntityManagerInterface $entityManager,
     UserInterface $user // Inject the authenticated user
 ): Response {
@@ -53,7 +57,7 @@ public function ajouterDemande(
     $demandePlat->setPlat($plat);
 
     // Création du formulaire
-    $form = $this->createForm(DemandePlatFormType::class, $demandePlat);
+    $form = $this->createForm(DemandePlatFormType::class, $demandePlat,);
     $form->handleRequest($request);
 
     if ($form->isSubmitted() && $form->isValid()) {
@@ -63,6 +67,14 @@ public function ajouterDemande(
         // Sauvegarde de la demande dans la base de données
         $entityManager->persist($demandePlat);
         $entityManager->flush();
+
+        $email = (new Email())
+                ->from('azizchehata47@gmail.com')
+                ->to($demandePlat->getEmail())
+                ->subject('mail de confirmation')
+                ->text('Votre demande a bien été soumise. Nous vous contacterons bientôt.');
+
+            $mailer->send($email);
 
         // Message de confirmation
         $this->addFlash('success', 'Votre demande de plat a été envoyée avec succès.');
