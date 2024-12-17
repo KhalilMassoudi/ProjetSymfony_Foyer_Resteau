@@ -18,6 +18,9 @@ class ServiceFormType extends AbstractType
             ->add('date_creation', null, [
                 'widget' => 'single_text',
             ])
+            ->add('date_fin', null, [
+                'widget' => 'single_text',
+            ])
             ->add('prix')
             ->add('description')
             ->add('TypeService', EntityType::class, [

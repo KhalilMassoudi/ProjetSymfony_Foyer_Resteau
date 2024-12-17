@@ -25,6 +25,9 @@ class Service
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
     private ?\DateTimeInterface $date_creation = null;
 
+    #[ORM\Column(type: Types::DATETIME_MUTABLE)]
+    private ?\DateTimeInterface $date_fin = null;
+
     #[ORM\Column(length: 255, nullable: true)]
     #[Assert\Length(min: 10,  minMessage: "Votre description doit contenir entre 10 et 255 caracteres")]
     private ?string $description = null;
@@ -76,6 +79,17 @@ class Service
     public function setDateCreation(\DateTime $date_creation): self
     {
         $this->date_creation = $date_creation;
+        return $this;
+    }
+
+    public function getDateFin(): ?\DateTime
+    {
+        return $this->date_fin;
+    }
+
+    public function setDateFin(?\DateTime $date_fin): self
+    {
+        $this->date_fin = $date_fin;
         return $this;
     }
 

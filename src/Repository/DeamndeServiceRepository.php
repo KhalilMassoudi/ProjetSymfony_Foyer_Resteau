@@ -84,37 +84,6 @@ class DeamndeServiceRepository extends ServiceEntityRepository
         return $qb->getQuery()->getResult();
     }
 
-    public function getDemandsByUser(): array
-    {
-        $qb = $this->createQueryBuilder('d');
-        $qb->select('u.username as userName, COUNT(d.id) as demandCount')
-            ->join('d.user', 'u')
-            ->groupBy('u.id')
-            ->orderBy('demandCount', 'DESC');
-
-        return $qb->getQuery()->getResult();
-    }
-    public function getUsersByService(): array
-    {
-        $qb = $this->getEntityManager()->createQueryBuilder();
-        $qb->select('u.username as userName, s.nom as serviceName')
-            ->from('App\Entity\DemandeService', 'd')
-            ->join('d.user', 'u')
-            ->join('d.service', 's');
-        
-        return $qb->getQuery()->getResult();
-    }
-    public function findServicesByUser(User $user): array
-{
-    return $this->createQueryBuilder('d')  // 'd' is the alias for the root entity (likely a "Document" or similar entity)
-        ->join('d.service', 's')           // Join the Service entity using alias 's'
-        ->where('d.user = :user')          // Filter by user
-        ->setParameter('user', $user)
-        ->select('s')                      // Select the 'Service' entity
-        ->getQuery()
-        ->getResult();
-}
-
     //    /**
     //     * @return DeamndeService[] Returns an array of DeamndeService objects
     //     */
