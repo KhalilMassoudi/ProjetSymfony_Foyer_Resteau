@@ -231,21 +231,22 @@ public function login(AuthenticationUtils $authenticationUtils): Response
         ]);
     }
 // visuliser les demandes services + demande plat
-    #[Route('/profile', name: 'app_user_profile')]
-    public function profileUser(DeamndeServiceRepository $demandeServiceRepository,DemandePlatRepository $demandePlatRepository): Response
-    {
-        $user = $this->getUser();
+#[Route('/profile', name: 'app_user_profile')]
+public function profileUser(DeamndeServiceRepository $demandeServiceRepository,DemandePlatRepository $demandePlatRepository, ReservationRepository $reservationRepository): Response
+{
+    $user = $this->getUser();
 
-        $demandes = $demandeServiceRepository->findByUser($user);
-        $demandesPlats = $demandePlatRepository->findBy(['user' => $user]);
-
-        // Pass the demandes to the template
-        return $this->render('fronttemplates/profile.html.twig', [
-            'user' => $user,
-            'demandes' => $demandes,
-            'demandesPlats' => $demandesPlats,
-        ]);
-    }   
+    $demandes = $demandeServiceRepository->findByUser($user);
+    $demandesPlats = $demandePlatRepository->findByUser($user);
+    $reservations = $reservationRepository->findByUser($user);
+    // Pass the demandes to the template
+    return $this->render('fronttemplates/profile.html.twig', [
+        'user' => $user,
+        'demandes' => $demandes,
+        'demandesPlats' => $demandesPlats,
+        'reservations'=> $reservations
+    ]);
+}   
 
 
 
