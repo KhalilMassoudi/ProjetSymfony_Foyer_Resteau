@@ -37,8 +37,9 @@ class DemandeController extends AbstractController
         DeamndeServiceRepository $demandeRepository,
         ServiceRepository $serviceRepository
     ): Response {
+        
         $services = $serviceRepository->findAll();
-
+        $data = $demandeRepository->getDemandsByUser();
         $criteria = [
             'status' => $request->query->get('status', 'Under review'), 
             'service' => $request->query->get('service'),
@@ -52,11 +53,12 @@ class DemandeController extends AbstractController
         return $this->render('service/demande/Demandes_back.html.twig', [
             'demandes' => $demandes,
             'services' => $services,
+            'data' => $data,
         ]);
     }
 
 
-    #[Route('/demande/ajout/{id}', name: 'app_demande_ajout')]
+    #[Route('/ajout/demande/{id}', name: 'app_demande_ajout')]
     public function ajouterDemande(
         int $id,
         ServiceRepository $serviceRepository,
@@ -65,7 +67,7 @@ class DemandeController extends AbstractController
         MailerInterface $mailer,
         Security $security
     ): Response {
-        // Fetch the currently authenticated user
+        
         $user = $security->getUser();
 
         if (!$user) {
@@ -110,7 +112,7 @@ class DemandeController extends AbstractController
 
 
     #[Route('/reject-demande/{id}', name: 'app_demande_reject')]
-    public function rejectDemande($id, DeamndeServiceRepository $rep, ManagerRegistry $doc): Response
+    public function rejectDemande($id, DeamndeServiceRepository $rep, ManagerRegistry $doc , MailerInterface $mailer): Response
     {
         $demande = $rep->find($id);
 
@@ -120,14 +122,78 @@ class DemandeController extends AbstractController
         }
 
         $em = $doc->getManager();
+        $user=$demande->getUser();
         $demande->setStatus('Rejected'); 
         $em->flush();
+        // Créer le contenu HTML de l'email
+        $htmlContent = "
+        <html>
+        <head>
+        <style>
+            body {
+                font-family: Arial, sans-serif;
+                line-height: 1.6;
+            }
+            .email-container {
+                margin: 20px auto;
+                padding: 20px;
+                max-width: 600px;
+                background-color: #f9f9f9;
+                border: 1px solid #ddd;
+                border-radius: 10px;
+            }
+            .email-header {
+                background-color: #FF0000;
+                color: white;
+                padding: 10px;
+                text-align: center;
+                border-radius: 10px 10px 0 0;
+            }
+            .email-content {
+                padding: 20px;
+                text-align: left;
+            }
+            .email-footer {
+                margin-top: 20px;
+                font-size: 0.9em;
+                color: #666;
+                text-align: center;
+            }
+        </style>
+        </head>
+        <body>
+            <div class='email-container'>
+                <div class='email-header'>
+                    <h2>Demande Rejetée</h2>
+                </div>
+                <div class='email-content'>
+                    <p>Bonjour <strong>{$user->getUsername()}</strong>,</p>
+                    <p>Nous vous informons que votre demande concernant le service a été <strong>rejetée</strong>.</p>
+                    <p>Si vous avez des questions ou souhaitez discuter de cette décision, n'hésitez pas à nous contacter.</p>
+                    <p>Merci de votre compréhension.</p>
+                </div>
+                <div class='email-footer'>
+                    <p>Service des demandes - Votre Entreprise</p>
+                    <p>Contact : support@votreentreprise.com</p>
+                </div>
+            </div>
+        </body>
+        </html>
+        ";
 
+        // Créer et envoyer l'email
+        $email = (new Email())
+        ->from('azizchehata47@gmail.com')
+        ->to($user->getEmail())
+        ->subject('Statut de votre demande')
+        ->html($htmlContent);
+
+        $mailer->send($email);
         $this->addFlash('success', 'The demande has been rejected.');
         return $this->redirectToRoute('app_demande');
     }
     #[Route('/accept-demande/{id}', name: 'app_demande_accept')]
-    public function acceptDemande($id, DeamndeServiceRepository $rep, ManagerRegistry $doc): Response
+    public function acceptDemande($id, DeamndeServiceRepository $rep, ManagerRegistry $doc , MailerInterface $mailer): Response
     {
         $demande = $rep->find($id);
 
@@ -137,8 +203,72 @@ class DemandeController extends AbstractController
         }
 
         $em = $doc->getManager();
+        $user=$demande->getUser();
         $demande->setStatus('Accepted'); // Update the status
         $em->flush();
+
+        $htmlContent = "
+<html>
+<head>
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        line-height: 1.6;
+    }
+    .email-container {
+        margin: 20px auto;
+        padding: 20px;
+        max-width: 600px;
+        background-color: #f9f9f9;
+        border: 1px solid #ddd;
+        border-radius: 10px;
+    }
+    .email-header {
+        background-color: #4CAF50; /* Green for acceptance */
+        color: white;
+        padding: 10px;
+        text-align: center;
+        border-radius: 10px 10px 0 0;
+    }
+    .email-content {
+        padding: 20px;
+        text-align: left;
+    }
+    .email-footer {
+        margin-top: 20px;
+        font-size: 0.9em;
+        color: #666;
+        text-align: center;
+    }
+</style>
+</head>
+<body>
+    <div class='email-container'>
+        <div class='email-header'>
+            <h2>Demande Acceptée</h2>
+        </div>
+        <div class='email-content'>
+            <p>Bonjour <strong>{$user->getUsername()}</strong>,</p>
+            <p>Nous sommes ravis de vous informer que votre demande concernant le service a été <strong>acceptée</strong>.</p>
+            <p>Nous vous remercions pour votre intérêt et votre confiance. Notre équipe se tient à votre disposition pour toute information supplémentaire.</p>
+            <p>Merci et à très bientôt.</p>
+        </div>
+        <div class='email-footer'>
+            <p>Service des demandes - Votre Entreprise</p>
+            <p>Contact : support@votreentreprise.com</p>
+        </div>
+    </div>
+</body>
+</html>
+";      
+         // Créer et envoyer l'email
+         $email = (new Email())
+         ->from('azizchehata47@gmail.com')
+         ->to($user->getEmail())
+         ->subject('Statut de votre demande')
+         ->html($htmlContent);
+ 
+         $mailer->send($email);
 
         $this->addFlash('success', 'The demande has been accepted.');
         return $this->redirectToRoute('app_demande');

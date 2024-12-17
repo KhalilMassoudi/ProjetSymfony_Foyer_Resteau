@@ -36,8 +36,9 @@ security:
         - { path: ^/back, roles: ROLE_ADMIN }
         - { path: ^/plat, roles: ROLE_ADMIN }
         - { path: ^/service, roles: ROLE_ADMIN }
-        - { path: ^/servicefront/nos-services, roles: ROLE_USER }
+        - { path: ^/front/nos-services, roles: ROLE_USER }
         - { path: ^/dashreclamation , roles: ROLE_ADMIN }
-
+        - { path: ^/front/, roles: ROLE_USER }
+        
 
 

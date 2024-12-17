@@ -9,6 +9,9 @@ use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bridge\Twig\Mime\TemplatedEmail;
 use Symfony\Bundle\SecurityBundle\Security;
 use App\Repository\DeamndeServiceRepository;
+use App\Repository\DeamndePlatRepository;
+use App\Repository\ReservationRepository;
+use App\Repository\DemandePlatRepository;
 use Doctrine\ORM\Mapping\Id;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -256,6 +259,8 @@ public function login(AuthenticationUtils $authenticationUtils): Response
         ]);
     }
 
+
+  
 // visuliser les demandes services + demande plat
 #[Route('/profile', name: 'app_user_profile')]
 public function profileUser(DeamndeServiceRepository $demandeServiceRepository,DemandePlatRepository $demandePlatRepository, ReservationRepository $reservationRepository): Response
@@ -273,8 +278,6 @@ public function profileUser(DeamndeServiceRepository $demandeServiceRepository,D
         'reservations'=> $reservations
     ]);
 }   
-
-
 
 
     #[Route('/create-admin', name: 'app_create_admin', methods: ['GET'])]
