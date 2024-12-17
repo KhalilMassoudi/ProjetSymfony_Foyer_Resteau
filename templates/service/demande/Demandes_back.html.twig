@@ -189,64 +189,16 @@
         <button type="submit">Filter</button>
     </form>
 </div>
-
-<h1>Statistiques des demandes par utilisateur</h1>
-
-<canvas id="userStatsChart"></canvas>
-
-
 {% endblock %}
 
 {% block js %}
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<script>
-    const ctx = document.getElementById('userStatsChart').getContext('2d');
-
-    // Préparer les données depuis Twig
-    const labels = {{ data|map(item => item.userName)|json_encode|raw }};
-    const dataValues = {{ data|map(item => item.demandCount)|json_encode|raw }};
-
-    // Configurer le graphique
-    const userStatsChart = new Chart(ctx, {
-        type: 'bar',
-        data: {
-            labels: labels, // Noms des utilisateurs
-            datasets: [{
-                label: 'Nombre de demandes',
-                data: dataValues, // Nombre de demandes
-                backgroundColor: [
-                    'rgba(75, 192, 192, 0.2)',
-                    'rgba(255, 99, 132, 0.2)',
-                    'rgba(255, 205, 86, 0.2)',
-                    'rgba(54, 162, 235, 0.2)',
-                    'rgba(153, 102, 255, 0.2)'
-                ],
-                borderColor: [
-                    'rgba(75, 192, 192, 1)',
-                    'rgba(255, 99, 132, 1)',
-                    'rgba(255, 205, 86, 1)',
-                    'rgba(54, 162, 235, 1)',
-                    'rgba(153, 102, 255, 1)'
-                ],
-                borderWidth: 1
-            }]
-        },
-        options: {
-            responsive: true,
-            scales: {
-                y: {
-                    beginAtZero: true
-                }
-            }
-        }
-    });
-</script>
-
 <script src="{{ asset('assets/back/vendor/global/global.min.js') }}"></script>
 <script src="{{ asset('assets/back/js/quixnav-init.js') }}"></script>
 <script src="{{ asset('assets/back/js/custom.min.js') }}"></script>
+<script src="{{ asset('assets/back/vendor/chartist/js/chartist.min.js') }}"></script>
 <script src="{{ asset('assets/back/vendor/moment/moment.min.js') }}"></script>
-
+<script src="{{ asset('assets/back/vendor/pg-calendar/js/pignose.calendar.min.js') }}"></script>
+<script src="{{ asset('assets/back/js/dashboard/dashboard-2.js') }}"></script>
 <script>
     document.getElementById('toggle-filters-btn').addEventListener('click', function () {
         const advancedFilters = document.getElementById('advanced-filters');

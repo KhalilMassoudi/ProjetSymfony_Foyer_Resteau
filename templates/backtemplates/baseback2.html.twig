@@ -148,80 +148,19 @@
                         </div>
                     </div>
                 </div>
-                <div class="col-lg-6 col-xl-4 col-xxl-6 col-md-6">
-                    <div class="card">
-                        <div class="card-header">
-                            <h4 class="card-title">Timeline</h4>
-                        </div>
-                        <div class="card-body">
-                            <div class="widget-timeline">
-                                <ul class="timeline">
-                                    <li>
-                                        <div class="timeline-badge primary"></div>
-                                        <a class="timeline-panel text-muted" href="#">
-                                            <span>10 minutes ago</span>
-                                            <h6 class="m-t-5">Youtube, a video-sharing website, goes live.</h6>
-                                        </a>
-                                    </li>
 
-                                    <li>
-                                        <div class="timeline-badge warning">
-                                        </div>
-                                        <a class="timeline-panel text-muted" href="#">
-                                            <span>20 minutes ago</span>
-                                            <h6 class="m-t-5">Mashable, a news website and blog, goes live.</h6>
-                                        </a>
-                                    </li>
+                <div class="row mb-3">
+                    <div class="col-lg-12 text-right">
+                        <a href="{{ path('admin_user_add') }}" class="btn btn-success">
+                            <i class="fa fa-plus"></i> Ajouter un étudiant
+                        </a>
 
-                                    <li>
-                                        <div class="timeline-badge danger">
-                                        </div>
-                                        <a class="timeline-panel text-muted" href="#">
-                                            <span>30 minutes ago</span>
-                                            <h6 class="m-t-5">Google acquires Youtube.</h6>
-                                        </a>
-                                    </li>
-
-                                    <li>
-                                        <div class="timeline-badge success">
-                                        </div>
-                                        <a class="timeline-panel text-muted" href="#">
-                                            <span>15 minutes ago</span>
-                                            <h6 class="m-t-5">StumbleUpon is acquired by eBay. </h6>
-                                        </a>
-                                    </li>
-
-                                    <li>
-                                        <div class="timeline-badge warning">
-                                        </div>
-                                        <a class="timeline-panel text-muted" href="#">
-                                            <span>20 minutes ago</span>
-                                            <h6 class="m-t-5">Mashable, a news website and blog, goes live.</h6>
-                                        </a>
-                                    </li>
-
-                                    <li>
-                                        <div class="timeline-badge dark">
-                                        </div>
-                                        <a class="timeline-panel text-muted" href="#">
-                                            <span>20 minutes ago</span>
-                                            <h6 class="m-t-5">Mashable, a news website and blog, goes live.</h6>
-                                        </a>
-                                    </li>
-
-                                    <li>
-                                        <div class="timeline-badge info">
-                                        </div>
-                                        <a class="timeline-panel text-muted" href="#">
-                                            <span>30 minutes ago</span>
-                                            <h6 class="m-t-5">Google acquires Youtube.</h6>
-                                        </a>
-                                    </li>
-                                </ul>
-                            </div>
-                        </div>
+                        <a href="{{ path('app_active_users') }}" class="btn btn-primary">
+                            Voir les utilisateurs les plus actifs
+                        </a>
                     </div>
                 </div>
+
                 <div class="col-xl-4 col-lg-6 col-xxl-6 col-md-6">
                     <div class="card">
                         <div class="card-header">
