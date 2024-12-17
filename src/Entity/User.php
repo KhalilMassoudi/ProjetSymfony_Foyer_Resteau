@@ -60,6 +60,11 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private ?Reservation $reservation = null;
 
     /**
+     * @ORM\OneToMany(targetEntity=DemandeService::class, mappedBy="user")
+     */
+    private  $demandeServices;
+
+    /**
      * @ORM\OneToMany(targetEntity=DemandePlat::class, mappedBy="user")
      */
     private $demandePlats;
