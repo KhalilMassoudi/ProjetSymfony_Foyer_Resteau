@@ -3,6 +3,7 @@
 namespace App\Repository;
 
 use App\Entity\Reservation;
+use App\Entity\User;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -110,6 +111,19 @@ class ReservationRepository extends ServiceEntityRepository
             ->orderBy('r.dateCreation', 'DESC') // Optionnel pour trier les notifications par date
             ->getQuery()
             ->getResult();
+    }
+    public function findByUser(User $user): array
+    {
+        // Create the query builder
+        $qb = $this->createQueryBuilder('rs');
+
+        // Define the query to get demandes for the given user
+        $qb->andWhere('rs.user = :user')
+            ->setParameter('user', $user)
+            ->orderBy('rs.id', 'DESC'); // Order by ID or modify as needed
+
+        // Execute the query and return the result
+        return $qb->getQuery()->getResult();
     }
 
 }

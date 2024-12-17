@@ -37,7 +37,7 @@
             #[ORM\JoinColumn(nullable: false)] // Pas de cascade ici
             private ?User $user = null;
             #[ORM\Column(type: 'string', length: 50, options: ['default' => 'En attente'])]
-            private string $statut = 'En attente';
+            private ?string $statut = 'En attente';
 
             public function getId(): int
             {

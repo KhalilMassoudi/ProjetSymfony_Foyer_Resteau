@@ -79,6 +79,46 @@
             {% endfor %}
         </tbody>
     </table>
+    <h2>Mes réservations de chambres</h2>
+    <table class="table custom-table">
+        <thead>
+        <tr>
+            <th>ID</th>
+            <th>Chambre</th>
+            <th>Date de réservation</th>
+            <th>Date d'arrivée</th>
+            <th>Date de départ</th>
+            <th>Nom étudiant</th>
+            <th>Email étudiant</th>
+            <th>Téléphone</th>
+            <th>Statut</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for reservation in reservations %}
+            <tr>
+                <td>{{ reservation.id }}</td>
+                <td>{{ reservation.chambre.id }}</td>
+                <td>{{ reservation.dateReservation|date('Y-m-d H:i:s') }}</td>
+                <td>{{ reservation.dateArrivee|date('Y-m-d H:i:s') }}</td>
+                <td>{{ reservation.dateDepart|date('Y-m-d H:i:s') }}</td>
+                <td>{{ reservation.nomEtudiant }}</td>
+                <td>{{ reservation.emailEtudiant }}</td>
+                <td>{{ reservation.telephoneEtudiant ?: 'Non fourni' }}</td>
+                <td>
+                    {% if reservation.statut == 'Accepté' %}
+
+                        <span class="badge bg-success">Acceptée</span>
+                    {% elseif reservation.statut == 'Rejeté' %}
+                        <span class="badge bg-danger">Rejetée</span>
+                    {% else %}
+                        <span class="badge bg-warning">En attente</span>
+                    {% endif %}
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
 
     <style>
         .custom-table {
