@@ -48,7 +48,6 @@
                             <th>Nom</th>
                             <th>Description</th>
                             <th>Date Création</th>
-                            <th>Date Fin</th>
                             <th>Type Service</th>
                             <th>Actions</th>
                         </tr>
@@ -59,13 +58,12 @@
                             {{ message }}
                         </div>
                         {% endfor %}
-                        {% for s in service %}
+                        {% for s in services %}
                         <tr>
                             <td>{{ s.id }}</td>
                             <td>{{ s.nom }}</td>
                             <td>{{ s.description }}</td>
                             <td>{{ s.dateCreation ? s.dateCreation|date('Y-m-d') : 'No date available' }}</td>
-                            <td>{{ s.dateFin ? s.dateFin | date('Y-m-d') : '' }}</td>
                             <td>{{ s.TypeService.nom }}</td>
                             <td>
                                 <a href="{{ path('app_service_edit', { 'id': s.id }) }}" class="btn btn-primary btn-sm">
@@ -115,14 +113,6 @@
                         {{ form_widget(form.date_creation, {'attr': {'class': 'form-control', 'placeholder': 'Date de création'}}) }}
                     </div>
                 </div>
-
-                {# Date Fin Field #}
-                <div class="row mb-3">
-                    <label for="{{ form.date_fin.vars.id }}" class="col-md-3 col-form-label text-primary">Date de fin</label>
-                    <div class="col-md-3">
-                        {{ form_widget(form.date_fin, {'attr': {'class': 'form-control', 'placeholder': 'Date de fin'}}) }}
-                    </div>
-                </div>
                 {#Prix#}
                 <div class="row mb-3">
                     <label for="{{ form.prix.vars.id }}" class="col-md-3 col-form-label text-primary">Prix du Service</label>
@@ -147,6 +137,152 @@
             </div>
         </div>
     </div>
+    {# users_by_service.html.twig #}
+<h1>Liste des utilisateurs par service</h1>
+
+<div class="row">
+    <!-- Left side: Users by service table -->
+    <div class="col-lg-6">
+        <div class="card">
+            <div class="card-header">
+                <h4 class="card-title">Liste des utilisateurs par service</h4>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table mb-0">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Nom de l'utilisateur</th>
+                                <th>Service</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for user in usersByService %}
+                                <tr>
+                                    <td>
+                                        <div class="round-img">
+                                            <a href="">
+                                                <img width="35" src="{{ asset('assets/back/images/avatar/1.png') }}" alt="">
+                                            </a>
+                                        </div>
+                                    </td>
+                                    <td>{{ user.userName }}</td>
+                                    <td>{{ user.serviceName }}</td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Right side: Statistics Section -->
+    <div class="col-lg-6">
+    <div class="card">
+        <div class="card-header">
+            <h4 class="card-title">Statistiques des services</h4>
+        </div>
+        <div class="card-body">
+            <div class="stats-summary">
+                <!-- Total Services -->
+                <div class="progress-content py-2">
+                    <div class="row">
+                        <div class="col-lg-4">
+                            <div class="progress-text"><strong>Total des services :</strong></div>
+                        </div>
+                        <div class="col-lg-8">
+                            <div class="current-progressbar">
+                                <div class="progress">
+                                    <div class="progress-bar progress-bar-primary w-{{ totalServices > 100 ? 100 : totalServices }}" role="progressbar" aria-valuenow="{{ totalServices }}" aria-valuemin="0" aria-valuemax="100">
+                                        {{ totalServices }}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Total Users -->
+                <div class="progress-content py-2">
+                    <div class="row">
+                        <div class="col-lg-4">
+                            <div class="progress-text"><strong>Total des utilisateurs :</strong></div>
+                        </div>
+                        <div class="col-lg-8">
+                            <div class="current-progressbar">
+                                <div class="progress">
+                                    <div class="progress-bar progress-bar-primary w-{{ totalUsers > 100 ? 100 : totalUsers }}" role="progressbar" aria-valuenow="{{ totalUsers }}" aria-valuemin="0" aria-valuemax="100">
+                                        {{ totalUsers }}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Users Inscrits -->
+                <div class="progress-content py-2">
+                    <div class="row">
+                        <div class="col-lg-4">
+                            <div class="progress-text"><strong>Utilisateurs inscrits :</strong></div>
+                        </div>
+                        <div class="col-lg-8">
+                            <div class="current-progressbar">
+                                <div class="progress">
+                                    <div class="progress-bar progress-bar-primary w-{{ usersInscrits > 100 ? 100 : usersInscrits }}" role="progressbar" aria-valuenow="{{ usersInscrits }}" aria-valuemin="0" aria-valuemax="100">
+                                        {{ usersInscrits }}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Users Non Inscrits -->
+                <div class="progress-content py-2">
+                    <div class="row">
+                        <div class="col-lg-4">
+                            <div class="progress-text"><strong>Utilisateurs non inscrits :</strong></div>
+                        </div>
+                        <div class="col-lg-8">
+                            <div class="current-progressbar">
+                                <div class="progress">
+                                    <div class="progress-bar progress-bar-primary w-{{ usersNonInscrits > 100 ? 100 : usersNonInscrits }}" role="progressbar" aria-valuenow="{{ usersNonInscrits }}" aria-valuemin="0" aria-valuemax="100">
+                                        {{ usersNonInscrits }}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <h5>Statistiques par service</h5>
+            <div class="table-responsive">
+                <table class="table mb-0">
+                    <thead>
+                        <tr>
+                            <th>Service</th>
+                            <th>Nombre d'utilisateurs</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for stat in serviceStats %}
+                            <tr>
+                                <td>{{ stat.service }}</td>
+                                <td>{{ stat.user_count }}</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    </div>
+
+</div>
 </div>
 {% endblock %}
 
