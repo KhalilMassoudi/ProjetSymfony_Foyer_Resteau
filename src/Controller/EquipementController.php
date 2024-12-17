@@ -61,6 +61,48 @@ class EquipementController extends AbstractController
             'equipements' => $equipements,
         ]);
     }
+    #[Route('/equipements/pdf', name: 'app_equipements_pdf')]
+    public function generatePdf(EquipementRepository $equipementRepository): Response
+    {
+        // Étape 1 : Configurez DomPDF
+        $pdfOptions = new \Dompdf\Options();
+        $pdfOptions->set('defaultFont', 'Arial'); // Définir la police par défaut (facultatif)
+        $pdfOptions->setIsHtml5ParserEnabled(true); // Activer les balises HTML5 si nécessaires
+        $pdfOptions->setIsRemoteEnabled(true); // Permettre de charger des ressources externes (ex: images)
+
+        // Initialisez DomPDF avec les options définies
+        $dompdf = new \Dompdf\Dompdf($pdfOptions);
+
+        // Étape 2 : Récupérez les équipements depuis le repository
+        $equipements = $equipementRepository->findAll();
+
+        // Vérifiez si la liste est vide
+        if (empty($equipements)) {
+            throw $this->createNotFoundException('Aucun équipement trouvé pour générer le PDF.');
+        }
+
+        // Étape 3 : Préparez le contenu HTML (à partir d'un fichier Twig)
+        $html = $this->renderView('backtemplates/pdf.html.twig', [ // Chemin mis à jour pour votre structure
+            'equipements' => $equipements,
+        ]);
+
+        // Étape 4 : Chargez le contenu HTML dans DomPDF
+        $dompdf->loadHtml($html);
+
+        // Optionnel : Configurer la taille de papier et l'orientation (A4, Portrait)
+        $dompdf->setPaper('A4', 'portrait');
+
+        // Étape 5 : Générez le fichier PDF
+        $dompdf->render();
+
+        // Étape 6 : Retourner le fichier PDF comme réponse HTTP
+        $output = $dompdf->output();
+
+        return new Response($output, 200, [
+            'Content-Type' => 'application/pdf',
+            'Content-Disposition' => 'inline; filename="equipements.pdf"', // Le filename peut être personnalisé ici
+        ]);
+    }
     #[Route("/equipement/search", name: "app_equipement_search")]
     public function search(Request $request, EquipementRepository $equipementRepository): Response
     {

@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Liste des Equipements</title>
+    <style>
+        /* Mise en forme du tableau */
+        body {
+            font-family: Arial, sans-serif;
+            font-size: 13px;
+            line-height: 1.6;
+            margin: 20px;
+        }
+
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 20px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+
+        table th, table td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+
+        table th {
+            background-color: #f4f4f4;
+            font-weight: bold;
+        }
+
+        img {
+            max-height: 60px;
+            max-width: 60px;
+        }
+
+        .footer {
+            text-align: center;
+            margin-top: 30px;
+            font-size: 12px;
+            color: #555;
+        }
+    </style>
+</head>
+<body>
+<!-- Titre principal -->
+<h1>Liste des Equipements</h1>
+
+<!-- Introduction avec date -->
+<p>Rapport généré le : {{ 'now'|date('d/m/Y') }}</p>
+
+<!-- Tableau contenant les équipements -->
+<table>
+    <thead>
+    <tr>
+        <th>ID</th>
+        <th>Nom</th>
+        <th>État</th>
+        <th>Dernier Entretien</th>
+        <th>Image</th>
+        <th>Chambre Associée</th>
+        <th>Rating</th>
+    </tr>
+    </thead>
+    <tbody>
+    {% for equipement in equipements %}
+        <tr>
+            <td>{{ equipement.idEquipementB }}</td>
+            <td>{{ equipement.nomEquipementB }}</td>
+            <td>{{ equipement.etatEquipementB }}</td>
+            <td>{{ equipement.dateDernierEntretienEquipementB|date('d/m/Y') }}</td>
+            <td>
+                {% if equipement.image %}
+                    <img src="{{ asset('uploads/equipements/' ~ equipement.image) }}" alt="Image">
+                {% else %}
+                    Pas d'image
+                {% endif %}
+            </td>
+            <td>
+                {% if equipement.chambre %}
+                    {{ equipement.chambre.numeroChB }}
+                {% else %}
+                    Non assignée
+                {% endif %}
+            </td>
+            <td>{{ equipement.rating is not null ? equipement.rating : 'Non noté' }}</td>
+        </tr>
+    {% else %}
+        <tr>
+            <td colspan="7" style="text-align: center;">Aucun équipement trouvé.</td>
+        </tr>
+    {% endfor %}
+    </tbody>
+</table>
+
+<!-- Pied de page -->
+<div class="footer">
+    <p>© {{ 'now'|date('Y') }} - Liste générée depuis l'application Symfony.</p>
+</div>
+</body>
+</html>
