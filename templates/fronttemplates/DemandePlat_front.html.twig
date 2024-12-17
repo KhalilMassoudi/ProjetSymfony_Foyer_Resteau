@@ -1,75 +1,61 @@
-{% extends 'fronttemplates/basefront.html.twig' %}
+{% extends 'basefront.html.twig' %}
 
-{% block body %}
-<!-- Affichage des alertes -->
-{% for message in app.flashes('success') %}
-    <div class="alert alert-success alert-dismissible fade show" role="alert">
-        {{ message }}
-        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-    </div>
-{% endfor %}
-{% for message in app.flashes('error') %}
-    <div class="alert alert-danger alert-dismissible fade show" role="alert">
-        {{ message }}
-        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-    </div>
-{% endfor %}
-
-<section class="py-5">
-    <div class="container-fluid">
-        <div class="bg-secondary py-5 my-5 rounded-5" style="background: url('images/bg-leaves-img-pattern.png') no-repeat;">
-            <div class="container my-5">
-                <div class="row">
-                    <!-- Plat Details -->
-                    <div class="col-md-6 p-5">
-                        <div class="section-header">
-                            <h2 class="section-title display-4">{{ plat.nomPlat }}</h2>
-                        </div>
-                        <p><strong>Description:</strong> {{ plat.descPlat }}</p>
-                    </div>
-
-            <!-- Formulaire -->
-            <div class="col-md-6">
-                <div class="p-5 bg-white rounded-4 shadow-lg">
-                    <h4 class="text-center mb-4 text-secondary">Faire une demande de plat</h4>
-                    {{ form_start(form, {'attr': {'class': 'form-modern'}}) }}
-                    <div class="mb-4">
-                        {{ form_label(form.nom, 'Nom', {'label_attr': {'class': 'form-label text-dark fw-bold'}}) }}
-                        {{ form_widget(form.nom, {'attr': {'class': 'form-control form-control-lg rounded-pill border-secondary shadow-sm'}}) }}
-                        {{ form_errors(form.nom) }}
-                    </div>
-                    <div class="mb-4">
-                        {{ form_label(form.prenom, 'Prénom', {'label_attr': {'class': 'form-label text-dark fw-bold'}}) }}
-                        {{ form_widget(form.prenom, {'attr': {'class': 'form-control form-control-lg rounded-pill border-secondary shadow-sm'}}) }}
-                        {{ form_errors(form.prenom) }}
-                    </div>
-                    <div class="mb-4">
-                        {{ form_label(form.telephone, 'Téléphone', {'label_attr': {'class': 'form-label text-dark fw-bold'}}) }}
-                        {{ form_widget(form.telephone, {'attr': {'class': 'form-control form-control-lg rounded-pill border-secondary shadow-sm'}}) }}
-                        {{ form_errors(form.telephone) }}
-                    </div>
-                    <div class="mb-4">
-                        {{ form_label(form.email, 'Email', {'label_attr': {'class': 'form-label text-dark fw-bold'}}) }}
-                        {{ form_widget(form.email, {'attr': {'class': 'form-control form-control-lg rounded-pill border-secondary shadow-sm'}}) }}
-                        {{ form_errors(form.email) }}
-                    </div>
-                    <div class="mb-4">
-                        {{ form_label(form.description, 'Description de la demande', {'label_attr': {'class': 'form-label text-dark fw-bold'}}) }}
-                        {{ form_widget(form.description, {'attr': {'class': 'form-control form-control-lg rounded border-secondary shadow-sm'}}) }}
-                        {{ form_errors(form.description) }}
-                    </div>
-                    <div class="d-grid">
-                        <button type="submit" class="btn btn-primary btn-lg rounded-pill shadow-sm">
-                            <i class="bi bi-send"></i> Envoyer la demande
-                        </button>
-                    </div>
-                    {{ form_end(form) }}
+{% block amodifier %}
+<div class="container mt-5">
+    <!-- Détails du plat -->
+    <div class="row">
+        <div class="col-md-8 mx-auto">
+            <div class="card shadow-sm">
+                <div class="card-header bg-primary text-white text-center">
+                    <h3 class="card-title mb-0">{{ plat.nomPlat }}</h3>
                 </div>
-            </div>
+                <div class="card-body">
+                    <p><strong>Description:</strong> {{ plat.descPlat }}</p>
                 </div>
             </div>
         </div>
     </div>
-</section>
 
+    <!-- Formulaire de demande de plat -->
+    <div class="row mt-5">
+        <div class="col-md-8 mx-auto">
+            <div class="card shadow-sm">
+                <div class="card-header bg-secondary text-white text-center">
+                    <h4 class="mb-0">Faire une demande de plat</h4>
+                </div>
+                <div class="card-body">
+                    {{ form_start(form) }}
+                    <div class="mb-3">
+                        {{ form_label(form.nom, 'Nom', {'label_attr': {'class': 'form-label'}}) }}
+                        {{ form_widget(form.nom, {'attr': {'class': 'form-control'}}) }}
+                        {{ form_errors(form.nom) }}
+                    </div>
+                    <div class="mb-3">
+                        {{ form_label(form.prenom, 'Prénom', {'label_attr': {'class': 'form-label'}}) }}
+                        {{ form_widget(form.prenom, {'attr': {'class': 'form-control'}}) }}
+                        {{ form_errors(form.prenom) }}
+                    </div>
+                    <div class="mb-3">
+                        {{ form_label(form.telephone, 'Téléphone', {'label_attr': {'class': 'form-label'}}) }}
+                        {{ form_widget(form.telephone, {'attr': {'class': 'form-control'}}) }}
+                        {{ form_errors(form.telephone) }}
+                    </div>
+                    <div class="mb-3">
+                        {{ form_label(form.email, 'Email', {'label_attr': {'class': 'form-label'}}) }}
+                        {{ form_widget(form.email, {'attr': {'class': 'form-control'}}) }}
+                        {{ form_errors(form.email) }}
+                    </div>
+                    <div class="mb-3">
+                        {{ form_label(form.description, 'Description de la demande', {'label_attr': {'class': 'form-label'}}) }}
+                        {{ form_widget(form.description, {'attr': {'class': 'form-control'}}) }}
+                        {{ form_errors(form.description) }}
+                    </div>
+
+                    <button type="submit" class="btn btn-primary w-100">Envoyer la demande</button>
+                    {{ form_end(form) }}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 {% endblock %}

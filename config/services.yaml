@@ -1,4 +1,9 @@
 services:
+    App\EventListener\LoginSuccessListener:
+        tags:
+            - { name: kernel.event_listener, event: security.login_success, method: onLoginSuccess }
+            - { name: kernel.event_listener, event: kernel.exception }
+
     App\Service\MailService:
         arguments:
             $dsn: '%env(MAILER_DSN)%'

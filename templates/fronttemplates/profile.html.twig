@@ -1,9 +1,8 @@
-{# templates/fronttemplates/profile.html.twig #}
-{% extends 'fronttemplates/basefront.html.twig' %}
+{% extends 'basefront.html.twig' %}
 
 {% block title %}Profile{% endblock %}
 
-{% block body %}
+{% block amodifier %}
 <div class="container mt-5">
     <h2>Welcome, {{ user.username }}</h2>
     <p>Email: {{ user.email }}</p>
@@ -14,116 +13,37 @@
         </button>
     </nav>
 
-    <h3>Mes demandes de service</h3>
-    <table class="table custom-table">
-        <thead>
-            <tr>
-                <th>ID</th>
-                <th>Service</th>
-                <th>Date de la demande</th>
-                <th>Status</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for demande in demandes %}
+        <h3>Demandes</h3>
+        <table class="table table-dark table-striped-columns border border-primary">
+            <thead>
                 <tr>
-                    <td>{{ demande.id }}</td>
-                    <td>{{ demande.service.nom }}</td>
-                    <td>{{ demande.dateDemande|date('Y-m-d H:i:s') }}</td>
-                    <td>
-                        {% if demande.status == 'Rejected' %}
-                            <span class="badge bg-danger">Rejetée</span>
-                        {% elseif demande.status == 'Accepted' %}
-                            <span class="badge bg-success">Acceptée</span>
-                        {% elseif demande.status == 'Under review' %}
-                            <span class="badge bg-warning">En attente</span>
-                        {% else %}
-                            {{ demande.status }}
-                        {% endif %}
-                    </td>
+                    <th>ID</th>
+                    <th>Status</th>
                 </tr>
-            {% else %}
-                <tr>
-                    <td colspan="4">No demandes found.</td>
-                </tr>
-            {% endfor %}
-        </tbody>
-    </table>
-
-    <h2>Mes demandes de plats</h2>
-    <table class="table custom-table">
-        <thead>
-            <tr>
-                <th>ID</th>
-                <th>Plat</th>
-                <th>Date de la demande</th>
-                <th>Statut</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for demande in demandesPlats %}
-                <tr>
-                    <td>{{ demande.id }}</td>
-                    <td>{{ demande.plat.nomPlat }}</td>
-                    <td>{{ demande.dateDemande|date('Y-m-d H:i:s') }}</td>
-                    <td>
-                        {% if demande.status == 'Accepted' %}
-                            <span class="badge bg-success">Acceptée</span>
-                        {% elseif demande.status == 'Rejected' %}
-                            <span class="badge bg-danger">Rejetée</span>
-                        {% else %}
-                            <span class="badge bg-warning">En attente</span>
-                        {% endif %}
-                    </td>
-                </tr>
-            {% endfor %}
-        </tbody>
-    </table>
-
-    <style>
-        .custom-table {
-            border-collapse: collapse;
-            width: 100%;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            border-radius: 8px;
-            overflow: hidden;
-        }
-
-        .custom-table thead tr {
-            background-color:rgb(158, 162, 151);
-            color: #fff;
-            text-align: left;
-        }
-
-        .custom-table th, .custom-table td {
-            padding: 12px 15px;
-        }
-
-        .custom-table tbody tr {
-            border-bottom: 1px solid #dddddd;
-        }
-
-        .custom-table tbody tr:nth-of-type(even) {
-            background-color: #f9f9f9;
-        }
-
-        .custom-table tbody tr:hover {
-            background-color: #f1f1f1;
-        }
-
-        .badge.bg-success {
-            background-color: #28a745 !important;
-            color: #fff !important;
-        }
-        .badge.bg-danger {
-            background-color: #dc3545 !important;
-            color: #fff !important;
-        }
-        .badge.bg-warning {
-            background-color: #ffc107 !important;
-            color: #212529 !important;
-        }
-    </style>
+            </thead>
+            <tbody>
+                {% for demande in demandes %}
+                    <tr>
+                        <td>{{ demande.id }}</td>
+                        <td>
+                            {% if demande.status == 'Rejected' %}
+                                <span style="color: red;">{{ demande.status }}</span>
+                            {% elseif demande.status == 'Accepted' %}
+                                <span style="color: green;">{{ demande.status }}</span>
+                            {% elseif demande.status == 'Under review' %}
+                                <span style="color: yellow;">{{ demande.status }}</span>
+                            {% else %}
+                                {{ demande.status }}
+                            {% endif %}
+                        </td>
+                    </tr>
+                {% else %}
+                    <tr>
+                        <td colspan="2">No demandes found.</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
 </div>
 {% endblock %}
 

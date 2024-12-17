@@ -59,17 +59,23 @@ class UserType extends AbstractType
             ->add('password', PasswordType::class, [
                 'label' => 'Password',
                 'attr' => ['class' => 'form-control', 'placeholder' => 'Password']
-            ])
-            ->add('save', SubmitType::class, [
+            ]);
+
+        // Ajouter le bouton de soumission si l'option include_submit est vraie
+        if ($options['include_submit']) {
+            $builder->add('save', SubmitType::class, [
                 'label' => 'Sign me up',
                 'attr' => ['class' => 'btn btn-primary btn-block']
             ]);
+        }
     }
 
     public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
             'data_class' => User::class,
+            'include_submit' => true, // Option par défaut
         ]);
     }
+
 }
