@@ -259,9 +259,6 @@ public function login(AuthenticationUtils $authenticationUtils): Response
             'controller_name' => 'UserController',
         ]);
     }
-
-
-  
 // visuliser les demandes services + demande plat
     #[Route('/profile', name: 'app_user_profile')]
 public function profileUser(DeamndeServiceRepository $demandeServiceRepository,DemandePlatRepository $demandePlatRepository,ReservationRepository  $reservationRepository): Response
@@ -278,7 +275,7 @@ public function profileUser(DeamndeServiceRepository $demandeServiceRepository,D
         'demandesPlats' => $demandesPlats,
         'reservations'=> $reservations
     ]);
-}   
+}
 
 
     #[Route('/create-admin', name: 'app_create_admin', methods: ['GET'])]
