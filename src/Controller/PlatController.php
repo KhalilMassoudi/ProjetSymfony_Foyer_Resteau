@@ -127,7 +127,7 @@ class PlatController extends AbstractController
         return $plat;
     }
 
-    #[Route("/plats", name: "app_plats_list")]
+    #[Route("/front/plats", name: "app_plats_list")]
     public function listAllPlats(PlatRepository $platRepository): Response
     {
         $plats = $platRepository->findAll();

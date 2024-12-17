@@ -113,17 +113,17 @@ class ReservationRepository extends ServiceEntityRepository
             ->getResult();
     }
     public function findByUser(User $user): array
-    {
-        // Create the query builder
-        $qb = $this->createQueryBuilder('rs');
+{
+    // Create the query builder
+    $qb = $this->createQueryBuilder('rs');
 
-        // Define the query to get demandes for the given user
-        $qb->andWhere('rs.user = :user')
-            ->setParameter('user', $user)
-            ->orderBy('rs.id', 'DESC'); // Order by ID or modify as needed
+    // Define the query to get demandes for the given user
+    $qb->andWhere('rs.user = :user')
+        ->setParameter('user', $user)
+        ->orderBy('rs.id', 'DESC'); // Order by ID or modify as needed
 
-        // Execute the query and return the result
-        return $qb->getQuery()->getResult();
-    }
+    // Execute the query and return the result
+    return $qb->getQuery()->getResult();
+}
 
 }
