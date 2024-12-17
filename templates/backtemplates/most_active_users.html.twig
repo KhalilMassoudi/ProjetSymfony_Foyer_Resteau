@@ -1,0 +1,75 @@
+{% extends 'backtemplates/baseback.html.twig' %}
+
+{% block body %}
+    <div class="container mt-4" style="margin-left: 20%; margin-top: 400px; padding-top: 80px;">
+        <h1 class="text-center mb-4">Utilisateurs les plus actifs</h1>
+
+        <!-- Barre de recherche -->
+        <div class="row mb-3">
+            <div class="col-md-6 offset-md-3">
+                <input type="text" id="search" class="form-control" placeholder="Rechercher un utilisateur...">
+            </div>
+        </div>
+
+        <!-- Tableau des utilisateurs -->
+        <div class="table-responsive">
+            <table class="table table-hover table-striped text-center">
+                <thead class="table-dark">
+                <tr>
+                    <th>#</th>
+                    <th>Nom d'utilisateur</th>
+                    <th>Email</th>
+                    <th>Nombre de connexions</th>
+                    <th>Statut</th>
+                </tr>
+                </thead>
+                <tbody id="userTable">
+                {% for user in activeUsers %}
+                    <tr>
+                        <td>{{ loop.index }}</td>
+                        <td>{{ user.username }}</td>
+                        <td>{{ user.email }}</td>
+                        <td>{{ user.loginCount }}</td>
+                        <td>
+                            {% if user.loginCount > 10 %}
+                                <span class="badge bg-success">Très actif</span>
+                            {% elseif user.loginCount > 5 %}
+                                <span class="badge bg-warning">Actif</span>
+                            {% else %}
+                                <span class="badge bg-secondary">Peu actif</span>
+                            {% endif %}
+                        </td>
+                    </tr>
+                {% else %}
+                    <tr>
+                        <td colspan="5" class="text-center text-muted">
+                            <i class="fas fa-user-times"></i> Aucun utilisateur trouvé.
+                        </td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Script pour le filtre de recherche -->
+    <script>
+        document.getElementById('search').addEventListener('input', function () {
+            let searchValue = this.value.toLowerCase();
+            let rows = document.querySelectorAll('#userTable tr');
+
+            rows.forEach(row => {
+                let username = row.cells[1]?.textContent.toLowerCase();
+                let email = row.cells[2]?.textContent.toLowerCase();
+
+                if (username.includes(searchValue) || email.includes(searchValue)) {
+                    row.style.display = '';
+                } else {
+                    row.style.display = 'none';
+                }
+            });
+        });
+    </script>
+{% endblock %}
+{% block footer %}
+{% endblock %}

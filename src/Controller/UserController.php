@@ -8,6 +8,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\SecurityBundle\Security;
 use App\Repository\DeamndeServiceRepository;
 use App\Repository\DemandePlatRepository;
+use App\Repository\ReservationRepository;
 use Doctrine\ORM\Mapping\Id;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -231,8 +232,8 @@ public function login(AuthenticationUtils $authenticationUtils): Response
         ]);
     }
 // visuliser les demandes services + demande plat
-#[Route('/profile', name: 'app_user_profile')]
-public function profileUser(DeamndeServiceRepository $demandeServiceRepository,DemandePlatRepository $demandePlatRepository, ReservationRepository $reservationRepository): Response
+    #[Route('/profile', name: 'app_user_profile')]
+public function profileUser(DeamndeServiceRepository $demandeServiceRepository,DemandePlatRepository $demandePlatRepository,ReservationRepository  $reservationRepository): Response
 {
     $user = $this->getUser();
 
