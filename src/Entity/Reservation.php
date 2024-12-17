@@ -17,21 +17,34 @@
             private ?Chambre $chambre = null;
 
             #[ORM\Column(type: 'datetime')]
+            #[Assert\NotNull(message: "La date de réservation est obligatoire.")]
             private $dateReservation;
 
             #[ORM\Column(type: 'datetime')]
+            #[Assert\NotNull(message: "La date d'arrivée est obligatoire.")]
+            #[Assert\GreaterThan(propertyPath: "dateReservation", message: "La date d'arrivée doit être après la date de réservation.")]
             private \DateTimeInterface $dateArrivee;
 
             #[ORM\Column(type: 'datetime')]
+            #[Assert\NotNull(message: "La date de départ est obligatoire.")]
+            #[Assert\GreaterThan(propertyPath: "dateArrivee", message: "La date de départ doit être après la date d'arrivée.")]
             private \DateTimeInterface $dateDepart;
 
             #[ORM\Column(type: 'string', length: 255)]
+            #[Assert\NotBlank(message: "Le nom de l'étudiant est obligatoire.")]
             private string $nomEtudiant;
 
             #[ORM\Column(type: 'string', length: 255)]
+            #[Assert\NotBlank(message: "L'email de l'étudiant est obligatoire.")]
+            #[Assert\Email(message: "L'email '{{ value }}' n'est pas valide.")]
             private string $emailEtudiant;
 
             #[ORM\Column(type: 'string', length: 255, nullable: true)]
+            #[Assert\NotBlank(message: "Le numéro de téléphone est obligatoire.")]
+            #[Assert\Regex(
+                pattern: "/^\+?[0-9]{10,15}$/",
+                message: "Le numéro de téléphone doit être valide."
+            )]
             private ?string $telephoneEtudiant = null;
             #[ORM\OneToOne(inversedBy: 'reservation')]
             #[ORM\JoinColumn(nullable: false)] // Pas de cascade ici

@@ -4,6 +4,16 @@
     <div class="container mt-5">
         <h2 class="mt-4">Réserver une Chambre</h2>
 
+        {# Affichage des alertes générales (Flash messages) #}
+        {% for type, messages in app.session.flashbag.all %}
+            {% for message in messages %}
+                <div class="alert alert-{{ type == 'success' ? 'success' : (type == 'warning' ? 'warning' : 'danger') }} mt-3" role="alert">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        {% endfor %}
+
+        {# Formulaire de réservation #}
         <form method="post">
             <table class="table table-striped">
                 <thead>
@@ -14,24 +24,64 @@
                 </thead>
                 <tbody>
                 <tr>
-                    <td><label for="dateArrivee" class="form-label">Date d'arrivée</label></td>
-                    <td>{{ form_widget(form.dateArrivee, { 'attr': { 'class': 'form-control' } }) }}</td>
+                    <td>
+                        <label for="dateArrivee" class="form-label">Date d'arrivée</label>
+                    </td>
+                    <td>
+                        {{ form_widget(form.dateArrivee, { 'attr': { 'class': 'form-control' } }) }}
+                        {# Affichage des erreurs spécifiques au champ dateArrivee #}
+                        <div class="text-danger mt-1">
+                            {{ form_errors(form.dateArrivee) }}
+                        </div>
+                    </td>
                 </tr>
                 <tr>
-                    <td><label for="dateDepart" class="form-label">Date de départ</label></td>
-                    <td>{{ form_widget(form.dateDepart, { 'attr': { 'class': 'form-control' } }) }}</td>
+                    <td>
+                        <label for="dateDepart" class="form-label">Date de départ</label>
+                    </td>
+                    <td>
+                        {{ form_widget(form.dateDepart, { 'attr': { 'class': 'form-control' } }) }}
+                        {# Affichage des erreurs spécifiques au champ dateDepart #}
+                        <div class="text-danger mt-1">
+                            {{ form_errors(form.dateDepart) }}
+                        </div>
+                    </td>
                 </tr>
                 <tr>
-                    <td><label for="nomEtudiant" class="form-label">Nom de l'Etudiant</label></td>
-                    <td>{{ form_widget(form.nomEtudiant, { 'attr': { 'class': 'form-control' } }) }}</td>
+                    <td>
+                        <label for="nomEtudiant" class="form-label">Nom de l'étudiant</label>
+                    </td>
+                    <td>
+                        {{ form_widget(form.nomEtudiant, { 'attr': { 'class': 'form-control' } }) }}
+                        {# Affichage des erreurs spécifiques au champ nomEtudiant #}
+                        <div class="text-danger mt-1">
+                            {{ form_errors(form.nomEtudiant) }}
+                        </div>
+                    </td>
                 </tr>
                 <tr>
-                    <td><label for="emailEtudiant" class="form-label">Email de l'Etudiant</label></td>
-                    <td>{{ form_widget(form.emailEtudiant, { 'attr': { 'class': 'form-control' } }) }}</td>
+                    <td>
+                        <label for="emailEtudiant" class="form-label">Email de l'étudiant</label>
+                    </td>
+                    <td>
+                        {{ form_widget(form.emailEtudiant, { 'attr': { 'class': 'form-control' } }) }}
+                        {# Affichage des erreurs spécifiques au champ emailEtudiant #}
+                        <div class="text-danger mt-1">
+                            {{ form_errors(form.emailEtudiant) }}
+                        </div>
+                    </td>
                 </tr>
                 <tr>
-                    <td><label for="telephoneEtudiant" class="form-label">Téléphone de l'Etudiant</label></td>
-                    <td>{{ form_widget(form.telephoneEtudiant, { 'attr': { 'class': 'form-control' } }) }}</td>
+                    <td>
+                        <label for="telephoneEtudiant" class="form-label">Téléphone de l'étudiant</label>
+                    </td>
+                    <td>
+                        {{ form_widget(form.telephoneEtudiant, { 'attr': { 'class': 'form-control' } }) }}
+                        {# Affichage des erreurs spécifiques au champ telephoneEtudiant #}
+                        <div class="text-danger mt-1">
+                            {{ form_errors(form.telephoneEtudiant) }}
+                        </div>
+                    </td>
                 </tr>
                 </tbody>
             </table>

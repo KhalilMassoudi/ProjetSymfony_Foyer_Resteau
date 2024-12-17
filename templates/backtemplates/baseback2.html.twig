@@ -22,6 +22,12 @@
                         <h4>Hi, welcome back!</h4>
                         <p class="mb-0">Your business dashboard template</p>
                     </div>
+
+                    <div class="text-right" style="position: absolute; top: 20px; right: 20px;">
+                        <a href="{{ path('app_logout') }}" class="btn btn-outline-danger">
+                            <i class="fa fa-sign-out"></i> Déconnexion
+                        </a>
+                    </div>
                 </div>
                 <div class="col-sm-6 p-md-0 justify-content-sm-end mt-2 mt-sm-0 d-flex">
                     <ol class="breadcrumb">
@@ -128,19 +134,19 @@
                                     </tr>
                                     </thead>
                                     <tbody>
-{% for user in users %}
-    <tr>
-        <td>{{ user.username }}</td>
-        <td>{{ user.email }}</td>
-        <td>{{ user.address }}</td>
-        <td>
-            <a href="{{ path('admin_user_delete', { id: user.id }) }}" class="btn btn-danger btn-sm" onclick="return confirm('Êtes-vous sûr de vouloir supprimer cet utilisateur ?');">Supprimer</a>
-        </td>
-        <td>
-            <a href="{{ path('admin_user_update', { id: user.id }) }}" class="btn btn-danger btn-sm">Modifier</a>
-        </td>
-    </tr>
-{% endfor %}
+                                    {% for user in users %}
+                                        <tr>
+                                            <td>{{ user.username }}</td>
+                                            <td>{{ user.email }}</td>
+                                            <td>{{ user.address }}</td>
+                                            <td>
+                                                <a href="{{ path('admin_user_delete', { id: user.id }) }}" class="btn btn-danger btn-sm" onclick="return confirm('Êtes-vous sûr de vouloir supprimer cet utilisateur ?');">Supprimer</a>
+                                            </td>
+                                            <td>
+                                                <a href="{{ path('admin_user_update', { id: user.id }) }}" class="btn btn-danger btn-sm">Modifier</a>
+                                            </td>
+                                        </tr>
+                                    {% endfor %}
 
                                     </tbody>
                                 </table>
@@ -501,3 +507,4 @@
 
     <script src="{{ asset('assets/back/js/dashboard/dashboard-2.js') }}"></script>
 {% endblock %}
+

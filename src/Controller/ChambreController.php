@@ -216,11 +216,12 @@ class ChambreController extends AbstractController
         UserInterface $user // L'utilisateur connecté
     ): Response {
 
+        // Vérifiez que l'utilisateur est connecté
         if (!$user) {
             throw $this->createAccessDeniedException('Vous devez être connecté pour effectuer une réservation.');
         }
 
-        // Vérifier si l'utilisateur a déjà une réservation
+        // Vérifiez si l'utilisateur a déjà effectué une réservation
         $existingReservation = $reservationRepository->findOneBy(['user' => $user]);
 
         if ($existingReservation) {
@@ -228,31 +229,35 @@ class ChambreController extends AbstractController
             return $this->redirectToRoute('app_front_chambre');
         }
 
-        // Récupérer la chambre demandée
+        // Récupérez la chambre demandée
         $chambre = $chambreRepository->find($id);
 
         if (!$chambre) {
             throw $this->createNotFoundException('La chambre demandée n\'existe pas.');
         }
 
-        // Créer une nouvelle réservation
+        // Créez une instance de réservation
         $reservation = new Reservation();
         $reservation->setChambre($chambre);
         $reservation->setUser($user);
 
-        // Créer un formulaire de réservation
+        // Créez un formulaire basé sur l'entité Reservation
         $form = $this->createForm(ReservationType::class, $reservation);
         $form->handleRequest($request);
 
+        // Si le formulaire est soumis et valide
         if ($form->isSubmitted() && $form->isValid()) {
-            $reservation->setDateReservation(new \DateTime()); // Ajouter une date de réservation
+            // Définir la date de réservation comme celle du moment
+            $reservation->setDateReservation(new \DateTime());
+
+            // Persist et enregistrez en base de données
             $entityManager->persist($reservation);
             $entityManager->flush();
 
-            // Envoyer un email de confirmation
+            // Préparez et envoyez un email de confirmation
             $email = (new Email())
                 ->from('mbechir643@gmail.com') // Adresse de l'expéditeur
-                ->to($user->getEmail()) // Envoyer l'email à l'utilisateur
+                ->to($user->getEmail()) // Email de l'utilisateur connecté
                 ->subject('Confirmation de votre réservation')
                 ->html($this->renderView('emails/reservation_confirmation.html.twig', [
                     'user' => $user,
@@ -262,10 +267,12 @@ class ChambreController extends AbstractController
 
             $mailer->send($email);
 
+            // Ajoutez un message flash et redirigez l'utilisateur
             $this->addFlash('success', 'Réservation effectuée avec succès ! Un email de confirmation vous a été envoyé.');
             return $this->redirectToRoute('app_front_chambre');
         }
 
+        // Si le formulaire n'est pas valide, ou pas encore soumis, affichez le formulaire
         return $this->render('fronttemplates/reservation_form.html.twig', [
             'form' => $form->createView(),
             'reservation' => $reservation,
