@@ -1,0 +1,4 @@
+<h1>Welcome, {{ username }}!</h1>
+<p>Please verify your email by clicking on the link below:</p>
+<a href="{{ url('app_verify_email', { token: token }) }}">Verify my email</a>
+<p>If you did not create an account, please ignore this message.</p>

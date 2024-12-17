@@ -58,7 +58,7 @@ class DemandeController extends AbstractController
     }
 
 
-    #[Route('/demande/ajout/{id}', name: 'app_demande_ajout')]
+    #[Route('/ajout/demande/{id}', name: 'app_demande_ajout')]
     public function ajouterDemande(
         int $id,
         ServiceRepository $serviceRepository,

@@ -1,0 +1,56 @@
+{% extends 'basefront.html.twig' %}
+
+{% block title %}Réinitialiser votre mot de passe{% endblock %}
+
+{% block body %}
+    <section class="py-5">
+        <div class="container-fluid">
+            <!-- Background stylisé -->
+            <div class="bg-secondary py-5 my-5 rounded-5" style="background: url('images/bg-leaves-img-pattern.png') no-repeat;">
+                <div class="container my-5">
+                    <div class="row">
+                        <!-- Section d'information -->
+                        <div class="col-md-6 p-5">
+                            <div class="section-header">
+                                <h2 class="section-title display-4">
+                                    Réinitialisez votre <span class="text-primary">mot de passe</span>
+                                </h2>
+                            </div>
+                            <p>
+                                Saisissez votre **nouveau mot de passe** et confirmez-le pour terminer la réinitialisation.
+                            </p>
+                        </div>
+
+                        <!-- Formulaire -->
+                        <div class="col-md-6 p-5">
+                            {{ form_start(resetForm) }}
+                            <!-- Champ Nouveau mot de passe -->
+                            <div class="mb-4">
+                                <label for="plainPassword_first" class="form-label">Nouveau mot de passe</label>
+                                {{ form_widget(resetForm.plainPassword.first, {
+                                    'attr': {'class': 'form-control form-control-lg', 'placeholder': 'Votre nouveau mot de passe'}
+                                }) }}
+                            </div>
+
+                            <!-- Champ Confirmation du mot de passe -->
+                            <div class="mb-4">
+                                <label for="plainPassword_second" class="form-label">Confirmez le mot de passe</label>
+                                {{ form_widget(resetForm.plainPassword.second, {
+                                    'attr': {'class': 'form-control form-control-lg', 'placeholder': 'Confirmez votre mot de passe'}
+                                }) }}
+                            </div>
+
+                            <!-- Bouton de soumission -->
+                            <div class="d-grid gap-2">
+                                <button type="submit" class="btn btn-dark btn-lg">
+                                    Réinitialiser le mot de passe
+                                </button>
+                            </div>
+                            {{ form_end(resetForm) }}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+{% endblock %}

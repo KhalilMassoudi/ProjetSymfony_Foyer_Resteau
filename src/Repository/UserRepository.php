@@ -33,6 +33,21 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
         $this->getEntityManager()->flush();
     }
 
+    public function findMostActiveUsersByLogin(int $limit = 5): array
+    {
+        $result = $this->createQueryBuilder('u')
+            ->select('u')
+            ->where('u.roles NOT LIKE :roleAdmin')
+            ->setParameter('roleAdmin', '%ROLE_ADMIN%')
+            ->orderBy('u.loginCount', 'DESC')
+            ->setMaxResults($limit)
+            ->getQuery()
+            ->getResult();
+
+        dump($result);
+        return $result;
+    }
+
 //    /**
 //     * @return User[] Returns an array of User objects
 //     */

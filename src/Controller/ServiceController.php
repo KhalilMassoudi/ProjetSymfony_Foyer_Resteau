@@ -98,7 +98,7 @@ class ServiceController extends AbstractController
             'service' => $service,
         ]);
     }
-    #[Route('/servicefront/nos-services', name: 'app_frontend_services')]
+    #[Route('/front/nos-services', name: 'app_frontend_services')]
     public function afficherServicesFrontend(Request $request, ServiceRepository $serviceRepository): Response
     {
         $searchTerm = $request->query->get('search', '');

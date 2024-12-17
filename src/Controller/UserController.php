@@ -4,20 +4,26 @@ namespace App\Controller;
 
 use App\Entity\User;
 use App\Form\UserType;
+use App\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Bridge\Twig\Mime\TemplatedEmail;
 use Symfony\Bundle\SecurityBundle\Security;
 use App\Repository\DeamndeServiceRepository;
+use App\Repository\DeamndePlatRepository;
+use App\Repository\ReservationRepository;
 use App\Repository\DemandePlatRepository;
 use App\Repository\ReservationRepository;
 use Doctrine\ORM\Mapping\Id;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Mime\Address;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
+use Symfony\Component\Mailer\MailerInterface;
 
 
 
@@ -44,33 +50,55 @@ public function front(Security $security): Response
     {
         $this->entityManager = $entityManager;
         $this->passwordHasher = $passwordHasher;
+        $this->createDefaultAdmin();
     }
 
     #[Route('/register', name: 'app_register')]
-    public function register(Request $request): Response
+    public function register(Request $request, MailerInterface $mailer): Response
     {
         $user = new User();
         $form = $this->createForm(UserType::class, $user);
 
-        //recuperer les donner du formulaire
+        // Récupérer les données du formulaire
         $form->handleRequest($request);
 
-        if ($form->isSubmitted() && $form->isValid()) {
+        if ($form->isSubmitted()) {
+            if ($form->isValid()) {
+                // Hacher le mot de passe
+                $hashedPassword = $this->passwordHasher->hashPassword($user, $user->getPassword());
+                $user->setPassword($hashedPassword);
 
+                // Définir le rôle par défaut
+                $user->setRoles(['ROLE_USER']);
 
-            $hashedPassword = $this->passwordHasher->hashPassword($user, $user->getPassword());
-            $user->setPassword($hashedPassword);
+                // Générer un token de vérification
+                $verificationToken = bin2hex(random_bytes(32));
+                $user->setVerificationToken($verificationToken);
 
-            $user->setRoles(['ROLE_USER']);
+                // Persister l'utilisateur dans la base de données
+                $this->entityManager->persist($user);
+                $this->entityManager->flush();
 
+                // Envoyer l'email de vérification
+                $email = (new TemplatedEmail())
+                    ->from(new Address('no-reply@example.com', 'Your App Name'))
+                    ->to($user->getEmail())
+                    ->subject('Please verify your email address')
+                    ->htmlTemplate('emails/verification_email.html.twig')
+                    ->context([
+                        'username' => $user->getUsername(),
+                        'token' => $verificationToken,
+                    ]);
 
+                $mailer->send($email);
 
-
-            $this->entityManager->persist($user);
-            $this->entityManager->flush();
-
-            $this->addFlash('success', 'Account created successfully!');
-            return $this->redirectToRoute('app_login');
+                // Message de confirmation
+                $this->addFlash('success', 'Account created successfully! Please check your email to verify your account.');
+                return $this->redirectToRoute('app_login');
+            } else {
+                // Si le formulaire est invalide (email en doublon ou autre erreur)
+                $this->addFlash('error', 'Please fix the errors in the form. If you are using this email, try another one.');
+            }
         }
 
         return $this->render('backtemplates/app_register.html.twig', [
@@ -148,13 +176,13 @@ public function login(AuthenticationUtils $authenticationUtils): Response
             'controller_name' => 'UserController',
         ]);
     }
-    #[Route('/back2', name: 'app_index2')]
+   /* #[Route('/back2', name: 'app_index2')]
     public function index2(): Response
     {
         return $this->render('backtemplates/baseback2.html.twig', [
             'controller_name' => 'IndexController',
         ]);
-    }
+    }*/
 
 
     /*#[Route('/back/profile', name: 'app_profile')]
@@ -231,6 +259,9 @@ public function login(AuthenticationUtils $authenticationUtils): Response
             'controller_name' => 'UserController',
         ]);
     }
+
+
+  
 // visuliser les demandes services + demande plat
     #[Route('/profile', name: 'app_user_profile')]
 public function profileUser(DeamndeServiceRepository $demandeServiceRepository,DemandePlatRepository $demandePlatRepository,ReservationRepository  $reservationRepository): Response
@@ -248,7 +279,6 @@ public function profileUser(DeamndeServiceRepository $demandeServiceRepository,D
         'reservations'=> $reservations
     ]);
 }   
-
 
 
     #[Route('/create-admin', name: 'app_create_admin', methods: ['GET'])]
@@ -275,5 +305,66 @@ public function profileUser(DeamndeServiceRepository $demandeServiceRepository,D
 
         }
     }
+
+    #[Route('/verify-email/{token}', name: 'app_verify_email')]
+    public function verifyEmail(string $token, EntityManagerInterface $entityManager): Response
+    {
+        $user = $entityManager->getRepository(User::class)->findOneBy(['verificationToken' => $token]);
+
+        if (!$user) {
+            $this->addFlash('error', 'Invalid or expired verification token.');
+            return $this->redirectToRoute('app_login');
+        }
+
+        // Valider l'utilisateur
+        $user->setIsVerified(true);
+        $user->setVerificationToken(null);
+        $entityManager->flush();
+
+        $this->addFlash('success', 'Your email has been verified successfully.');
+        return $this->redirectToRoute('app_login');
+    }
+
+    #[Route('/active-users', name: 'app_active_users')]
+    public function mostActiveUsers(UserRepository $userRepository): Response
+    {
+        $activeUsers = $userRepository->findMostActiveUsersByLogin();
+
+        return $this->render('backtemplates/most_active_users.html.twig', [
+            'activeUsers' => $activeUsers,
+        ]);
+    }
+
+    #[Route('/back2/add', name: 'admin_user_add')]
+    public function addUser(Request $request, EntityManagerInterface $entityManager, UserPasswordHasherInterface $passwordHasher): Response
+    {
+        $user = new User();
+        $form = $this->createForm(UserType::class, $user);
+
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            // Hacher le mot de passe
+            $hashedPassword = $passwordHasher->hashPassword($user, $user->getPassword());
+            $user->setPassword($hashedPassword);
+
+            // Définir un rôle par défaut
+            $user->setRoles(['ROLE_USER']);
+
+            // Sauvegarder dans la base de données
+            $entityManager->persist($user);
+            $entityManager->flush();
+
+            // Message de confirmation
+            $this->addFlash('success', 'Étudiant ajouté avec succès!');
+
+            return $this->redirectToRoute('app_index2'); // Retour à la liste des étudiants
+        }
+
+        return $this->render('backtemplates/add_user.html.twig', [
+            'form' => $form->createView(),
+        ]);
+    }
+
 
 }
