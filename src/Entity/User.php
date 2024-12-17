@@ -60,7 +60,10 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     #[ORM\OneToOne(mappedBy: 'user', cascade: ['remove'])]
     private ?Reservation $reservation = null;
-
+        /**
+     * @ORM\OneToMany(targetEntity=DemandeService::class, mappedBy="user")
+     */
+    private  $demandeServices;    
     /**
      * @ORM\OneToMany(targetEntity=DemandePlat::class, mappedBy="user")
      */

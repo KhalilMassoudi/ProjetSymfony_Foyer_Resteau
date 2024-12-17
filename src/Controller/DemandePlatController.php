@@ -26,7 +26,7 @@ class DemandePlatController extends AbstractController
     }
 
     
-     #[Route('/demande/plat/ajout/{id}', name: 'app_demande_plat_ajout')]
+     #[Route('front/demande/plat/ajout/{id}', name: 'app_demande_plat_ajout')]
 public function ajouterDemande(
     int $id,
     PlatRepository $platRepository,
