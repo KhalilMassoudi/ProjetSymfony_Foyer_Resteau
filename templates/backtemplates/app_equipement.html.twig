@@ -3,9 +3,6 @@
 {% block body %}
     <div class="container mt-4" style="margin-left: 20%; margin-top: 400px; padding-top: 80px;">
 
-
-
-
         <!-- Section des équipements -->
         <h2>Gestion des équipements</h2>
         <button id="showFormButtonEquipement" class="btn btn-primary mb-3">
@@ -16,6 +13,7 @@
             Rechercher un équipement
             <span class="btn-icon-right"><i class="fa fa-search"></i></span>
         </a>
+
         <!-- Formulaire d'ajout d'équipement masqué par défaut -->
         <div id="addFormEquipement" style="display: none;">
             <h2>Ajouter un nouvel équipement</h2>
@@ -86,6 +84,11 @@
             {% endfor %}
             </tbody>
         </table>
+
+        <!-- Nouveau bouton pour générer un PDF -->
+        <a href="{{ path('app_equipements_pdf') }}" class="btn btn-info mt-3">
+            Générer un PDF <span class="btn-icon-right"><i class="fa fa-file-pdf"></i></span>
+        </a>
 
         <!-- Message flash success -->
         {% for message in app.flashes('success') %}
