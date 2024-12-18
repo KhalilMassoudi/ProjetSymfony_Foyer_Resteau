@@ -114,29 +114,32 @@
         </div>
 
         <!-- Top utilisateurs actifs -->
-        <div class="col-lg-6 col-xl-4 col-xxl-6 col-md-6">
-            <div class="card shadow-sm">
-                
-                <div class="card-body text-center">
-                    <div class="m-t-10">
-                        <h4 class="card-title">Top utilisateur actif</h4>
-                        <h2 class="mt-3">{{ top_active_users[0].demande_count }}</h2> <!-- Affichage du top utilisateur -->
-                    </div>
-                    <div class="widget-card-circle mt-5 mb-5" id="info-circle-card">
-                        <!-- Vous pouvez ajouter un graphique circulaire si nécessaire -->
-                        <canvas width="125" height="125" style="height: 100px; width: 100px;"></canvas>
-                        <i class="ti-user pa"></i>
-                    </div>
-                    <ul class="widget-line-list m-b-15">
-                        <li class="border-right">
-                            <span class="text-info">{{ top_active_users[0].user_email }}</span><br>
-                            <span class="text-success">{{ top_active_users[0].demande_count }} Demandes</span>
-                        </li>
-                    </ul>
+                <!-- Top utilisateurs actifs -->
+<div class="col-lg-6 col-xl-4 col-xxl-6 col-md-6">
+    <div class="card shadow-sm">
+        <div class="card-body text-center">
+            {% if top_active_users is not empty %}
+                <div class="m-t-10">
+                    <h4 class="card-title">Top utilisateur actif</h4>
+                    <h2 class="mt-3">{{ top_active_users[0].demande_count }}</h2> <!-- Affichage du top utilisateur -->
                 </div>
-            </div>
+                <div class="widget-card-circle mt-5 mb-5" id="info-circle-card">
+                    <!-- Vous pouvez ajouter un graphique circulaire si nécessaire -->
+                    <canvas width="125" height="125" style="height: 100px; width: 100px;"></canvas>
+                    <i class="ti-user pa"></i>
+                </div>
+                <ul class="widget-line-list m-b-15">
+                    <li class="border-right">
+                        <span class="text-info">{{ top_active_users[0].user_email }}</span><br>
+                        <span class="text-success">{{ top_active_users[0].demande_count }} Demandes</span>
+                    </li>
+                </ul>
+            {% else %}
+                <p>Aucun utilisateur actif trouvé.</p>
+            {% endif %}
         </div>
-
+    </div>
+</div>
         <!-- Détails des demandes (ajouté à côté de Top utilisateurs actifs) -->
         <div class="col-lg-6 col-xl-4 col-xxl-6 col-md-6">
             <div class="card">
