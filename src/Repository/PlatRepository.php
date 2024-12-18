@@ -46,7 +46,40 @@ class PlatRepository extends ServiceEntityRepository
 
         return $qb->getQuery()->getResult();
     }
-    
+    public function findOutOfStockPlats(): array
+{
+    return $this->createQueryBuilder('p')
+        ->where('p.quantite = 0')
+        ->getQuery()
+        ->getResult();
+}
+public function countTotalPlats(): int
+{
+    return $this->createQueryBuilder('p')
+        ->select('COUNT(p.id)')
+        ->getQuery()
+        ->getSingleScalarResult();
+}
+
+
+public function findRecentlyAddedPlats(): array
+{
+    return $this->createQueryBuilder('p')
+        ->orderBy('p.createdAt', 'DESC')
+        ->setMaxResults(5)
+        ->getQuery()
+        ->getResult();
+}
+public function findMostRequestedPlats()
+    {
+        return $this->createQueryBuilder('d')
+            ->select('p.nom AS plat_name', 'COUNT(d.id) AS demande_count')
+            ->join('d.plat', 'p')
+            ->groupBy('p.id')
+            ->orderBy('demande_count', 'DESC')
+            ->getQuery()
+            ->getResult();
+    }
 //    /**
 //     * @return Plat[] Returns an array of Plat objects
 //     */

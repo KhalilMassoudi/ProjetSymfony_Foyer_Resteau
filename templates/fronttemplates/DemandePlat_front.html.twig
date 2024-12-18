@@ -28,44 +28,49 @@
                         <p><strong>Description:</strong> {{ plat.descPlat }}</p>
                     </div>
 
-            <!-- Formulaire -->
-            <div class="col-md-6">
-                <div class="p-5 bg-white rounded-4 shadow-lg">
-                    <h4 class="text-center mb-4 text-secondary">Faire une demande de plat</h4>
-                    {{ form_start(form, {'attr': {'class': 'form-modern'}}) }}
-                    <div class="mb-4">
-                        {{ form_label(form.nom, 'Nom', {'label_attr': {'class': 'form-label text-dark fw-bold'}}) }}
-                        {{ form_widget(form.nom, {'attr': {'class': 'form-control form-control-lg rounded-pill border-secondary shadow-sm'}}) }}
-                        {{ form_errors(form.nom) }}
+                    <!-- Formulaire -->
+                    <div class="col-md-6">
+                        <div class="p-5 bg-white rounded-4 shadow-lg">
+                            <h4 class="text-center mb-4 text-secondary">Faire une demande de plat</h4>
+                            {{ form_start(form, {'attr': {'class': 'form-modern'}}) }}
+                            <div class="mb-4">
+                                {{ form_label(form.nom, 'Nom', {'label_attr': {'class': 'form-label text-dark fw-bold'}}) }}
+                                {{ form_widget(form.nom, {'attr': {'class': 'form-control form-control-lg rounded-pill border-secondary shadow-sm'}}) }}
+                                {{ form_errors(form.nom) }}
+                            </div>
+                            <div class="mb-4">
+                                {{ form_label(form.prenom, 'Prénom', {'label_attr': {'class': 'form-label text-dark fw-bold'}}) }}
+                                {{ form_widget(form.prenom, {'attr': {'class': 'form-control form-control-lg rounded-pill border-secondary shadow-sm'}}) }}
+                                {{ form_errors(form.prenom) }}
+                            </div>
+                            <div class="mb-4">
+                                {{ form_label(form.telephone, 'Téléphone', {'label_attr': {'class': 'form-label text-dark fw-bold'}}) }}
+                                {{ form_widget(form.telephone, {'attr': {'class': 'form-control form-control-lg rounded-pill border-secondary shadow-sm'}}) }}
+                                {{ form_errors(form.telephone) }}
+                            </div>
+                            <div class="mb-4">
+                                {{ form_label(form.email, 'Email', {'label_attr': {'class': 'form-label text-dark fw-bold'}}) }}
+                                {{ form_widget(form.email, {'attr': {'class': 'form-control form-control-lg rounded-pill border-secondary shadow-sm'}}) }}
+                                {{ form_errors(form.email) }}
+                            </div>
+                            <div class="mb-4">
+                                {{ form_label(form.description, 'Description de la demande', {'label_attr': {'class': 'form-label text-dark fw-bold'}}) }}
+                                {{ form_widget(form.description, {'attr': {'class': 'form-control form-control-lg rounded border-secondary shadow-sm'}}) }}
+                                {{ form_errors(form.description) }}
+                            </div>
+                            <div class="mb-4">
+                                {{ form_label(form.createdAt, 'Date de la demande', {'label_attr': {'class': 'form-label text-dark fw-bold'}}) }}
+                                {{ form_widget(form.createdAt, {'attr': {'class': 'form-control form-control-lg rounded-pill border-secondary shadow-sm'}}) }}
+                                {{ form_errors(form.createdAt) }}
+                            </div>
+                            <div class="d-grid">
+                                <button type="submit" class="btn btn-primary btn-lg rounded-pill shadow-sm">
+                                    <i class="bi bi-send"></i> Envoyer la demande
+                                </button>
+                            </div>
+                            {{ form_end(form) }}
+                        </div>
                     </div>
-                    <div class="mb-4">
-                        {{ form_label(form.prenom, 'Prénom', {'label_attr': {'class': 'form-label text-dark fw-bold'}}) }}
-                        {{ form_widget(form.prenom, {'attr': {'class': 'form-control form-control-lg rounded-pill border-secondary shadow-sm'}}) }}
-                        {{ form_errors(form.prenom) }}
-                    </div>
-                    <div class="mb-4">
-                        {{ form_label(form.telephone, 'Téléphone', {'label_attr': {'class': 'form-label text-dark fw-bold'}}) }}
-                        {{ form_widget(form.telephone, {'attr': {'class': 'form-control form-control-lg rounded-pill border-secondary shadow-sm'}}) }}
-                        {{ form_errors(form.telephone) }}
-                    </div>
-                    <div class="mb-4">
-                        {{ form_label(form.email, 'Email', {'label_attr': {'class': 'form-label text-dark fw-bold'}}) }}
-                        {{ form_widget(form.email, {'attr': {'class': 'form-control form-control-lg rounded-pill border-secondary shadow-sm'}}) }}
-                        {{ form_errors(form.email) }}
-                    </div>
-                    <div class="mb-4">
-                        {{ form_label(form.description, 'Description de la demande', {'label_attr': {'class': 'form-label text-dark fw-bold'}}) }}
-                        {{ form_widget(form.description, {'attr': {'class': 'form-control form-control-lg rounded border-secondary shadow-sm'}}) }}
-                        {{ form_errors(form.description) }}
-                    </div>
-                    <div class="d-grid">
-                        <button type="submit" class="btn btn-primary btn-lg rounded-pill shadow-sm">
-                            <i class="bi bi-send"></i> Envoyer la demande
-                        </button>
-                    </div>
-                    {{ form_end(form) }}
-                </div>
-            </div>
                 </div>
             </div>
         </div>

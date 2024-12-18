@@ -14,6 +14,8 @@ use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Component\Form\Extension\Core\Type\DateTimeType;
+
 
 class PlatType extends AbstractType
 {
@@ -79,6 +81,12 @@ class PlatType extends AbstractType
                     new Assert\PositiveOrZero(['message' => 'La quantité doit être un nombre positif ou zéro.']),
                 ],
             ])
+            ->add('createdAt', DateTimeType::class, [
+                'widget' => 'single_text',  // This is to use a single input field for DateTime
+                'required' => false,        // Make it optional if you want, or set it to true if mandatory
+                'input' => 'datetime',      // Store as DateTime in database
+                'attr' => ['class' => 'datetime-picker'], // You can add your custom CSS class for styling
+            ])
             ->add('image', FileType::class, [
                 'label' => 'Image du plat',
                 'required' => false,
@@ -94,6 +102,7 @@ class PlatType extends AbstractType
                         'maxSizeMessage' => 'L\'image ne doit pas dépasser 2 Mo.',
                     ]),
                 ],
+                
             ]);
     }
 

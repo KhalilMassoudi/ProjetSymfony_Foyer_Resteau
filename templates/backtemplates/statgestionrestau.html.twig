@@ -1,0 +1,190 @@
+{% extends 'backtemplates/baseback2.html.twig' %}
+
+{% block title %}Statistiques{% endblock %}
+
+{% block body %}
+<div class="container mt-4" style="margin-left: 20%; margin-top: 100px; padding-top: 80px;">
+    <h1 class="page-title my-4">Statistiques du Restaurant</h1>
+
+    <div class="row">
+        <!-- Statistiques générales -->
+        {% for stat in [
+            {"text": "Nombre total de plats", "digit": total_plats, "icon": "fa-cutlery", "progress": "100", "color": "success"},
+            {"text": "Plats en rupture de stock", "digit": out_of_stock_plats|length, "icon": "fa-exclamation-circle", "progress": "40", "color": "danger"},
+            {"text": "Demandes aujourd'hui", "digit": demandes_today, "icon": "fa-calendar-day", "progress": "60", "color": "primary"},
+            {"text": "Nombre total d'utilisateurs", "digit": total_users, "icon": "fa-users", "progress": "90", "color": "info"}
+        ] %}
+        <div class="col-lg-3 col-sm-6">
+            <div class="card shadow-sm">
+                <div class="stat-widget-two card-body">
+                    <div class="stat-content">
+                        <div class="stat-text font-weight-bold">{{ stat.text }}</div>
+                        <div class="stat-digit">
+                            <i class="fa {{ stat.icon }} text-{{ stat.color }}"></i> {{ stat.digit }}
+                        </div>
+                    </div>
+                    <div class="progress mt-2">
+                        <div class="progress-bar bg-{{ stat.color }} w-{{ stat.progress }}" role="progressbar" aria-valuenow="{{ stat.progress }}" aria-valuemin="0" aria-valuemax="100"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+    <div class="row mt-4">
+                <!-- Plats récemment ajoutés -->
+        <div class="col-lg-6 col-xl-4 col-xxl-6 col-md-6">
+            <div class="card">
+                <div class="card-header">
+                    <h4 class="card-title">Plats récemment ajoutés</h4>
+                </div>
+                <div class="card-body">
+                    <div class="widget-timeline ps ps--active-y">
+                        <ul class="timeline">
+                            {% for plat in recently_added_plats %}
+                            <li>
+                                <div class="timeline-badge primary"></div>
+                                <a class="timeline-panel text-muted" href="#">
+                                    <span>Ajouté le {{ plat.createdAt|date('d/m/Y') }}</span>
+                                    <h6 class="m-t-5">{{ plat.nomPlat }}</h6>
+                                </a>
+                            </li>
+                            {% else %}
+                            <li>
+                                <div class="timeline-badge danger"></div>
+                                <a class="timeline-panel text-muted" href="#">
+                                    <h6 class="m-t-5">Aucun plat récemment ajouté</h6>
+                                </a>
+                            </li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Plats les plus demandés -->
+        <div class="col-xl-4 col-lg-6">
+            <div class="card shadow-sm">
+                <div class="card-header">
+                    <h4 class="card-title">Plats les plus demandés </h4>
+                </div>
+                <div class="card-body">
+                    <ul class="list-group">
+                        {% for plat in most_requested_plats %}
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            {{ plat.plat_name }}
+                            <span class="badge badge-success">{{ plat.demande_count }} Demandes</span>
+                        </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Demandes par statut -->
+        <div class="col-xl-4 col-lg-6">
+            <div class="card shadow-sm">
+                <div class="card-header">
+                    <h4 class="card-title">Demandes par statut</h4>
+                </div>
+                <div class="card-body">
+                    <div class="current-progress">
+                        {% for status in demandes_status %}
+                        <div class="progress-content py-2">
+                            <div class="row">
+                                <div class="col-lg-4">
+                                    <div class="progress-text">{{ status.status }}</div>
+                                </div>
+                                <div class="col-lg-8">
+                                    <div class="current-progressbar">
+                                        <div class="progress">
+                                            <div class="progress-bar progress-bar-primary w-{{ (status.demande_count / demandes_this_month) * 100|round }}" role="progressbar" aria-valuenow="{{ (status.demande_count / demandes_this_month) * 100|round }}" aria-valuemin="0" aria-valuemax="100"></div>
+                                        </div>
+                                    </div>
+                                    <div class="text-end mt-1">{{ status.demande_count }} demandes</div>
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+        <!-- Top utilisateurs actifs -->
+        <div class="col-lg-6 col-xl-4 col-xxl-6 col-md-6">
+            <div class="card shadow-sm">
+                
+                <div class="card-body text-center">
+                    <div class="m-t-10">
+                        <h4 class="card-title">Top utilisateur actif</h4>
+                        <h2 class="mt-3">{{ top_active_users[0].demande_count }}</h2> <!-- Affichage du top utilisateur -->
+                    </div>
+                    <div class="widget-card-circle mt-5 mb-5" id="info-circle-card">
+                        <!-- Vous pouvez ajouter un graphique circulaire si nécessaire -->
+                        <canvas width="125" height="125" style="height: 100px; width: 100px;"></canvas>
+                        <i class="ti-user pa"></i>
+                    </div>
+                    <ul class="widget-line-list m-b-15">
+                        <li class="border-right">
+                            <span class="text-info">{{ top_active_users[0].user_email }}</span><br>
+                            <span class="text-success">{{ top_active_users[0].demande_count }} Demandes</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Détails des demandes (ajouté à côté de Top utilisateurs actifs) -->
+        <div class="col-lg-6 col-xl-4 col-xxl-6 col-md-6">
+            <div class="card">
+                <div class="card-header">
+                    <h4 class="card-title">Détails des demandes</h4>
+                </div>
+                <div class="card-body">
+                    <p><strong>Demandes aujourd'hui :</strong> {{ demandes_today }}</p>
+                    <p><strong>Demandes cette semaine :</strong> {{ demandes_this_week }}</p>
+                    <p><strong>Demandes ce mois :</strong> {{ demandes_this_month }}</p>
+
+                    <!-- Canvas pour le graphique -->
+                    <div class="chart py-4">
+                        <canvas id="demandes-chart" width="647" height="287"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        var demandesData = [{{ demandes_today }}, {{ demandes_this_week }}, {{ demandes_this_month }}];
+        
+        var ctx = document.getElementById('demandes-chart').getContext('2d');
+        var demandesChart = new Chart(ctx, {
+            type: 'bar', // Vous pouvez changer le type de graphique ici (bar, line, etc.)
+            data: {
+                labels: ['Aujourd\'hui', 'Cette semaine', 'Ce mois'], // Les labels de l'axe X
+                datasets: [{
+                    label: 'Demandes',
+                    data: demandesData, // Données pour chaque période
+                    borderColor: 'rgb(106, 233, 52)',
+                    backgroundColor: 'rgba(42, 195, 108, 0.2)',
+                    fill: true,
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+    </script>
+</div>
+{% endblock %}

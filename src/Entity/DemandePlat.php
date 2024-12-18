@@ -43,6 +43,9 @@ class DemandePlat
 
     #[ORM\Column(type: 'string', length: 20)]
     private $status = 'Under review'; // statut par défaut
+    #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
+    private ?\DateTimeInterface $createdAt = null;
+    
 
     // Getter et setter pour le status
     public function getStatus(): ?string
@@ -157,4 +160,22 @@ class DemandePlat
         $this->plat = $plat;
         return $this;
     }
+
+public function __construct()
+{
+    
+}
+
+// Getter et setter pour createdAt
+public function getCreatedAt(): ?\DateTimeInterface
+{
+    return $this->createdAt;
+}
+
+public function setCreatedAt(\DateTimeInterface $createdAt): static
+{
+    $this->createdAt = $createdAt;
+    return $this;
+}
+
 }
