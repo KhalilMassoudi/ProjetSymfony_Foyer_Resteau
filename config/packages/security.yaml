@@ -28,7 +28,7 @@ security:
     access_control:
         - { path: ^/demande, roles: ROLE_ADMIN }
         - { path: ^/back2, roles: ROLE_ADMIN }
-        - { path: ^/reclamations, roles: ROLE_USER }
+       
         - { path: ^/categorieplat, roles: ROLE_ADMIN }
         - { path: ^/app_chamber, roles: ROLE_ADMIN }
         - { path: ^/equipement, roles: ROLE_ADMIN }
@@ -36,9 +36,10 @@ security:
         - { path: ^/back, roles: ROLE_ADMIN }
         - { path: ^/plat, roles: ROLE_ADMIN }
         - { path: ^/service, roles: ROLE_ADMIN }
-        - { path: ^/front/nos-services, roles: ROLE_USER }
+       
         - { path: ^/dashreclamation , roles: ROLE_ADMIN }
-        - { path: ^/front/, roles: ROLE_USER }
+        
+
         
 
 

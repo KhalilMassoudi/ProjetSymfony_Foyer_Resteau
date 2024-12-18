@@ -72,7 +72,7 @@ public function ajouterDemande(
                 ->from('azizchehata47@gmail.com')
                 ->to($demandePlat->getEmail())
                 ->subject('mail de confirmation')
-                ->text('Votre demande a bien été soumise. Nous vous contacterons bientôt.');
+                ->text('Votre Plat a bien été soumise. Nous vous contacterons bientôt.');
 
             $mailer->send($email);
 
