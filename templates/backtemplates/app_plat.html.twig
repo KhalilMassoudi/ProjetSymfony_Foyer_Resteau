@@ -57,6 +57,14 @@
                 <div class="alert alert-danger"><strong>{{ error.message }}</strong></div>
             {% endfor %}
         </div>
+          <div class="mb-3">
+      <label for="{{ form.createdAt.vars.id }}" class="form-label">{{ form.createdAt.vars.label }}</label>
+      {{ form_widget(form.createdAt, {'attr': {'class': 'form-control'}}) }}
+      {% for error in form.createdAt.vars.errors %}
+        <div class="alert alert-danger"><strong>{{ error.message }}</strong></div>
+    {% endfor %}
+    </div>
+
 
         <div class="mb-3">
             <label for="{{ form.categoriePlat.vars.id }}" class="form-label">{{ form.categoriePlat.vars.label }}</label>
@@ -95,6 +103,7 @@
                 <th>Disponibilité</th>
                 <th>Type de cuisine</th>
                 <th>Image</th>
+                <th>Date d'ajout</th> {# Nouvelle colonne pour createdAt #}
                 <th>Actions</th>
             </tr>
         </thead>
@@ -113,6 +122,7 @@
                     <td>{{ plat.categoriePlat.nomCategorie }}</td>
                     <td>{{ plat.dispoPlat ? 'Disponible' : 'Indisponible' }}</td>
                     <td>{{ plat.typeCuisine }}</td>
+                    
                     <td>
                         {% if plat.image %}
                             <img src="{{ asset('uploads/images/' ~ plat.image) }}" alt="Image de {{ plat.nomPlat }}" style="width: 80px; height: auto;">
@@ -120,6 +130,7 @@
                             <span class="text-muted">Pas d'image</span>
                         {% endif %}
                     </td>
+                    <td>{{ plat.createdAt|date('Y-m-d H:i:s') }} </td> {# Affichage de la date de création formatée #}
                     <td>
                         <a href="{{ path('app_plat_edit', {'id': plat.id}) }}" class="btn btn-primary btn-sm">
                             <i class="fa fa-edit"></i> Modifier
